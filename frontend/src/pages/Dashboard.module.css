@@ -1,0 +1,758 @@
+.dashboard {
+  padding: 2rem;
+  --bg: #f4f7fb;
+  --card-bg: #ffffff;
+  --primary: #9ca3af; /* substituído verde por cinza */
+  --primary-2: #4b5563; /* tom de texto cinza-escuro */
+  background: var(--bg);
+  min-height: 100%;
+}
+
+.dashboard h1 {
+  color: #083344;
+  margin-bottom: 1.25rem;
+  font-size: 1.6rem;
+  background: linear-gradient(90deg, rgba(11,109,107,0.08), rgba(43,138,239,0.06));
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 1.5rem;
+  color: #7f8c8d;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.card {
+  background: var(--card-bg);
+  padding: 1.25rem;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(14, 165, 164, 0.06);
+  border: 1px solid rgba(12, 74, 75, 0.04);
+}
+
+.cardAccent {
+  background: linear-gradient(135deg, rgba(14,165,164,0.12), rgba(43,138,239,0.08));
+  padding: 1.25rem;
+  border-radius: 10px;
+  box-shadow: 0 8px 22px rgba(43,138,239,0.04);
+  border: 1px solid rgba(11,109,107,0.06);
+}
+
+.cardHeader {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.cardValue {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--primary-2);
+  margin-bottom: 0.25rem;
+}
+
+.cardLink { text-decoration: none; color: inherit; display: block; }
+.cardLink:hover .card { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(43,138,239,0.08); }
+
+/* Wireframe styles */
+.dashboardWire { padding: 18px 22px 22px 22px; background: transparent; }
+.headerRow { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px }
+.welcome { display:none }
+.topStatsRow {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(220px, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+.smallCard {
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, rgba(15,23,42,0.08));
+  border-radius: 14px;
+  min-width: 0;
+  padding: 14px 14px 12px 14px;
+  box-shadow: 0 10px 24px rgba(15,23,42,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.smallTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: rgba(15, 23, 42, 0.84);
+}
+
+.smallIcon {
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #0f172a;
+  flex: 0 0 auto;
+}
+
+.iconMoney { background: rgba(34,197,94,0.18); color: rgba(22,163,74,1); }
+.iconCheck { background: rgba(34,197,94,0.14); color: rgba(22,163,74,1); }
+.iconUsers { background: rgba(37,99,235,0.14); color: rgba(29,78,216,1); }
+
+.smallValue {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: #0f172a;
+  line-height: 1.0;
+}
+
+.smallMeta {
+  font-size: 0.85rem;
+  color: var(--muted, #6b7280);
+}
+
+.mainGrid { display:grid; grid-template-columns: 1fr; gap:14px }
+.topPanels { display:grid; grid-template-columns: 1fr 420px; gap:14px; align-items: start }
+.fullWidthChart { grid-column: 1 / -1 }
+.largeChartPlaceholder { height:260px; background:linear-gradient(180deg,#f6f9fc,#ffffff); border-radius:6px; display:flex; align-items:center; justify-content:center; color:#7f8c8d }
+
+/* Two-column charts grid for daily and monthly revenue panels */
+.chartsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 0;
+}
+@media (max-width: 900px) {
+  .chartsGrid { grid-template-columns: 1fr }
+}
+.leftCol { display:flex; flex-direction:column; gap:1rem }
+.panel {
+  background: #ffffff;
+  border: 1px solid var(--border, rgba(15,23,42,0.08));
+  border-radius: 16px;
+  box-shadow: 0 12px 28px rgba(15,23,42,0.08);
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(15,23,42,0.06);
+}
+
+.panelHeader h3 {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.panelLink {
+  text-decoration: none;
+  color: var(--primary-2, #1d4ed8);
+  font-weight: 800;
+  font-size: 0.86rem;
+}
+
+.panelLink:hover { text-decoration: underline; }
+
+/* Table-style card for lists like Próximas Consultas */
+.tableCard { border:1px solid #e6e6e6; border-radius:8px; overflow:hidden; padding:0 }
+.tableCardInner { padding: 10px 14px 14px 14px }
+.tableCardTable { width:100%; border-collapse: collapse; }
+.tableCardTable th {
+  text-align:left;
+  padding: 10px 12px;
+  font-weight: 900;
+  font-size: 0.78rem;
+  color: rgba(15,23,42,0.55);
+  border-bottom: 1px solid rgba(15,23,42,0.08);
+  background: rgba(243,246,251,0.8);
+}
+.tableCardTable th, .tableCardTable td { border-right: 1px solid #e6e6e6 }
+.tableCardTable th:last-child, .tableCardTable td:last-child { border-right: none }
+
+/* ensure a visible divider between columns (left border for non-first cells) */
+.tableCardTable th:not(:first-child), .tableCardTable td:not(:first-child) {
+  border-left: 1px solid #e6e6e6;
+}
+
+/* apply same rule for estoque and agendadas tables as they reuse tableCardTable */
+.estoqueTable th:not(:first-child), .estoqueTable td:not(:first-child) {
+  border-left: 1px solid #e6e6e6;
+}
+
+/* For Consultas Agendadas we use a single spacer column as divider;
+   remove the generic left-border on agendadas cells to avoid double lines. */
+.agendadasTable th:not(:first-child), .agendadasTable td:not(:first-child) {
+  border-left: none;
+}
+
+/* Zebra striping for Próximas Consultas only */
+.proximasTable tbody tr:nth-child(odd) { background: #ffffff }
+.proximasTable tbody tr:nth-child(even) { background: #f1eef0 }
+.proximasTable tbody tr:hover { background: #e9e6e8 }
+
+/* Make Próximas Consultas fit the card (no horizontal scrollbar) */
+.proximasTable {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.proximasTable th,
+.proximasTable td {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Keep date and action columns stable so the middle columns can wrap */
+.proximasTable th:nth-child(1),
+.proximasTable td:nth-child(1) {
+  width: 120px;
+}
+
+.proximasTable th:nth-child(4),
+.proximasTable td:nth-child(4) {
+  width: 140px;
+}
+
+/* Slightly tighter padding helps on narrower cards */
+.proximasTable td { padding: 12px 12px; }
+
+/* Ensure estoque headers match Próximas Consultas headers when using tableCardTable + estoqueTable */
+.tableCardTable.estoqueTable thead th,
+.tableCardTable.estoqueTable th {
+  background: transparent;
+  color: #34495e;
+  padding: 0.35rem 0.75rem;
+  font-weight: 700;
+  border-bottom: 1px solid #e6e6e6;
+  text-align: left;
+}
+
+/* make table headers sit flush under the card title */
+.tableCard > h3 { margin-bottom: 0 }
+.tableCardTable td {
+  padding: 12px 12px;
+  border-bottom: 1px solid rgba(15,23,42,0.06);
+  color: rgba(15, 23, 42, 0.85);
+  font-weight: 600;
+  background: #ffffff;
+}
+/* always show bottom border to 'close' the table card */
+.tableCardTable { border-bottom: 1px solid #e6e6e6 }
+
+/* also ensure agendadas table has a closing border */
+.agendadasTable { border-bottom: 1px solid #e6e6e6 }
+
+/* thin style for scheduled consultations rows */
+.scheduledRow td {
+  color: #7f8c8d; /* lighter gray */
+  font-weight: 400; /* thinner */
+  padding-top: 0.28rem;
+  padding-bottom: 0.28rem;
+  font-size: 0.85rem;
+  line-height: 1.05;
+}
+
+/* Keep action button compact and single-line */
+.markPaidBtn {
+  white-space: nowrap;
+  padding: 7px 12px;
+  font-size: 0.85rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .scheduledRow td { transition: color 0.18s ease, font-weight 0.12s ease }
+}
+
+.nextList { display:flex; flex-direction:column; gap:0.6rem }
+.nextItem { display:flex; align-items:center; gap:0.75rem; padding:0.5rem; border-radius:6px; background:#fff }
+.nextList .nextItem:nth-child(even) { background:#f3f4f6 }
+.nextActions {
+  margin-left: auto;
+}
+.markPaidBtn {
+  background: rgba(34,197,94,0.14);
+  color: rgba(22,163,74,1);
+  border: 1px solid rgba(34,197,94,0.24);
+  cursor: pointer;
+  font-weight: 900;
+  transition: background-color 0.15s ease, transform 0.08s ease;
+}
+
+.markPaidBtn::before {
+  content: '→';
+  font-weight: 900;
+  margin-right: 8px;
+}
+
+.markPaidBtn:hover { background: rgba(34,197,94,0.18); transform: translateY(-1px) }
+.markPaidBtn:active { transform: translateY(0) }
+.paidLabel { color: rgba(22,163,74,1); font-weight: 900; }
+
+/* Dashboard action modal (Realizada/Falta/Cancelada/Reagendar) */
+.actionOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.42);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 14px;
+}
+
+.actionModal {
+  width: min(560px, 96vw);
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 18px 60px rgba(15, 23, 42, 0.28);
+  border: 1px solid rgba(15, 23, 42, 0.10);
+  overflow: hidden;
+}
+
+.actionHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(15,23,42,0.08);
+  background: linear-gradient(135deg, rgba(69, 101, 171, 0.95), rgba(125, 153, 208, 0.95));
+}
+
+.actionTitle {
+  font-weight: 900;
+  color: #ffffff;
+  font-size: 1.2rem;
+  letter-spacing: -0.02em;
+}
+
+.actionClose {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(15, 23, 42, 0.10);
+  cursor: pointer;
+  font-weight: 900;
+  color: rgba(15, 23, 42, 0.85);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.08s ease, background-color 0.15s ease;
+}
+
+.actionClose:hover { background: rgba(255, 255, 255, 0.88); transform: translateY(-1px); }
+.actionClose:active { transform: translateY(0); }
+
+.actionBody {
+  padding: 0;
+}
+
+.actionInfoRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: rgba(243, 246, 251, 0.95);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.actionIconBox {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.06);
+  color: rgba(15, 23, 42, 0.75);
+  flex: 0 0 auto;
+}
+
+.actionInfoText {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  font-weight: 900;
+  color: rgba(15, 23, 42, 0.84);
+  flex-wrap: wrap;
+}
+
+.actionPatient { font-size: 1.05rem; }
+.actionDatetime { font-size: 0.98rem; font-weight: 800; color: rgba(15, 23, 42, 0.70); }
+.actionDot { color: rgba(15, 23, 42, 0.35); font-weight: 900; }
+
+.actionRadios {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  font-weight: 900;
+  color: rgba(15, 23, 42, 0.86);
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.actionRadios label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+}
+
+.actionRadios input[type="radio"],
+.actionCheck input[type="checkbox"] {
+  accent-color: rgba(29, 78, 216, 1);
+  width: 16px;
+  height: 16px;
+}
+
+.actionSection {
+  padding: 12px 16px;
+}
+
+.actionLabel {
+  display: block;
+  font-weight: 900;
+  font-size: 0.82rem;
+  color: rgba(15, 23, 42, 0.65);
+  margin-bottom: 6px;
+}
+
+.actionInput {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  border-radius: 12px;
+  font-weight: 700;
+  outline: none;
+  background: #ffffff;
+}
+
+.actionTextarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  border-radius: 12px;
+  font-weight: 700;
+  outline: none;
+  resize: vertical;
+  background: #ffffff;
+}
+
+.actionInput:focus,
+.actionTextarea:focus {
+  border-color: rgba(59, 130, 246, 0.75);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.14);
+}
+
+.actionInput:hover,
+.actionTextarea:hover {
+  border-color: rgba(100, 116, 139, 0.55);
+}
+
+.actionRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.actionCheck {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 900;
+  color: rgba(15, 23, 42, 0.80);
+  font-size: 1rem;
+}
+
+.actionHint {
+  margin-top: 10px;
+  color: rgba(15, 23, 42, 0.55);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.actionFooter {
+  padding: 14px 16px;
+  border-top: 1px solid rgba(15,23,42,0.08);
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  background: #ffffff;
+}
+
+.actionBtnSecondary {
+  padding: 10px 14px;
+  min-width: 120px;
+  border-radius: 14px;
+  border: 2px solid rgba(226, 232, 240, 1);
+  background: #ffffff;
+  font-weight: 900;
+  cursor: pointer;
+  color: rgba(15, 23, 42, 0.85);
+  transition: transform 0.08s ease, background-color 0.15s ease;
+}
+
+.actionBtnSecondary:hover { background: rgba(248, 250, 252, 1); transform: translateY(-1px); }
+.actionBtnSecondary:active { transform: translateY(0); }
+
+.actionBtnPrimary {
+  padding: 10px 14px;
+  min-width: 140px;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(180deg, rgba(47, 102, 231, 1), rgba(29, 78, 216, 1));
+  color: #fff;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(29, 78, 216, 0.25);
+  transition: transform 0.08s ease, filter 0.15s ease;
+}
+
+@media (max-width: 520px) {
+  .actionModal { width: min(520px, 96vw); }
+  .actionTitle { font-size: 1.12rem; }
+  .actionRadios label { font-size: 0.96rem; }
+  .actionFooter { gap: 12px; }
+}
+
+.actionBtnPrimary:hover { filter: brightness(1.03); transform: translateY(-1px); }
+.actionBtnPrimary:active { transform: translateY(0); }
+
+.actionBtnPrimary:disabled,
+.actionBtnSecondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.nextDate { width:90px; color:#7f8c8d; font-weight:700 }
+.nextTimes { flex:1; display:flex; gap:0.5rem; align-items:center }
+.time { font-weight:700; color:#083344; width:70px }
+.patient { color:#34495e }
+.nextType { color:#7f8c8d; font-size:0.9rem }
+.linkRow { text-align:right; margin-top:0.6rem }
+
+.chartPanel .chartPlaceholder { height:160px; background:linear-gradient(180deg,#f6f9fc,#ffffff); border-radius:6px; display:flex; align-items:center; justify-content:center; color:#7f8c8d }
+.periods { display:flex; gap:0.5rem; margin-top:0.65rem }
+.periods button { padding:0.35rem 0.6rem; border-radius:6px; border:1px solid #e6eef8; background:white; cursor:pointer }
+.activePeriod { background:var(--primary-2); color:white }
+
+.estoqueTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.estoqueTable th,
+.estoqueTable td {
+  border: 1px solid #e6eef8;
+  padding: 0.6rem 0.8rem;
+  vertical-align: middle;
+  text-align: left;
+}
+
+.estoqueTable th {
+  background: rgba(243,246,251,0.8);
+  color: rgba(15,23,42,0.55);
+  font-weight: 900;
+  border-bottom: 1px solid rgba(15,23,42,0.08);
+}
+
+.estoqueTable td { background: #ffffff }
+
+.estoqueTable tbody tr:nth-child(odd) { background: #ffffff }
+.estoqueTable tbody tr:nth-child(even) { background: #f1eef0 }
+.estoqueTable tbody tr:hover { background: #e9e6e8 }
+
+@media (max-width: 1000px) {
+  .mainGrid { grid-template-columns: 1fr }
+}
+
+@media (max-width: 600px) {
+  .smallCard { grid-template-columns: 1fr; grid-template-rows: auto auto auto }
+  .smallValue { grid-column: 1 / -1; border-right: none; height: 64px }
+  .smallMeta { grid-column: 1 / -1 }
+  .topStatsRow { gap: 12px }
+}
+
+/* Specific styling for the Consultas Agendadas card to look like the provided table */
+.agendadasCard { display:block; padding: 14px 14px 12px 14px; min-width:0 }
+.agendadasCard .smallTitle { padding: 0; background: transparent; border-bottom: none }
+.agendadasTable { width:100%; border-collapse: collapse; }
+.agendadasTable thead th { text-align:left; padding: 10px 0 8px 0; font-weight: 900; color: rgba(15,23,42,0.55); border-bottom: 1px solid rgba(15,23,42,0.06) }
+.agendadasTable tbody td { padding: 12px 0; font-weight: 900; font-size: 1.7rem; color:#0f172a; }
+.agendadasTable tbody tr + tr td { border-top:1px solid #e6e6e6 }
+
+/* spacer column and larger values */
+.agendadasTable thead th.agSpacerHead { width: 18px; padding:0; }
+.agendadasTable tbody td.agSpacer { width:18px; padding:0; }
+.agendadasTable tbody td.agSpacer {
+  border-left: 1px solid rgba(15,23,42,0.08); /* vertical divider */
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 900;
+  border: 1px solid transparent;
+}
+
+.badgeSuccess { background: rgba(34,197,94,0.14); color: rgba(22,163,74,1); border-color: rgba(34,197,94,0.22); }
+.badgeWarning { background: rgba(245,158,11,0.16); color: rgba(217,119,6,1); border-color: rgba(245,158,11,0.26); }
+
+.fullWidthChart { margin-top: 14px; }
+
+.chartCard {
+  overflow: hidden;
+}
+
+.chartCard > h3 {
+  margin: 0;
+  padding: 14px 16px;
+  font-size: 1.02rem;
+  font-weight: 900;
+  color: #0f172a;
+  border-bottom: 1px solid rgba(15,23,42,0.06);
+}
+
+.chartCard .tableCardInner {
+  padding: 12px 14px 14px 14px;
+}
+
+/* Avoid double vertical lines in Consultas Agendadas: remove right borders
+   and rely on single left-border on the spacer column. This prevents
+   overlapping borders from appearing as two lines. */
+.agendadasTable th,
+.agendadasTable td {
+  border-right: none;
+}
+.agendadasTable tbody td.agValue { font-size: 2rem; text-align: center }
+
+@media (max-width: 600px) {
+  .agendadasCard { min-width: auto }
+  .agendadasTable thead th, .agendadasTable tbody td { padding:0.6rem }
+}
+
+@media (max-width: 420px) {
+  .topStatsRow { grid-template-columns: 1fr; }
+  color: #95a5a6;
+  font-size: 0.85rem;
+}
+
+.section {
+  background: var(--card-bg);
+  padding: 1.25rem;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+  margin-bottom: 1.5rem;
+}
+
+.section h2 {
+  color: #2c3e50;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #ecf0f1;
+  padding-bottom: 0.5rem;
+}
+
+.alertsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.alertItem {
+  display: flex;
+  gap: 1rem;
+  padding: 0.75rem;
+  background-color: #fff7e6;
+  border-left: 4px solid #ffb020;
+  border-radius: 6px;
+}
+
+.alertIcon {
+  font-size: 1.5rem;
+}
+
+.alertItem strong {
+  color: #856404;
+}
+
+.alertItem p {
+  color: #856404;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.table th,
+.table td {
+  border: 1px solid #e6eef8;
+  padding: 0.6rem 0.8rem;
+  vertical-align: middle;
+}
+
+.table th {
+  background-color: #f3f6fb;
+  color: #0b4f63;
+  font-weight: 700;
+  text-align: left;
+  border-bottom: 2px solid #dbe9f7;
+}
+
+.table td { background: #ffffff }
+
+.table tbody tr:nth-child(even) {
+  background: #f7fafc; /* zebra */
+}
+
+.table tbody tr:hover {
+  background-color: #eef6ff;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  background-color: rgba(11,109,107,0.08);
+  color: #083344;
+  font-size: 0.82rem;
+  font-weight: 700;
+}

@@ -1,0 +1,545 @@
+.container {
+  padding: 24px;
+  background: #f6f6f6;
+}
+
+.toolbar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.toolbar select,
+.btnNova {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: white;
+}
+
+.btnNova {
+  margin-left: auto;
+  background: #FAF9FB;
+  color: #494D58;
+  border: 1px solid #E4E4E8;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 80px repeat(6, 1fr);
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.hours {
+  display: flex;
+  flex-direction: column;
+}
+
+.empty {
+  height: 48px;
+}
+
+.hour {
+  height: 60px;
+  padding: 10px;
+  color: #666;
+  border-top: 1px solid #eee;
+}
+
+.dayColumn {
+  border-left: 1px solid #eee;
+}
+
+.dayHeader {
+  height: 48px;
+  padding: 10px;
+  font-weight: 600;
+  border-bottom: 1px solid #eee;
+}
+
+.slot {
+  height: 60px;
+  border-top: 1px solid #f0f0f0;
+  padding: 4px;
+}
+
+.card {
+  background: #eaeaea;
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 13px;
+}
+
+.slotsWrap { position: relative; }
+
+.appointment {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  z-index: 10;
+}
+
+.appointmentCancelled .appCard {
+  opacity: 0.55;
+  border-left-color: #9ca3af;
+}
+
+.appointmentFalta .appCard {
+  opacity: 0.7;
+  border-left-color: #f59e0b;
+}
+
+.appointmentRealizada .appCard {
+  opacity: 0.85;
+  border-left-color: #10b981;
+}
+
+.appCard {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-left: 4px solid #667eea;
+  border-radius: 6px;
+  padding: 8px 10px;
+  position: relative;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+.appTime { font-size: 12px; color: #666; margin-top: 4px }
+
+/* Tooltip para preview da consulta (hover) */
+.tooltip {
+  position: fixed;
+  z-index: 2500;
+  pointer-events: none;
+}
+
+.tooltipCard {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 10px 12px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  min-width: 220px;
+  font-size: 13px;
+  color: #1f2937;
+}
+
+/* modal styles similar to pacientes */
+.modal {
+  position: fixed;
+  left: 0; top: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+}
+
+.modalContent {
+  background: #fff;
+  width: 720px;
+  max-width: 94%;
+  padding: 20px 24px 16px 24px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  border: 4px solid #d0d0d0;
+  position: relative;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.modalHeader h3 { margin:0; font-size:20px }
+
+.modalClose { width:36px; height:36px; border-radius:18px; background:#f3f3f3; border:none; display:inline-flex; align-items:center; justify-content:center; cursor:pointer }
+
+.modalBody { padding: 14px 0 }
+.formLabel { display:block; margin-bottom:6px; font-weight:600; color:#333 }
+.formInput { width:100%; padding:10px 12px; border:1px solid #ccc; border-radius:6px; box-sizing:border-box }
+.modalFooter { display:flex; justify-content:flex-end; gap:12px; padding-top:12px; border-top:1px solid #eee; margin-top:12px }
+.btnPrimary { background:#1d7be3; color:white; border:none; padding:10px 16px; border-radius:8px; cursor:pointer }
+.btnSecondary { background:transparent; border:1px solid #d0d0d0; padding:10px 16px; border-radius:8px; cursor:pointer }
+
+.appCard .deleteBtn {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: none;
+  background: rgba(0,0,0,0.06);
+  color: #111;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+.appointment:hover .deleteBtn { opacity: 1 }
+
+/* New form layout for Marcar Consulta (match design) */
+.formSection { border: 1px solid #eef2f6; padding: 14px; border-radius: 8px; background: #fff }
+.inlineRow { display:flex; gap:12px; align-items:center }
+.inlineRow .formInput { flex:1 }
+.smallInput { width:100%; padding:12px 14px; border:1px solid #d9d9d9; border-radius:8px; box-sizing:border-box; font-size:15px }
+.procRow { display:flex; gap:8px; align-items:center; margin-top:8px }
+.addBlue { background: #1d7be3; color: #ffffff; border: none; padding:10px 12px; border-radius:8px; cursor:pointer; box-shadow: 0 1px 0 rgba(0,0,0,0.06); }
+.addBlue:hover { background: #1666c0; box-shadow: 0 6px 18px rgba(22,102,192,0.12); }
+.chipList { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px }
+.chip { background:#f1f5f9; padding:6px 10px; border-radius:18px; display:inline-flex; gap:8px; align-items:center; color:#1f2937 }
+.chip .qty { background:#e2e8f0; padding:2px 6px; border-radius:10px; font-size:12px }
+.chip button { background:transparent; border:none; color:#6b7280; cursor:pointer; padding:0 }
+
+.materialSection { margin-top:12px }
+.materialSelectRow { display:flex; gap:8px; align-items:center }
+.materialSelectRow .formInput { flex:1 }
+.materialList { margin-top:8px; display:flex; gap:8px; flex-wrap:wrap }
+.materialChip { background:#eef2ff; padding:6px 10px; border-radius:18px; display:inline-flex; gap:8px; align-items:center }
+.materialChip .qty { background:#dbeafe; padding:2px 6px; border-radius:10px; font-size:12px }
+
+.modalActions { display:flex; gap:12px; justify-content:flex-end; margin-top:12px }
+
+.save { background: var(--primary); color: white; border:none; padding:8px 12px; border-radius:6px }
+.cancel { background: transparent; border:1px solid #ddd; padding:8px 12px; border-radius:6px }
+
+.historyList { max-height: 400px; overflow: auto; display:flex; flex-direction:column; gap:8px }
+.historyItem { padding:10px; border-radius:6px; background:#fafafa; display:flex; justify-content:space-between }
+.historyItem:hover { background:#f0f4f8; box-shadow: 0 2px 8px rgba(0,0,0,0.04) }
+
+/* ================= MODAL ================= */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+	padding: 24px;
+}
+
+.modalContent {
+  background: #fff;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 720px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0;
+  border: none;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+}
+
+/* Dialog variants (used by Marcar Consulta) */
+.dialogContent {
+  background: #f6f7fb;
+  border-radius: 14px;
+  width: min(620px, calc(100vw - 24px));
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 48px);
+  overflow: hidden;
+  position: relative;
+  padding: 10px 12px 12px 12px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.14);
+}
+
+.dialogHeader {
+  background: #f3f4f6;
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #e6e9ec;
+}
+
+.dialogHeader h2 { margin: 0; font-size: 22px; font-weight: 700; color: #0f172a; }
+
+.dialogBody {
+  padding: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  min-height: 0;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.dialogBody::-webkit-scrollbar { width: 0; height: 0; }
+
+.dialogTopbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 0 8px 0;
+}
+
+.dialogClose {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid #e6e9ec;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.10);
+}
+
+.dialogFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 18px;
+  border-top: 1px solid #e6e6e6;
+  margin-top: 6px;
+}
+
+.mcDialog { width: min(620px, calc(100vw - 24px)); }
+
+/* evita o X sobrepor o título do primeiro card */
+.mcDialog .mcBlock:first-of-type .mcBlockHeader { padding-right: 56px; }
+
+
+
+.mcBlock {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.mcBlockHeader {
+  background: #f8fafc;
+  padding: 12px 14px;
+  border-bottom: 1px solid #eef2f6;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  font-size: 13px;
+  color: #111827;
+  text-transform: uppercase;
+}
+
+.mcBlockBody { padding: 12px; display: flex; flex-direction: column; gap: 12px; }
+
+.mcRow { display: flex; gap: 12px; align-items: flex-start; }
+.mcRow > * { flex: 1; }
+.mcTime { flex: 0 0 160px; max-width: 160px; }
+
+/* Sheet variant: used for the full "Atendimento" modal
+   Removes the outer white box and makes the header a gray rounded top
+   while keeping the form content as a white card below. */
+.sheet {
+  background: transparent;
+  padding: 0;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  width: 100%;
+  max-width: 700px;
+  max-height: none;
+  overflow: visible;
+}
+
+.sheet .modalHeader {
+  background: #f3f4f6; /* light gray header */
+  border-bottom: none;
+  padding: 18px 24px;
+  border-radius: 14px 14px 0 0; /* rounded top corners */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sheet .modalHeader h2 { margin:0; font-size:18px; font-weight:700; color:#111 }
+
+.sheet .form {
+  background: #fff; /* white body card */
+  border-radius: 0 0 14px 14px; /* rounded bottom corners */
+  padding: 20px 24px;
+  max-height: none;
+  overflow: visible;
+}
+
+.modalHeader {
+  padding: 18px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Close button (consistent, always clickable) */
+.modalClose {
+  width: 44px;
+  height: 44px;
+  border-radius: 22px;
+  background: #efefef;
+  border: 1px solid #e5e7eb;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* ================= FORM ================= */
+
+.form {
+  padding: 20px 24px;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* No modal de Marcar Consulta (sheet), não usar scrollbar interna */
+.sheet .form {
+  overflow: visible;
+}
+
+.formLabel {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.formInput {
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 15px;
+}
+
+textarea.formInput {
+  resize: vertical;
+  min-height: 70px;
+}
+
+/* ================= LAYOUT ================= */
+
+.inlineRow {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.smallInput {
+  width: 140px;
+}
+
+/* ================= BUTTONS ================= */
+
+.addBlue {
+    background: #1d7be3;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    width: 46px;
+    height: 46px;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+  }
+
+  .addBlue:hover {
+    background: #1666c0;
+    box-shadow: 0 8px 24px rgba(22,102,192,0.12);
+  }
+/* ================= CHIPS ================= */
+
+.chipList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.chip,
+.materialChip {
+  padding: 6px 12px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.chip {
+  background: #eef2ff;
+}
+
+.materialChip {
+  background: #ecfeff;
+}
+
+.chip button,
+.materialChip button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.qty {
+  background: #bae6fd;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* ================= FOOTER ================= */
+
+.modalFooter {
+  padding: 16px 24px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  background: #fff;
+}
+
+/* ================= RESPONSIVO ================= */
+
+@media (max-width: 640px) {
+  .modalContent {
+    max-width: 95%;
+    max-height: 90vh;
+  }
+
+  .inlineRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .smallInput {
+    width: 100%;
+  }
+
+  .addBlue {
+    width: 100%;
+  }
+}
+

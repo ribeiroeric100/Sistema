@@ -1,0 +1,87 @@
+.navbar {
+  background: transparent;
+  color: var(--text);
+  padding: 18px 22px 10px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.left { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+
+.title {
+  margin: 0;
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.2px;
+}
+
+.breadcrumb {
+  font-size: 0.86rem;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sep { opacity: 0.6; padding: 0 6px; }
+
+.right { display: flex; align-items: center; gap: 10px; }
+
+.monthPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.85);
+  border: 1px solid var(--border);
+  color: #0f172a;
+  padding: 9px 12px;
+  border-radius: 12px;
+  box-shadow: 0 8px 18px rgba(15,23,42,0.08);
+  cursor: default;
+}
+
+.calendarIcon { font-size: 0.95rem; opacity: 0.9; }
+
+.userPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,0.85);
+  border: 1px solid var(--border);
+  padding: 9px 10px;
+  border-radius: 12px;
+  box-shadow: 0 8px 18px rgba(15,23,42,0.08);
+}
+
+.userName {
+  font-weight: 700;
+  color: #0f172a;
+  font-size: 0.92rem;
+  max-width: 240px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.logoutBtn {
+  background: rgba(37,99,235,0.10);
+  color: var(--primary-2);
+  border: 1px solid rgba(37,99,235,0.14);
+  padding: 6px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+.logoutBtn:hover {
+  background: rgba(37,99,235,0.14);
+}
+
+@media (max-width: 700px) {
+  .navbar { padding: 16px 14px 8px 14px; }
+  .userName { max-width: 120px; }
+  .monthPill { display: none; }
+}

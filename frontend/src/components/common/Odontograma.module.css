@@ -1,0 +1,244 @@
+:root {
+  --ok: #10b981;
+  --warn: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+  --neutral: #9ca3af;
+}
+
+.wrap {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 16px;
+  align-items: start;
+}
+
+.left {
+  min-width: 0;
+}
+
+.right {
+  min-width: 0;
+}
+
+.headRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.title {
+  margin: 0;
+  color: #083344;
+}
+
+.status {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.error {
+  border: 1px solid #fecaca;
+  background: #fff1f2;
+  color: #991b1b;
+  padding: 10px 12px;
+  border-radius: 10px;
+  margin: 8px 0 12px;
+  font-size: 13px;
+}
+
+.arch {
+  margin-top: 14px;
+}
+
+.archLabel {
+  color: #6b7280;
+  font-size: 12px;
+  margin: 0 0 8px;
+}
+
+.teethRow {
+  display: grid;
+  grid-template-columns: repeat(16, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.tooth {
+  position: relative;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 10px 8px;
+  cursor: pointer;
+  min-width: 0;
+  outline: none;
+  user-select: none;
+}
+
+.tooth:focus-visible {
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.25);
+  border-color: rgba(59,130,246,0.8);
+}
+
+.num { font-weight: 800; font-size: 13px; }
+
+.facesGrid {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+}
+
+.face {
+  height: 9px;
+  border-radius: 3px;
+  border: 1px solid rgba(0,0,0,0.06);
+  background: #f3f4f6;
+}
+
+.tooth[data-cond="saudavel"] { border-color: rgba(16,185,129,0.55); }
+.tooth[data-cond="carie"] { border-color: rgba(239,68,68,0.65); }
+.tooth[data-cond="restauracao"] { border-color: rgba(59,130,246,0.65); }
+.tooth[data-cond="tratamento"] { border-color: rgba(245,158,11,0.7); }
+.tooth[data-cond="ausente"] { border-color: rgba(156,163,175,0.8); background: #f9fafb; }
+
+.tooth[data-cond="saudavel"] .num { color: var(--ok); }
+.tooth[data-cond="carie"] .num { color: var(--danger); }
+.tooth[data-cond="restauracao"] .num { color: var(--info); }
+.tooth[data-cond="tratamento"] .num { color: var(--warn); }
+.tooth[data-cond="ausente"] .num { color: var(--neutral); text-decoration: line-through; }
+
+.tooth[data-selected="1"] {
+  box-shadow: 0 0 0 3px rgba(17,24,39,0.08);
+  border-color: rgba(17,24,39,0.35);
+}
+
+.legend {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 12px 0 0;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: #6b7280;
+  background: #fff;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--neutral);
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+.editorCard {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.editorHd {
+  padding: 12px 14px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.editorBd {
+  padding: 14px;
+}
+
+.row {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.row label {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.editorBd input,
+.editorBd select,
+.editorBd textarea {
+  width: 100%;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 14px;
+  outline: none;
+  background: #fff;
+}
+
+.editorBd textarea { min-height: 90px; resize: vertical; }
+
+.facesPick {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
+.chip {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 8px 10px;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 700;
+  color: #374151;
+  background: #fff;
+}
+
+.chip[disabled] {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.chip[data-on="1"] { border-color: rgba(59,130,246,0.55); background: rgba(59,130,246,0.08); }
+
+.hint { color: #6b7280; font-size: 12px; }
+
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.actions button {
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  font-weight: 700;
+  color: #111827;
+}
+
+.actions button[disabled] {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+@media (max-width: 980px) {
+  .wrap { grid-template-columns: 1fr; }
+}

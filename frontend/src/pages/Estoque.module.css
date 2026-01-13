@@ -1,0 +1,228 @@
+.container { padding: 24px }
+.searchSection { display:flex; gap:12px; align-items:center; margin-bottom:14px }
+.searchBox { flex:1 }
+.searchInput { width:100%; padding:10px 12px; border:1px solid #ddd; border-radius:8px }
+.btnBuscar { padding:10px 14px; background:var(--primary); color:#fff; border:none; border-radius:8px }
+.tableContainer { background:#fff; border-radius:8px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); overflow:hidden }
+.table { width:100%; border-collapse:collapse }
+.table th, .table td { padding:12px 16px; border-bottom:1px solid #f1f1f1; text-align:left }
+.actions { display:flex; gap:8px }
+.editBtn, .deleteBtn { width:32px; height:32px; border-radius:6px; border:none; cursor:pointer }
+.footer { margin-top:16px; display:flex; justify-content:flex-end }
+.btnNovoItem { display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:8px; background:var(--primary); color:#fff; border:none }
+
+/* Modal styles reuse Pacientes styles but ensure consistent width */
+.modalContent { max-width:760px }
+
+.formLabel { display:block; margin-bottom:8px; font-weight:700; color:#4a4a4a; font-size:14px }
+.formInput { width:100%; padding:12px 14px; border:1px solid #d9d9d9; border-radius:8px; box-sizing:border-box; font-size:15px }
+.twoCols { display:grid; grid-template-columns:1fr 1fr; gap:12px }
+.container {
+  padding: 2rem;
+  background: #f4f7fb;
+  min-height: 100vh;
+}
+
+.container h1 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+}
+
+.searchSection {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  align-items: stretch;
+}
+
+.searchBox {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 1px solid rgba(8, 51, 68, 0.08);
+  border-radius: 8px;
+  padding: 0 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.searchIcon {
+  flex-shrink: 0;
+  color: #9ca3af;
+}
+
+.searchInput {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 0.75rem 0.75rem;
+  font-size: 1rem;
+  color: #1f2937;
+}
+
+.searchInput::placeholder {
+  color: #9ca3af;
+}
+
+.searchInput:focus {
+  outline: none;
+}
+
+.btnBuscar {
+  background: #5a6a73;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.btnBuscar:hover {
+  background: #4d5a63;
+}
+
+.tableContainer {
+  background: white;
+  border: 1px solid rgba(8, 51, 68, 0.06);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  margin-bottom: 2rem;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table thead {
+  background: #f3f4f6;
+  border-bottom: 1px solid rgba(8, 51, 68, 0.06);
+}
+
+.table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #4b5563;
+  font-size: 0.95rem;
+}
+
+.table td {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(8, 51, 68, 0.04);
+  color: #1f2937;
+}
+
+.table tbody tr:hover {
+  background: rgba(8, 51, 68, 0.02);
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.editBtn,
+.deleteBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.editBtn {
+  color: #9ca3af;
+}
+
+.editBtn:hover {
+  color: #6b7280;
+}
+
+.deleteBtn {
+  color: #9ca3af;
+}
+
+.deleteBtn:hover {
+  color: #ef4444;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btnNovoItem {
+  background: #5a6a73;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.btnNovoItem:hover {
+  background: #4d5a63;
+}
+
+.btnNovoItem span {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+/* Modal base (copied from Pacientes styling to keep consistent look) */
+.modal {
+  position: fixed;
+  left: 0; top: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+}
+
+.modalContent {
+  background: #fff;
+  width: 760px;
+  max-width: 96%;
+  padding: 22px 28px 8px 28px;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  border: 6px solid #cfcfcf;
+  position: relative;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.modalHeader h2 { margin:0; font-size:28px; font-weight:800 }
+
+.modalClose { width:44px; height:44px; border-radius:22px; background:#efefef; border:none; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px }
+
+.modalBody { padding: 18px 0 6px 0 }
+
+.modalFooter { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:18px 0 6px 0; border-top:1px solid #e6e6e6; margin-top:16px }
+
+.btnPrimary { background:#3f4446; color:white; border:none; padding:12px 20px; border-radius:10px; cursor:pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.08) }
+.btnSecondary { background: #fff; border:1px solid #cfcfcf; padding:10px 18px; border-radius:8px; cursor:pointer }
+
+.form { display: flex; flex-direction: column; gap: 10px; margin-top: 8px }
+

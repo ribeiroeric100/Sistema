@@ -1,0 +1,167 @@
+.container {
+  padding: 24px;
+}
+
+.title {
+  margin-bottom: 20px;
+}
+
+/* Relatórios: barra de filtros (estilo arredondado como no print) */
+.reportFiltersBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.reportFiltersRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filterSelect {
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.18);
+  background: #ffffff;
+  font-weight: 800;
+  color: rgba(15, 23, 42, 0.85);
+  outline: none;
+}
+
+.filterPill {
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.18);
+  background: #ffffff;
+}
+
+.filterLabel {
+  font-weight: 900;
+  font-size: 0.86rem;
+  color: rgba(15, 23, 42, 0.65);
+}
+
+.filterInput {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-weight: 900;
+  color: rgba(15, 23, 42, 0.85);
+  height: 100%;
+  padding: 0;
+}
+
+.filterInput[type='date'] {
+  min-width: 140px;
+}
+
+.filterInput[type='month'] {
+  min-width: 140px;
+}
+
+.filterSelect:focus,
+.filterPill:focus-within {
+  border-color: rgba(37, 99, 235, 0.65);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14);
+}
+
+.reportBtnPrimary {
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: none;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.20);
+  transition: transform 0.08s ease, filter 0.15s ease;
+}
+
+.reportBtnPrimary:hover { filter: brightness(1.03); transform: translateY(-1px); }
+.reportBtnPrimary:active { transform: translateY(0); }
+.reportBtnPrimary:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; }
+
+.filterSection {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.filterSection select {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.btnPrimary {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btnSecondary {
+  margin-top: 12px;
+  background: #f3f4f6;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btnLink {
+  margin-top: 10px;
+  background: none;
+  border: none;
+  color: #2563eb;
+  cursor: pointer;
+  text-align: left;
+}
+
+.chartsGrid,
+.dataGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.card {
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.chartPlaceholder {
+  height: 180px;
+  background: #e5e7eb;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  margin-top: 10px;
+}
+
+.dataItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.muted {
+  color: #6b7280;
+}
