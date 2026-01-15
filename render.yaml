@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: odonto-backend
+    env: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm run start:prod
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CORS_ORIGIN
+        value: https://netoabreu.netlify.app
+      - key: APP_URL
+        value: https://netoabreu.netlify.app
+
+      # Secrets / provider URLs (set in Render dashboard)
+      - key: JWT_SECRET
+        sync: false
+      - key: RESET_TOKEN_SECRET
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: MIGRATIONS_DATABASE_URL
+        sync: false
