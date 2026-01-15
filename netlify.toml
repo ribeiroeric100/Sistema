@@ -3,7 +3,10 @@
 
 [build]
   base = "frontend"
-  command = "npm run build"
+  # Workaround for npm optionalDependencies bug on CI/Linux where Rollup's
+  # platform-specific package (@rollup/rollup-linux-x64-gnu) may be missing.
+  # Reinstall without package-lock so npm resolves the correct optional deps.
+  command = "rm -rf node_modules package-lock.json && npm install --no-audit --no-fund --no-package-lock && npm run build"
   publish = "dist"
 
 [build.environment]
