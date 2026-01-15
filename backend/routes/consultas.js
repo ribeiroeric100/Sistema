@@ -311,7 +311,7 @@ router.put('/:id/status', verifyToken, verifyRole(['admin', 'dentista', 'recepca
             db.run(
               `INSERT INTO daily_receitas (dia, total) VALUES (?, ?) 
                ON CONFLICT(dia) DO UPDATE SET total = total + excluded.total`,
-              [dia, valorConsulta, valorConsulta],
+              [dia, valorConsulta],
               (err2) => {
                 if (err2) console.error('Erro ao atualizar daily_receitas (add):', err2)
               }

@@ -7,6 +7,7 @@ export default function Pacientes() {
   const navigate = useNavigate()
   const [pacientes, setPacientes] = useState([])
   const [loading, setLoading] = useState(true)
+  const [savingPaciente, setSavingPaciente] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const [formData, setFormData] = useState({ nome: '', email: '', telefone: '', cpf: '', data_nascimento: '' })
   const [busca, setBusca] = useState('')
@@ -51,17 +52,32 @@ export default function Pacientes() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    const telefone = String(formData.telefone || '').trim()
+    if (!telefone) {
+      alert('Telefone é obrigatório')
+      return
+    }
+
     try {
+      setSavingPaciente(true)
       if (formData.id) {
         await pacientesService.atualizar(formData.id, formData)
       } else {
-        await pacientesService.criar(formData)
+        const created = await pacientesService.criar({ ...formData, telefone })
+        setFormData({ nome: '', email: '', telefone: '', cpf: '', data_nascimento: '' })
+        setShowForm(false)
+        // Após criar, avançar para o perfil para completar o cadastro
+        if (created?.id) navigate(`/paciente/${created.id}`)
+        return
       }
       setFormData({ nome: '', email: '', telefone: '', cpf: '', data_nascimento: '' })
       setShowForm(false)
       carregarPacientes()
     } catch (err) {
       console.error('Erro ao salvar:', err)
+      try { alert('Erro ao salvar paciente: ' + (err?.message || String(err))) } catch { /* ignore */ }
+    } finally {
+      setSavingPaciente(false)
     }
   }
 
@@ -222,7 +238,7 @@ export default function Pacientes() {
 
   return (
     <div className={styles.container}>
-      <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+      <div className={styles.pageHeader}>
         <h1>Pacientes</h1>
         <div className={styles.topActions}>
           <button className={`${styles.primary} ${styles.addBtn}`} onClick={() => { setFormData({ nome: '', email: '', telefone: '', cpf: '', data_nascimento: '' }); setShowForm(true) }}>+ Adicionar Paciente</button>
@@ -231,12 +247,21 @@ export default function Pacientes() {
       </div>
 
       <div className={styles.searchRow}>
-        <input 
-          className={styles.searchInput} 
-          placeholder="Buscar paciente..." 
-          value={busca} 
-          onChange={e => setBusca(e.target.value)} 
-        />
+        <div className={styles.searchInputWrap}>
+          <span className={styles.searchIcon} aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" strokeWidth="1.8" />
+              <path d="M16.5 16.5 21 21" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
+          </span>
+          <input
+            className={styles.searchInput}
+            type="search"
+            placeholder="Buscar paciente..."
+            value={busca}
+            onChange={e => setBusca(e.target.value)}
+          />
+        </div>
         <button className={styles.searchBtn}>Buscar</button>
       </div>
 
@@ -261,7 +286,7 @@ export default function Pacientes() {
                   <button onClick={() => abrirEdicao(p)} className={styles.iconBtn} title="Editar">
                     <img src="/assets/edit.svg" alt="Editar" className={styles.actionIcon} />
                   </button>
-                  <button onClick={() => handleDelete(p.id)} className={styles.iconBtn} title="Deletar">
+                  <button onClick={() => handleDelete(p.id)} className={`${styles.iconBtn} ${styles.iconBtnDanger}`} title="Deletar">
                     <img src="/assets/delete.svg" alt="Deletar" className={styles.actionIcon} />
                   </button>
                 </td>
@@ -296,7 +321,7 @@ export default function Pacientes() {
                   </span>
                   <span className={styles.phoneCountry}>+55</span>
                   <span className={styles.phoneDivider} aria-hidden="true" />
-                  <input className={styles.phoneField} type="tel" placeholder="—" value={formData.telefone} onChange={e => setFormData({ ...formData, telefone: e.target.value })} />
+                  <input className={styles.phoneField} type="tel" placeholder="—" value={formData.telefone} onChange={e => setFormData({ ...formData, telefone: e.target.value })} required />
                 </div>
               </div>
 
@@ -319,7 +344,7 @@ export default function Pacientes() {
 
               <div className={styles.patientDialogFooter}>
                 <button type="button" className={styles.patientCancelBtn} onClick={() => setShowForm(false)}>Cancelar</button>
-                <button type="submit" className={styles.patientSaveBtn}>Salvar</button>
+                <button type="submit" className={styles.patientSaveBtn} disabled={savingPaciente}>{savingPaciente ? 'Salvando...' : 'Salvar'}</button>
               </div>
             </form>
           </div>

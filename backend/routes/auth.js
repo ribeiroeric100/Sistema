@@ -30,6 +30,8 @@ const RESET_TOKEN_SECRET = getSecret('RESET_TOKEN_SECRET') || JWT_SECRET
 
 const ALLOWED_ROLES = new Set(['admin', 'dentista', 'recepcao'])
 
+const isInactive = (v) => v === false || v === 0 || v === '0'
+
 // Zod's .email() is strict and rejects common local-dev emails like "admin@local".
 // For this app we accept "user@host" with optional dotted suffix ("user@host.com").
 const emailLikeSchema = z
@@ -122,8 +124,8 @@ router.post('/register', authRegisterLimiter, validateBody(registerSchema), (req
     if (!ALLOWED_ROLES.has(finalRole)) finalRole = 'recepcao'
 
     db.run(
-      'INSERT INTO usuarios (id, nome, email, senha, role, ativo, criado_em) VALUES (?, ?, ?, ?, ?, 1, ?)',
-      [id, nome, email, senhaHash, finalRole, now],
+      'INSERT INTO usuarios (id, nome, email, senha, role, ativo, criado_em) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [id, nome, email, senhaHash, finalRole, true, now],
       function(err) {
         if (err) {
           return res.status(500).json({ error: err.message })
@@ -158,7 +160,7 @@ router.post('/login', authLoginLimiter, validateBody(loginSchema), (req, res) =>
       return res.status(401).json({ error: 'Usuário não encontrado' })
     }
 
-    if (user.ativo === 0) {
+    if (isInactive(user.ativo)) {
       logAudit(req, 'auth.login_failed', { details: { email, reason: 'inactive', ip: getRequestIp(req) } })
       return res.status(403).json({ error: 'Usuário desativado' })
     }
@@ -202,7 +204,7 @@ router.post('/forgot-password', forgotPasswordLimiter, (req, res) => {
 
   db.get('SELECT id, nome, email, ativo FROM usuarios WHERE email = ?', [safeEmail], async (err, user) => {
     if (err) return okResponse()
-    if (!user || user.ativo === 0) return okResponse()
+    if (!user || isInactive(user.ativo)) return okResponse()
 
     const rawToken = crypto.randomBytes(32).toString('hex')
     const tokenHash = hashResetToken(rawToken)
@@ -251,49 +253,44 @@ router.post('/forgot-password', forgotPasswordLimiter, (req, res) => {
 })
 
 // Redefinir senha
-router.post('/reset-password', resetPasswordLimiter, validateBody(resetPasswordSchema), (req, res) => {
+router.post('/reset-password', resetPasswordLimiter, validateBody(resetPasswordSchema), async (req, res) => {
   const { token, novaSenha } = req.body || {}
   const tokenHash = hashResetToken(token)
-  db.get(
-    `SELECT pr.*, u.email, u.nome, u.role, u.ativo
-     FROM password_resets pr
-     JOIN usuarios u ON pr.user_id = u.id
-     WHERE pr.token_hash = ? AND pr.used_at IS NULL
-     ORDER BY pr.created_at DESC
-     LIMIT 1`,
-    [tokenHash],
-    (err, row) => {
-      if (err || !row) return res.status(400).json({ error: 'Token inválido ou expirado' })
 
-      const exp = new Date(row.expires_at)
-      if (Number.isNaN(exp.getTime()) || exp.getTime() < Date.now()) {
-        return res.status(400).json({ error: 'Token inválido ou expirado' })
-      }
+  try {
+    const row = await db.get(
+      `SELECT pr.*, u.email, u.nome, u.role, u.ativo
+       FROM password_resets pr
+       JOIN usuarios u ON pr.user_id = u.id
+       WHERE pr.token_hash = ? AND pr.used_at IS NULL
+       ORDER BY pr.created_at DESC
+       LIMIT 1`,
+      [tokenHash]
+    )
 
-      if (row.ativo === 0) return res.status(403).json({ error: 'Usuário desativado' })
+    if (!row) return res.status(400).json({ error: 'Token inválido ou expirado' })
 
-      const senhaHash = bcrypt.hashSync(String(novaSenha || ''), 10)
-      db.run('BEGIN TRANSACTION')
-      db.run('UPDATE usuarios SET senha = ? WHERE id = ?', [senhaHash, row.user_id], (e1) => {
-        if (e1) {
-          db.run('ROLLBACK')
-          return res.status(500).json({ error: 'Erro ao atualizar senha' })
-        }
-        db.run('UPDATE password_resets SET used_at = CURRENT_TIMESTAMP WHERE id = ?', [row.id], (e2) => {
-          if (e2) {
-            db.run('ROLLBACK')
-            return res.status(500).json({ error: 'Erro ao finalizar redefinição' })
-          }
-          db.run('COMMIT')
-
-          req.user = { id: row.user_id, role: normalizeRole(row.role), email: row.email, nome: row.nome }
-          logAudit(req, 'auth.reset_password', { entityType: 'usuario', entityId: row.user_id })
-
-          return res.json({ success: true })
-        })
-      })
+    const exp = new Date(row.expires_at)
+    if (Number.isNaN(exp.getTime()) || exp.getTime() < Date.now()) {
+      return res.status(400).json({ error: 'Token inválido ou expirado' })
     }
-  )
+
+    if (isInactive(row.ativo)) return res.status(403).json({ error: 'Usuário desativado' })
+
+    const senhaHash = bcrypt.hashSync(String(novaSenha || ''), 10)
+
+    await db.tx(async (trx) => {
+      await trx.run('UPDATE usuarios SET senha = ? WHERE id = ?', [senhaHash, row.user_id])
+      await trx.run('UPDATE password_resets SET used_at = CURRENT_TIMESTAMP WHERE id = ?', [row.id])
+    })
+
+    req.user = { id: row.user_id, role: normalizeRole(row.role), email: row.email, nome: row.nome }
+    logAudit(req, 'auth.reset_password', { entityType: 'usuario', entityId: row.user_id })
+
+    return res.json({ success: true })
+  } catch (e) {
+    return res.status(500).json({ error: 'Erro ao redefinir senha' })
+  }
 })
 
 module.exports = router

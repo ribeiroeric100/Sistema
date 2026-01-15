@@ -1,7 +1,7 @@
 import { estoqueService, relatoriosService, configuracoesService } from '@services/api'
 import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import logoFallback from '../assets/dr-neto-logo.png'
 import denteIcon from '../assets/dente.png'
 import styles from './Relatorios.module.css'
@@ -15,6 +15,21 @@ import {
   CartesianGrid,
   Tooltip
 } from 'recharts'
+
+const formatMoneyCompact = (v) => `R$ ${Number(v || 0).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`
+
+function MoneyLabelContent(props) {
+  const { x, y, width, value } = props || {}
+  const n = Number(value || 0)
+  if (!Number.isFinite(n) || n <= 0) return null
+  const cx = Number(x || 0) + Number(width || 0) / 2
+  const cy = Number(y || 0) - 6
+  return (
+    <text x={cx} y={cy} textAnchor="middle" fontSize={10} fill="#111827">
+      {formatMoneyCompact(n)}
+    </text>
+  )
+}
 
 export default function Relatorios() {
   const [, setDailyReceitas] = useState([]) // [{dia, total}]
@@ -73,27 +88,31 @@ export default function Relatorios() {
   })
   const [reportMonth, setReportMonth] = useState(() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}` })
 
+  const carregarRelatoriosRef = useRef(null)
+  const carregarReceitaPorHoraRef = useRef(null)
+  const carregarReceitaMensalSemanasRef = useRef(null)
+
   useEffect(() => {
-    carregarRelatorios()
+    carregarRelatoriosRef.current?.()
   }, [])
 
   useEffect(() => {
     // polling somente quando o dia selecionado for "hoje"
     const iv = setInterval(() => {
       const hoje = new Date().toISOString().split('T')[0]
-      if (dailyChartDate === hoje) carregarReceitaPorHora(hoje)
+      if (dailyChartDate === hoje) carregarReceitaPorHoraRef.current?.(hoje)
     }, 10000)
     return () => clearInterval(iv)
   }, [dailyChartDate])
 
   useEffect(() => {
     setDailyChartDateInput(dailyChartDate)
-    carregarReceitaPorHora(dailyChartDate)
+    carregarReceitaPorHoraRef.current?.(dailyChartDate)
   }, [dailyChartDate])
 
   useEffect(() => {
     setMonthlyChartMonthInput(monthlyChartMonth)
-    carregarReceitaMensalSemanas(monthlyChartMonth)
+    carregarReceitaMensalSemanasRef.current?.(monthlyChartMonth)
   }, [monthlyChartMonth])
 
   const HOUR_START = 8
@@ -220,6 +239,8 @@ export default function Relatorios() {
     }
   }
 
+  carregarReceitaPorHoraRef.current = carregarReceitaPorHora
+
   async function carregarReceitaMensalSemanas(ym) {
     setMonthlyChartLoading(true)
     setMonthlyChartError('')
@@ -240,6 +261,8 @@ export default function Relatorios() {
       setMonthlyChartLoading(false)
     }
   }
+
+  carregarReceitaMensalSemanasRef.current = carregarReceitaMensalSemanas
 
   async function carregarRelatorios() {
     try {
@@ -312,17 +335,19 @@ export default function Relatorios() {
     }
   }
 
+  carregarRelatoriosRef.current = carregarRelatorios
+
   useEffect(() => {
     // Quando atualiza a lista de consultas, recalcula os gráficos
     if (!Array.isArray(consultasAll) || consultasAll.length === 0) {
       // se não há consultas, ainda assim deixa os gráficos no estado vazio
-      carregarReceitaPorHora(dailyChartDate)
-      carregarReceitaMensalSemanas(monthlyChartMonth)
+      carregarReceitaPorHoraRef.current?.(dailyChartDate)
+      carregarReceitaMensalSemanasRef.current?.(monthlyChartMonth)
       return
     }
-    carregarReceitaPorHora(dailyChartDate)
-    carregarReceitaMensalSemanas(monthlyChartMonth)
-  }, [consultasAll])
+    carregarReceitaPorHoraRef.current?.(dailyChartDate)
+    carregarReceitaMensalSemanasRef.current?.(monthlyChartMonth)
+  }, [consultasAll, dailyChartDate, monthlyChartMonth])
 
   // Generate a PDF report for the selected period (diario, semanal, mensal)
   async function gerarPDF() {
@@ -1789,8 +1814,6 @@ function DailyHourChart({ data, startHour = 8 }) {
     valor: Number(v || 0)
   }))
 
-  const formatMoneyCompact = (v) => `R$ ${Number(v || 0).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`
-
   return (
     <ResponsiveContainer width="100%" height={240}>
       <BarChart data={chartData} margin={{ top: 10, right: 16, left: 6, bottom: 8 }}>
@@ -1818,21 +1841,6 @@ function MonthlyWeeksChartRecharts({ weeks }) {
     total: Number(w?.total || 0)
   }))
 
-  const formatMoneyCompact = (v) => `R$ ${Number(v || 0).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`
-
-  const MoneyLabel = (props) => {
-    const { x, y, width, value } = props || {}
-    const n = Number(value || 0)
-    if (!Number.isFinite(n) || n <= 0) return null
-    const cx = Number(x || 0) + Number(width || 0) / 2
-    const cy = Number(y || 0) - 6
-    return (
-      <text x={cx} y={cy} textAnchor="middle" fontSize={10} fill="#111827">
-        {formatMoneyCompact(n)}
-      </text>
-    )
-  }
-
   return (
     <ResponsiveContainer width="100%" height={220}>
       <BarChart data={chartData} margin={{ top: 10, right: 16, left: 6, bottom: 8 }}>
@@ -1841,7 +1849,7 @@ function MonthlyWeeksChartRecharts({ weeks }) {
         <YAxis tickFormatter={formatMoneyCompact} tick={{ fontSize: 11, fill: '#6b7280' }} width={64} />
         <Tooltip formatter={(value) => formatMoneyCompact(value)} />
         <Bar dataKey="total" fill="#365c52" radius={[8, 8, 0, 0]}>
-          <LabelList dataKey="total" content={<MoneyLabel />} />
+          <LabelList dataKey="total" content={MoneyLabelContent} />
         </Bar>
       </BarChart>
     </ResponsiveContainer>

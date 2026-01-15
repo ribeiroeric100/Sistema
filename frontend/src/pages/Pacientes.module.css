@@ -1,15 +1,26 @@
 .container {
 	padding: 24px;
 	position: relative;
-	background: #f6f6f6
+	background: transparent;
 }
 
-/* Page header spacing to match reference */
-.container > div[style] {
+/* Header (premium, clean) */
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   gap: 12px;
-  border-bottom: 1px solid var(--divider);
-  padding-bottom: 12px;
-  margin-bottom: 12px;
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--border, rgba(15, 23, 42, 0.08));
+}
+
+.pageHeader h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  line-height: 1.2;
+  font-weight: 900;
+  color: var(--text, #0f172a);
 }
 
 
@@ -21,84 +32,142 @@
 }
 
 .topActions { display:flex; gap:12px; align-items:center }
-.topActions .primary { background: #FAF9FB; color:#494D58;  padding:10px 14px; border-radius:8px; cursor:pointer; border: 1px solid #E4E4E8 } 
+.topActions .primary {
+  background: #ffffff;
+  color: var(--text, #0f172a);
+  padding: 10px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  border: 1px solid var(--border, rgba(15, 23, 42, 0.10));
+  font-weight: 800;
+  transition: transform 0.08s ease, background 0.12s ease, border-color 0.12s ease;
+}
+
+.topActions .primary:hover {
+  background: rgba(248, 250, 252, 1);
+  border-color: rgba(15, 23, 42, 0.16);
+  transform: translateY(-1px);
+}
+
+.topActions .primary:active { transform: translateY(0); }
 
 /* Add patient button styled like the reference (white with border and subtle shadow) */
 .addBtn {
   background: #ffffff;
-  color: #111827; /* dark text */
-  border: 1px solid #d1d5db;
+  color: #111827;
+  border: 1px solid rgba(15, 23, 42, 0.14);
   padding: 10px 16px;
-  font-size: 15px;
-  font-weight: 700;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(16,24,40,0.06);
+  font-size: 0.92rem;
+  font-weight: 900;
+  border-radius: 12px;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
 }
 
 /* Mark consultation button styled like modal header */
 .markBtn {
-  background: #f3f4f6; /* modal header gray */
-  color: #0f172a; /* dark header text */
-  border: 1px solid #e6e8eb;
+  background: rgba(248, 250, 252, 1);
+  color: #0f172a;
+  border: 1px solid rgba(15, 23, 42, 0.10);
   padding: 10px 14px;
-  font-size: 14px;
-  font-weight: 700;
-  border-radius: 12px; /* rounded like modal header */
+  font-size: 0.90rem;
+  font-weight: 900;
+  border-radius: 12px;
   box-shadow: none;
 }
 
+.markBtn:hover {
+  background: rgba(243, 246, 251, 1);
+}
+
+.searchInputWrap {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(15, 23, 42, 0.45);
+  pointer-events: none;
+}
+
 .searchInput {
-	flex: 1;
-	padding: 14px 16px;
-	border-radius: 8px;
-	border: 1px solid rgba(0,0,0,0.12);
-	font-size: 16px;
+  width: 100%;
+  padding: 12px 14px 12px 42px;
+  border-radius: 12px;
+  border: 1px solid rgba(15, 23, 42, 0.10);
+  font-size: 0.98rem;
+  background: #ffffff;
+  outline: none;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.searchInput:focus {
+  border-color: rgba(29, 78, 216, 0.45);
+  box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.10);
 }
 
 .searchBtn {
   padding: 10px 14px;
-  background: #f3f4f6;
-  color: #374151;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 12px;
   cursor: pointer;
+  font-weight: 900;
+  transition: background 0.12s ease, border-color 0.12s ease, transform 0.08s ease;
 }
 
+.searchBtn:hover {
+  background: rgba(248, 250, 252, 1);
+  border-color: rgba(15, 23, 42, 0.16);
+  transform: translateY(-1px);
+}
+
+.searchBtn:active { transform: translateY(0); }
+
 .tableWrap {
-	background: var(--card-bg);
-	border-radius: 8px;
-	border: 1px solid var(--divider);
-	overflow: hidden;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
 }
 
 .table {
 	width: 100%;
-	border-collapse: collapse;
+  border-collapse: collapse;
 }
 
 .table th, .table td {
-	padding: 12px 16px;
-	border-bottom: 1px solid var(--divider);
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
 	text-align: left;
 }
 
-.table tbody tr:nth-child(odd) { background: #fafafa }
+.table th {
+  background: rgba(248, 250, 252, 1);
+  color: rgba(15, 23, 42, 0.55);
+  font-weight: 900;
+  font-size: 0.78rem;
+}
+
+.table tbody tr:hover { background: rgba(248, 250, 252, 1) }
 
 .actionsCell { 
 	width: 120px;
 	display: flex;
-	gap: 6px;
+  gap: 8px;
 	align-items: center;
-	justify-content: flex-start;
-}
-
-.table tbody tr {
-	cursor: pointer;
+  justify-content: flex-start;
 }
 
 .nomeClickable {
-	color: var(--primary);
-	font-weight: 500;
+  color: #4f46e5;
+  font-weight: 600;
 	cursor: pointer;
 	text-decoration: none; /* remove underline */
 }
@@ -109,16 +178,27 @@
 
 .iconBtn {
 	background: transparent;
-	border: none;
+  border: 1px solid transparent;
 	cursor: pointer;
 	margin: 0;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	padding: 4px;
+  padding: 6px;
 	width: 32px;
 	height: 32px;
-	border-radius: 6px;
+  border-radius: 10px;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.iconBtn:hover {
+  background: rgba(15, 23, 42, 0.04);
+  border-color: rgba(15, 23, 42, 0.08);
+}
+
+.iconBtnDanger:hover {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.18);
 }
 
 .actionIcon { width: 16px; height: 16px; display: block }

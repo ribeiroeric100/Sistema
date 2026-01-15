@@ -293,7 +293,7 @@ cd electron && npm start
 ### Backend
 - Node.js 16+
 - Express.js 4.18
-- SQLite3 5.1
+- Postgres (pg)
 - JWT (jsonwebtoken)
 - bcryptjs (criptografia)
 - PDFKit (geração PDF)

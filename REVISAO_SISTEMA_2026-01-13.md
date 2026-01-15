@@ -14,9 +14,9 @@ Esta revisão foi feita por leitura do repositório (docs + backend + frontend +
 ---
 
 ## Visão geral (o que o sistema é hoje)
-- Monorepo com workspaces: **backend (Express + SQLite)**, **frontend (React + Vite)**, **electron**.
+- Monorepo com workspaces: **backend (Express + Postgres)**, **frontend (React + Vite)**, **electron**.
 - Autenticação via **JWT** e controle de acesso por **roles** (`admin`, `dentista`, `recepcao`).
-- Banco local em arquivo: `backend/database.db` (SQLite).
+- Banco em Postgres (configurado via `DATABASE_URL`).
 - Funcionalidades chave: pacientes, agenda/consultas, atendimentos (status/pagamento), estoque/movimentações, relatórios + exportação PDF/Excel, auditoria.
 
 Arquivos-base importantes:

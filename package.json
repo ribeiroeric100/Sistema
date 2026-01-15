@@ -19,5 +19,8 @@
     "dev:electron:wait": "wait-on --race http://localhost:5173 http://localhost:5174 http://localhost:5175 http://localhost:5176 && npm run start --workspace=electron",
     "dev:web": "concurrently -k \"npm run dev:backend\" \"npm run dev:frontend\"",
     "dev:all": "concurrently -k \"npm run dev:backend\" \"npm run dev:frontend\" \"npm run dev:electron:wait\""
+  },
+  "dependencies": {
+    "node-pg-migrate": "^8.0.4"
   }
 }

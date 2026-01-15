@@ -294,7 +294,7 @@ A aplicação Electron rodará a interface React em uma janela desktop.
 1. O Electron abrirá automaticamente
 2. A janela mostra a interface web em `http://localhost:5173`
 3. Você pode usar todos os recursos como no navegador
-4. Os dados são salvos no banco SQLite
+4. Os dados são salvos no banco Postgres
 
 ---
 
@@ -306,8 +306,9 @@ Porta 3001 já está em uso. Mude a porta no `.env`:
 PORT=3002
 ```
 
-### Erro: "Database locked"
-Feche outros programas usando o `database.db` e reinicie o backend.
+### Erro de conexão com o banco
+- Verifique se `DATABASE_URL` está configurado em `backend/.env`
+- Rode migrations: `npm run migrate:up --workspace=backend`
 
 ### Frontend não conecta ao Backend
 1. Verifique se o backend está rodando na porta 3001

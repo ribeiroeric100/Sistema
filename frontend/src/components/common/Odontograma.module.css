@@ -59,6 +59,45 @@
   margin: 0 0 8px;
 }
 
+.svgCard {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+  padding: 8px;
+}
+
+.svgError {
+  border: 1px solid #fecaca;
+  background: #fff1f2;
+  color: #991b1b;
+  padding: 8px 10px;
+  border-radius: 10px;
+  margin: 0 0 10px;
+  font-size: 12px;
+}
+
+.svgWrap {
+  width: 100%;
+  overflow: auto;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.svgWrap :global(svg) {
+  width: min(420px, 100%);
+  height: auto;
+  display: block;
+}
+
+.svgWrap :global(.tooth:focus-visible) {
+  outline: none;
+}
+
+.teethFallback {
+  padding: 6px 0;
+}
+
 .teethRow {
   display: grid;
   grid-template-columns: repeat(16, minmax(0, 1fr));
@@ -67,14 +106,18 @@
 
 .tooth {
   position: relative;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  padding: 10px 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  padding: 10px 6px 8px 6px;
   cursor: pointer;
   min-width: 0;
   outline: none;
   user-select: none;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  color: rgba(148, 163, 184, 1);
 }
 
 .tooth:focus-visible {
@@ -82,37 +125,42 @@
   border-color: rgba(59,130,246,0.8);
 }
 
-.num { font-weight: 800; font-size: 13px; }
 
-.facesGrid {
-  margin-top: 8px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 3px;
+.toothIconWrap {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.face {
-  height: 9px;
-  border-radius: 3px;
-  border: 1px solid rgba(0,0,0,0.06);
-  background: #f3f4f6;
+.toothSvg {
+  width: 100%;
+  max-width: 42px;
+  height: 46px;
+  display: block;
 }
 
-.tooth[data-cond="saudavel"] { border-color: rgba(16,185,129,0.55); }
-.tooth[data-cond="carie"] { border-color: rgba(239,68,68,0.65); }
-.tooth[data-cond="restauracao"] { border-color: rgba(59,130,246,0.65); }
-.tooth[data-cond="tratamento"] { border-color: rgba(245,158,11,0.7); }
-.tooth[data-cond="ausente"] { border-color: rgba(156,163,175,0.8); background: #f9fafb; }
+.num {
+  font-weight: 800;
+  font-size: 12px;
+  color: rgba(100, 116, 139, 1);
+}
 
-.tooth[data-cond="saudavel"] .num { color: var(--ok); }
-.tooth[data-cond="carie"] .num { color: var(--danger); }
-.tooth[data-cond="restauracao"] .num { color: var(--info); }
-.tooth[data-cond="tratamento"] .num { color: var(--warn); }
-.tooth[data-cond="ausente"] .num { color: var(--neutral); text-decoration: line-through; }
+
+.tooth[data-cond="saudavel"] { color: rgba(16,185,129,0.75); }
+.tooth[data-cond="carie"] { color: rgba(239,68,68,0.85); }
+.tooth[data-cond="restauracao"] { color: rgba(59,130,246,0.85); }
+.tooth[data-cond="tratamento"] { color: rgba(245,158,11,0.9); }
+.tooth[data-cond="ausente"] { color: rgba(156,163,175,0.95); }
+
+.tooth[data-cond="ausente"] .toothSvg { opacity: 0.45; }
+.tooth[data-cond="ausente"] .num { color: rgba(156,163,175,1); text-decoration: line-through; }
 
 .tooth[data-selected="1"] {
-  box-shadow: 0 0 0 3px rgba(17,24,39,0.08);
-  border-color: rgba(17,24,39,0.35);
+  box-shadow: 0 0 0 4px rgba(16,185,129,0.14);
+  border-color: rgba(16,185,129,0.40);
+  background: rgba(16,185,129,0.04);
+  color: rgba(16,185,129,1);
 }
 
 .legend {

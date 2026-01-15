@@ -156,7 +156,7 @@ Compatibilidade: `assistente` é normalizado para `recepcao`.
 
 ## 💾 Dados Salvos Automaticamente
 
-- Banco de dados SQLite em `backend/database.db`
+- Banco de dados Postgres (configurado via `DATABASE_URL`)
 - Sincroniza em tempo real entre abas/janelas
 - Todas as operações têm histórico
 
@@ -179,9 +179,9 @@ PORT=3002
 - Aguarde 10 segundos para Vite compilar
 - Atualize com Ctrl+R
 
-### "Database locked"
-- Feche outros programas usando o banco
-- Reinicie o backend
+### Erro de conexão com o banco
+- Verifique se `DATABASE_URL` está configurado no `backend/.env`
+- Rode migrations: `npm run migrate:up --workspace=backend`
 
 ---
 

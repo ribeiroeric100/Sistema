@@ -588,6 +588,15 @@
 .estoqueTable tbody tr:nth-child(even) { background: #f1eef0 }
 .estoqueTable tbody tr:hover { background: #e9e6e8 }
 
+.estoquePlaceholderRow td {
+  color: var(--muted, #6b7280);
+  font-weight: 700;
+}
+
+.estoqueOutrosRow td {
+  font-weight: 900;
+}
+
 @media (max-width: 1000px) {
   .mainGrid { grid-template-columns: 1fr }
 }

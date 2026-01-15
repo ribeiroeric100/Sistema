@@ -1,14 +1,9 @@
 #!/usr/bin/env node
 
-const path = require('path')
-const sqlite3 = require('sqlite3').verbose()
 const bcrypt = require('bcryptjs')
 
-const dbPath = path.join(__dirname, '..', 'database.db')
-
-function openDb() {
-  return new sqlite3.Database(dbPath)
-}
+require('dotenv').config()
+const { db, initialize } = require('../config/database')
 
 function usage() {
   const cmd = 'node scripts/reset-admin-password.js'
@@ -20,45 +15,23 @@ function usage() {
   console.log(`  ${cmd}              # lista usuários admin`) 
 }
 
-function listAdmins(db) {
-  return new Promise((resolve, reject) => {
-    db.all(
-      "SELECT id, nome, email, role, ativo, criado_em FROM usuarios WHERE role = 'admin' ORDER BY criado_em ASC",
-      (err, rows) => {
-        if (err) return reject(err)
-        resolve(rows || [])
-      }
-    )
-  })
+async function listAdmins() {
+  return db.all("SELECT id, nome, email, role, ativo, criado_em FROM usuarios WHERE role = 'admin' ORDER BY criado_em ASC")
 }
 
-function getUserByEmail(db, email) {
-  return new Promise((resolve, reject) => {
-    db.get('SELECT id, email, role, ativo FROM usuarios WHERE lower(email) = lower(?)', [email], (err, row) => {
-      if (err) return reject(err)
-      resolve(row || null)
-    })
-  })
-}
-
-function runSql(db, sql, params) {
-  return new Promise((resolve, reject) => {
-    db.run(sql, params, function (err) {
-      if (err) return reject(err)
-      resolve({ changes: this.changes })
-    })
-  })
+async function getUserByEmail(email) {
+  return db.get('SELECT id, email, role, ativo FROM usuarios WHERE lower(email) = lower(?)', [email])
 }
 
 async function main() {
   const arg1 = process.argv[2]
   const arg2 = process.argv[3]
 
-  const db = openDb()
-
   try {
+    await initialize()
+
     if (!arg1) {
-      const admins = await listAdmins(db)
+      const admins = await listAdmins()
       if (admins.length === 0) {
         console.log('Nenhum usuário admin encontrado no banco.')
         console.log('Se este for o primeiro setup, você pode registrar um novo usuário e ele vira admin automaticamente (quando não existe nenhum usuário).')
@@ -89,15 +62,15 @@ async function main() {
     const senhaHash = bcrypt.hashSync(String(newPassword), 10)
 
     if (isAllAdmins) {
-      const result = await runSql(db, "UPDATE usuarios SET senha = ? WHERE role = 'admin'", [senhaHash])
+      const result = await db.run("UPDATE usuarios SET senha = ? WHERE role = 'admin'", [senhaHash])
       console.log(`OK: senha atualizada para ${result.changes} usuário(s) admin.`)
       return
     }
 
-    const user = await getUserByEmail(db, email)
+    const user = await getUserByEmail(email)
     if (!user) {
       console.error(`Erro: usuário não encontrado para email: ${email}`)
-      const admins = await listAdmins(db)
+      const admins = await listAdmins()
       if (admins.length) {
         console.log('Admins existentes no banco:')
         for (const u of admins) console.log(`- ${u.email} (${u.nome})`) 
@@ -106,11 +79,11 @@ async function main() {
       return
     }
 
-    if (user.ativo === 0) {
+    if (user.ativo === false || user.ativo === 0 || user.ativo === '0') {
       console.error('Aviso: usuário está desativado (ativo=0). A senha ainda será atualizada.')
     }
 
-    const result = await runSql(db, 'UPDATE usuarios SET senha = ? WHERE id = ?', [senhaHash, user.id])
+    const result = await db.run('UPDATE usuarios SET senha = ? WHERE id = ?', [senhaHash, user.id])
     if (result.changes !== 1) {
       console.error('Erro: nenhuma linha foi atualizada (changes != 1).')
       process.exitCode = 1
@@ -122,7 +95,7 @@ async function main() {
     console.error('Erro ao resetar senha:', e?.message || e)
     process.exitCode = 1
   } finally {
-    db.close()
+    await db.close()
   }
 }
 

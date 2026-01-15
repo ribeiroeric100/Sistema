@@ -10,16 +10,25 @@ PORT=3001
 NODE_ENV=development
 
 # Banco de Dados
-DATABASE_PATH=./database.db
+# Postgres (obrigatório)
+DATABASE_URL=
+
+# SSL do Postgres (opcional)
+# Em produção (NODE_ENV=production) o backend já ativa SSL automaticamente.
+PGSSL=true
 
 # Autenticação
 JWT_SECRET=sua_chave_jwt_super_secreta_aqui
-JWT_EXPIRES_IN=24h
 
-# Email (Opcional - para lembretes)
-EMAIL_USER=seu_email@gmail.com
-EMAIL_PASSWORD=sua_senha_gmail
-EMAIL_SERVICE=gmail
+# URL do frontend (usada para links de redefinição de senha)
+APP_URL=http://localhost:5173
+
+# Email SMTP (opcional - usado no "Esqueci minha senha")
+SMTP_HOST=
+SMTP_PORT=587
+SMTP_USER=
+SMTP_PASS=
+SMTP_FROM=
 
 # SMS (Opcional - para lembretes)
 TWILIO_ACCOUNT_SID=seu_sid
@@ -56,7 +65,15 @@ cd backend
 npm install pg
 ```
 
-#### 2. Atualize `config/database.js`:
+#### 2. Rode as migrations (cria as tabelas no Postgres/Supabase)
+
+Se o `DATABASE_URL` apontar para o Supabase, as tabelas serão criadas lá diretamente:
+
+```bash
+npm run migrate:up --workspace=backend
+```
+
+#### 3. (Legado) Atualize `config/database.js`:
 ```javascript
 const { Pool } = require('pg')
 
@@ -273,12 +290,15 @@ const { exec } = require('child_process')
 const schedule = require('node-schedule')
 const fs = require('fs')
 
+// Exemplo para Postgres: use pg_dump (requer pg_dump disponível no ambiente)
+// Você pode usar DATABASE_URL diretamente.
+
 // Backup diário às 2AM
 schedule.scheduleJob('0 2 * * *', () => {
   const timestamp = new Date().getTime()
-  const backupPath = `./backups/database-${timestamp}.db`
+  const backupPath = `./backups/database-${timestamp}.sql`
   
-  exec(`cp database.db ${backupPath}`, (err) => {
+  exec(`pg_dump "${process.env.DATABASE_URL}" > "${backupPath}"`, (err) => {
     if (err) console.error('Erro no backup:', err)
     else console.log('Backup realizado:', backupPath)
   })

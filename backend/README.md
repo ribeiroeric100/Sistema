@@ -7,10 +7,62 @@ cd backend
 npm install
 ```
 
+## Banco de dados (Postgres)
+
+Este backend usa Postgres via `pg` e cria o schema via migrations (`node-pg-migrate`).
+
+### Variáveis de ambiente
+
+- `DATABASE_URL` (obrigatório)
+	- Dev local (exemplo): `postgres://postgres:postgres@localhost:5432/odonto`
+	- Render: o próprio Render fornece `DATABASE_URL` automaticamente ao criar um Postgres.
+- `PGSSL=true` (opcional)
+	- Em produção, o backend já ativa SSL automaticamente.
+
+### Rodar migrations
+
+```bash
+npm run migrate:up
+```
+
+### Importar dados antigos do SQLite (migração local → Postgres)
+
+Se seus dados antigos estavam em um arquivo SQLite (`.db`/`.sqlite`), você pode importar para o Postgres configurado em `DATABASE_URL`.
+
+1) Conferir quantas linhas o SQLite tem (não escreve nada):
+
+```bash
+npm run import:sqlite -- C:\caminho\para\seu\banco.sqlite --dry-run
+```
+
+2) Importar de fato:
+
+```bash
+npm run import:sqlite -- C:\caminho\para\seu\banco.sqlite
+```
+
+3) Para substituir (apagar dados atuais no Postgres e importar do zero):
+
+```bash
+npm run import:sqlite -- C:\caminho\para\seu\banco.sqlite --truncate
+```
+
+Depois valide com:
+
+```bash
+node scripts/db-check.js DATABASE_URL
+```
+
 ## Rodar o servidor
 
 ```bash
 npm run dev
+```
+
+Se for a primeira vez com Postgres, rode antes:
+
+```bash
+npm run migrate:up
 ```
 
 O servidor rodará em `http://localhost:3001`

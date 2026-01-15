@@ -3,6 +3,52 @@ import { useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import styles from './Agenda.module.css'
 
+function startOfWeek(date) {
+  const d = new Date(date)
+  const day = (d.getDay() + 6) % 7
+  d.setDate(d.getDate() - day)
+  return d
+}
+
+function buildWeeksForMonth(year, monthIndex) {
+  const monthStart = new Date(year, monthIndex, 1)
+  const monthEnd = new Date(year, monthIndex + 1, 0)
+  const weeks = []
+  let wkStart = startOfWeek(monthStart) // Monday
+  while (wkStart <= monthEnd) {
+    const wkEnd = new Date(wkStart)
+    wkEnd.setDate(wkStart.getDate() + 6) // Sunday
+
+    const from = new Date(Math.max(monthStart.getTime(), wkStart.getTime()))
+    const to = new Date(Math.min(monthEnd.getTime(), wkEnd.getTime()))
+
+    if (from <= to) {
+      const fromDay = from.getDate()
+      const toDay = to.getDate()
+      weeks.push({
+        start: wkStart,
+        end: wkEnd,
+        from,
+        to,
+        label: `Semana ${weeks.length + 1} (${fromDay}–${toDay})`
+      })
+    }
+
+    wkStart = new Date(wkStart)
+    wkStart.setDate(wkStart.getDate() + 7)
+  }
+  return weeks
+}
+
+function currentWeekOfMonth(d = new Date()) {
+  const year = d.getFullYear()
+  const month = d.getMonth()
+  const weeks = buildWeeksForMonth(year, month)
+  const day = new Date(d.getFullYear(), d.getMonth(), d.getDate())
+  const idx = weeks.findIndex(w => day >= w.start && day <= w.end)
+  return (idx >= 0 ? (idx + 1) : 1)
+}
+
 export default function Agenda() {
   const [consultas, setConsultas] = useState([])
   const [loading, setLoading] = useState(true)
@@ -17,52 +63,6 @@ export default function Agenda() {
   const [procDescG, setProcDescG] = useState('')
   const [procValorG, setProcValorG] = useState('')
 
-  // filtro: semana (1..4) e ano
-  function startOfWeek(date) {
-    const d = new Date(date)
-    const day = (d.getDay() + 6) % 7
-    d.setDate(d.getDate() - day)
-    return d
-  }
-
-  const buildWeeksForMonth = (year, monthIndex) => {
-    const monthStart = new Date(year, monthIndex, 1)
-    const monthEnd = new Date(year, monthIndex + 1, 0)
-    const weeks = []
-    let wkStart = startOfWeek(monthStart) // Monday
-    while (wkStart <= monthEnd) {
-      const wkEnd = new Date(wkStart)
-      wkEnd.setDate(wkStart.getDate() + 6) // Sunday
-
-      const from = new Date(Math.max(monthStart.getTime(), wkStart.getTime()))
-      const to = new Date(Math.min(monthEnd.getTime(), wkEnd.getTime()))
-
-      if (from <= to) {
-        const fromDay = from.getDate()
-        const toDay = to.getDate()
-        weeks.push({
-          start: wkStart,
-          end: wkEnd,
-          from,
-          to,
-          label: `Semana ${weeks.length + 1} (${fromDay}–${toDay})`
-        })
-      }
-
-      wkStart = new Date(wkStart)
-      wkStart.setDate(wkStart.getDate() + 7)
-    }
-    return weeks
-  }
-
-  const currentWeekOfMonth = (d = new Date()) => {
-    const year = d.getFullYear()
-    const month = d.getMonth()
-    const weeks = buildWeeksForMonth(year, month)
-    const day = new Date(d.getFullYear(), d.getMonth(), d.getDate())
-    const idx = weeks.findIndex(w => day >= w.start && day <= w.end)
-    return (idx >= 0 ? (idx + 1) : 1)
-  }
   const [filterWeek, setFilterWeek] = useState(() => currentWeekOfMonth())
   const [hoverConsulta, setHoverConsulta] = useState(null)
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 })
@@ -77,8 +77,12 @@ export default function Agenda() {
   // keep filterWeek within the available range when month changes
   useEffect(() => {
     const maxWeek = Math.max(1, (availableWeeks || []).length)
-    if (filterWeek > maxWeek) setFilterWeek(maxWeek)
-    if (filterWeek < 1) setFilterWeek(1)
+    setFilterWeek((prev) => {
+      const n = Number(prev || 1)
+      if (n > maxWeek) return maxWeek
+      if (n < 1) return 1
+      return n
+    })
   }, [availableWeeks])
 
   const OPERACOES = [

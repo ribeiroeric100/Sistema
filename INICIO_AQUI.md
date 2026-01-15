@@ -132,7 +132,7 @@ cd electron && npm install && npm start
 ### Backend
 - **Node.js** 16+
 - **Express** 4.18
-- **SQLite3** 5.1
+- **Postgres (pg)**
 - **JWT** para autenticação
 - **bcryptjs** para criptografia
 - **PDFKit** para PDF
@@ -268,8 +268,8 @@ PORT=3002
 - Recarregue a página (Ctrl+R ou F5)
 
 ### Erro de banco de dados?
-- Delete `backend/database.db`
-- Reinicie o servidor
+- Verifique se `DATABASE_URL` está configurado em `backend/.env`
+- Rode migrations: `npm run migrate:up --workspace=backend`
 
 ---
 
@@ -280,7 +280,7 @@ PORT=3002
 📱 **Responsivo** - Funciona em qualquer tela  
 📚 **Documentado** - 7 guias completos  
 🚀 **Escalável** - Fácil expandir funcionalidades  
-⚡ **Rápido** - SQLite + React/Vite otimizados  
+⚡ **Rápido** - Postgres + React/Vite otimizados  
 🎨 **Bonito** - Design moderno e profissional  
 
 ---

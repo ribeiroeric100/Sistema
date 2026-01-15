@@ -51,12 +51,12 @@ router.post('/', verifyToken, verifyRole(['admin']), (req, res) => {
     const senhaHash = bcrypt.hashSync(finalSenha, 10)
     const now = new Date().toISOString()
     db.run(
-      'INSERT INTO usuarios (id, nome, email, senha, role, ativo, criado_em) VALUES (?, ?, ?, ?, ?, 1, ?)',
-      [id, finalNome, finalEmail, senhaHash, finalRole, now],
+      'INSERT INTO usuarios (id, nome, email, senha, role, ativo, criado_em) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [id, finalNome, finalEmail, senhaHash, finalRole, true, now],
       (e2) => {
         if (e2) return res.status(500).json({ error: e2.message })
         logAudit(req, 'usuarios.create', { entityType: 'usuario', entityId: id, details: { email: finalEmail, role: finalRole } })
-        res.json({ id, nome: finalNome, email: finalEmail, role: finalRole, ativo: 1 })
+        res.json({ id, nome: finalNome, email: finalEmail, role: finalRole, ativo: true })
       }
     )
   })
@@ -97,7 +97,7 @@ router.put('/:id', verifyToken, verifyRole(['admin']), (req, res) => {
 
     if (ativo !== undefined) {
       updates.push('ativo = ?')
-      params.push(ativo ? 1 : 0)
+      params.push(Boolean(ativo))
     }
 
     if (senha !== undefined && String(senha).length) {
@@ -112,7 +112,7 @@ router.put('/:id', verifyToken, verifyRole(['admin']), (req, res) => {
       params.push(id)
       db.run(`UPDATE usuarios SET ${updates.join(', ')} WHERE id = ?`, params, (e2) => {
         if (e2) return res.status(500).json({ error: e2.message })
-        logAudit(req, 'usuarios.update', { entityType: 'usuario', entityId: id, details: { role: finalRole || undefined, ativo: ativo !== undefined ? (ativo ? 1 : 0) : undefined, email: finalEmail || undefined } })
+        logAudit(req, 'usuarios.update', { entityType: 'usuario', entityId: id, details: { role: finalRole || undefined, ativo: ativo !== undefined ? Boolean(ativo) : undefined, email: finalEmail || undefined } })
         res.json({ success: true })
       })
     }

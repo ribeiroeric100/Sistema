@@ -15,13 +15,13 @@ router.get('/dashboard', verifyToken, (req, res) => {
   const toPromise = (fn) => new Promise((resolve, reject) => fn((err, row) => err ? reject(err) : resolve(row)))
 
   try {
-    const totalPacientes = toPromise(cb => db.get('SELECT COUNT(*) as total FROM pacientes WHERE ativo = 1', cb))
+    const totalPacientes = toPromise(cb => db.get('SELECT COUNT(*) as total FROM pacientes WHERE ativo IS TRUE', cb))
     const consultasHoje = toPromise(cb => db.get('SELECT COUNT(*) as total FROM consultas WHERE DATE(data_hora) = ?', [hoje], cb))
     const proximas7 = toPromise(cb => db.get('SELECT COUNT(*) as total FROM consultas WHERE DATE(data_hora) >= ? AND DATE(data_hora) <= ?', [hoje, daqui7], cb))
-    const receitaHoje = toPromise(cb => db.get('SELECT COALESCE(SUM(valor),0) as total FROM consultas WHERE pago = 1 AND DATE(data_hora) = ?', [hoje], cb))
-    const produtosBaixos = toPromise(cb => db.all('SELECT id, nome, quantidade, quantidade_minima FROM produtos_estoque WHERE ativo = 1 AND quantidade <= quantidade_minima', [], cb))
-    const recentPacientes = toPromise(cb => db.all('SELECT id, nome, criado_em FROM pacientes WHERE ativo = 1 ORDER BY criado_em DESC LIMIT 5', [], cb))
-    const recentProdutos = toPromise(cb => db.all('SELECT id, nome, quantidade, quantidade_minima, criado_em FROM produtos_estoque WHERE ativo = 1 ORDER BY criado_em DESC LIMIT 6', [], cb))
+    const receitaHoje = toPromise(cb => db.get('SELECT COALESCE(SUM(valor),0) as total FROM consultas WHERE pago IS TRUE AND DATE(data_hora) = ?', [hoje], cb))
+    const produtosBaixos = toPromise(cb => db.all('SELECT id, nome, quantidade, quantidade_minima FROM produtos_estoque WHERE ativo IS TRUE AND quantidade <= quantidade_minima', [], cb))
+    const recentPacientes = toPromise(cb => db.all('SELECT id, nome, criado_em FROM pacientes WHERE ativo IS TRUE ORDER BY criado_em DESC LIMIT 5', [], cb))
+    const recentProdutos = toPromise(cb => db.all('SELECT id, nome, quantidade, quantidade_minima, criado_em FROM produtos_estoque WHERE ativo IS TRUE ORDER BY criado_em DESC LIMIT 6', [], cb))
     const nextConsultas = toPromise(cb => db.all(`SELECT c.id, c.data_hora, c.tipo_consulta, c.status, p.nome as paciente_nome, u.nome as dentista_nome 
       FROM consultas c 
       JOIN pacientes p ON c.paciente_id = p.id 
@@ -56,7 +56,7 @@ router.get('/estoque', verifyToken, verifyRole(['admin', 'dentista']), (req, res
             (SELECT SUM(quantidade) FROM movimentacoes_estoque WHERE produto_id = p.id AND tipo = 'entrada') as total_entrada,
             (SELECT SUM(quantidade) FROM movimentacoes_estoque WHERE produto_id = p.id AND tipo = 'saida') as total_saida
      FROM produtos_estoque p
-     WHERE p.ativo = 1`,
+     WHERE p.ativo IS TRUE`,
     (err, produtos) => {
       if (err) return res.status(500).json({ error: err.message })
 
@@ -82,7 +82,7 @@ router.get('/receita', verifyToken, verifyRole(['admin', 'dentista']), (req, res
     `SELECT c.*, p.nome as paciente_nome
      FROM consultas c
      JOIN pacientes p ON c.paciente_id = p.id
-     WHERE c.pago = 1 
+    WHERE c.pago IS TRUE 
      AND DATE(c.data_hora) >= ? 
      AND DATE(c.data_hora) <= ?
      ORDER BY c.data_hora DESC`,

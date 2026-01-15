@@ -1,5 +1,5 @@
 import { consultasService, pacientesService, estoqueService, configuracoesService, odontogramaService } from '@services/api'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import Odontograma from '../components/common/Odontograma'
 import html2canvas from 'html2canvas'
@@ -21,10 +21,6 @@ export default function PacientePerfil() {
   const galeriaImagensRef = useRef([])
   const [imagemSelecionada, setImagemSelecionada] = useState(null)
   const [exportandoPdf, setExportandoPdf] = useState(false)
-
-  useEffect(() => {
-    carregarPaciente()
-  }, [id])
 
   const exportarProntuarioPdf = async () => {
     if (!id) return
@@ -627,7 +623,7 @@ export default function PacientePerfil() {
     return () => window.removeEventListener('consultaDeleted', onDeleted)
   }, [id])
 
-  const carregarPaciente = async () => {
+  const carregarPaciente = useCallback(async () => {
     try {
       // Buscar paciente usando o serviço
       const dados = await pacientesService.buscar(id)
@@ -642,7 +638,11 @@ export default function PacientePerfil() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [id])
+
+  useEffect(() => {
+    carregarPaciente()
+  }, [carregarPaciente])
 
   const calcularIdade = (dataNascimento) => {
     const hoje = new Date()

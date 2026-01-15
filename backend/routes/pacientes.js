@@ -8,7 +8,7 @@ const router = express.Router()
 
 // Listar pacientes
 router.get('/', verifyToken, (req, res) => {
-  db.all('SELECT * FROM pacientes WHERE ativo = 1 ORDER BY nome', (err, pacientes) => {
+  db.all('SELECT * FROM pacientes WHERE ativo IS TRUE ORDER BY nome', (err, pacientes) => {
     if (err) return res.status(500).json({ error: err.message })
     logAudit(req, 'pacientes.list')
     res.json(pacientes)

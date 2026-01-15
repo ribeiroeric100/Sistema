@@ -1,6 +1,6 @@
 import { useAuth } from '@context/useAuth'
 import { consultasService, relatoriosService } from '@services/api'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import styles from './Dashboard.module.css'
 import reportStyles from './Relatorios.module.css'
 import {
@@ -14,6 +14,21 @@ import {
   Tooltip
 } from 'recharts'
 
+const formatMoneyCompact = (v) => `R$ ${Number(v || 0).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`
+
+function MoneyLabelContent(props) {
+  const { x, y, width, value } = props || {}
+  const n = Number(value || 0)
+  if (!Number.isFinite(n) || n <= 0) return null
+  const cx = Number(x || 0) + Number(width || 0) / 2
+  const cy = Number(y || 0) - 6
+  return (
+    <text x={cx} y={cy} textAnchor="middle" fontSize={10} fill="#111827">
+      {formatMoneyCompact(n)}
+    </text>
+  )
+}
+
 export default function Dashboard() {
   const { user } = useAuth()
   const [_alertas, setAlertas] = useState([])
@@ -25,7 +40,7 @@ export default function Dashboard() {
   const [estoque, setEstoque] = useState([])
   const [consultasAgendadasHoje, setConsultasAgendadasHoje] = useState(0)
   const [consultasAgendadasTotal, setConsultasAgendadasTotal] = useState(0)
-  const [suppressAgendadasUntil, setSuppressAgendadasUntil] = useState(0)
+  const [suppressAgendadasUntil, _setSuppressAgendadasUntil] = useState(0)
   const [_pacientes, setPacientes] = useState([])
   const [loading, setLoading] = useState(true)
   const [lastUpdated, setLastUpdated] = useState(null)
@@ -61,6 +76,12 @@ export default function Dashboard() {
   ))
   const [monthlyChartLoading, setMonthlyChartLoading] = useState(false)
   const [monthlyChartError, setMonthlyChartError] = useState('')
+
+  const carregarDadosRef = useRef(null)
+  const carregarReceitaPorHoraRef = useRef(null)
+  const carregarReceitaMensalSemanasRef = useRef(null)
+
+  const ESTOQUE_ROWS = 5
 
   const formatMoney = (v) => `R$ ${Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
 
@@ -180,6 +201,8 @@ export default function Dashboard() {
     }
   }
 
+  carregarReceitaPorHoraRef.current = carregarReceitaPorHora
+
   const carregarReceitaMensalSemanas = (ym) => {
     setMonthlyChartLoading(true)
     setMonthlyChartError('')
@@ -200,6 +223,8 @@ export default function Dashboard() {
       setMonthlyChartLoading(false)
     }
   }
+
+  carregarReceitaMensalSemanasRef.current = carregarReceitaMensalSemanas
 
   // helpers to persist daily counters so switching tabs doesn't show temporary zeros
   const storageKey = 'dashboardDaily_v1'
@@ -228,8 +253,8 @@ export default function Dashboard() {
       if (typeof saved.consultasAgendadasTotal === 'number') setConsultasAgendadasTotal(saved.consultasAgendadasTotal)
     }
 
-    carregarDados()
-    const interval = setInterval(() => carregarDados(), 10000) // polling a cada 10s
+    carregarDadosRef.current?.()
+    const interval = setInterval(() => carregarDadosRef.current?.(), 10000) // polling a cada 10s
 
     // schedule a daily reset at next midnight
     const scheduleMidnightReset = () => {
@@ -248,7 +273,7 @@ export default function Dashboard() {
         // refresh data after reset
           // clear persisted daily data (new day)
           try { localStorage.removeItem(storageKey) } catch { /* ignore */ }
-          carregarDados()
+          carregarDadosRef.current?.()
         // schedule again for the following midnight
         scheduleMidnightReset()
       }, ms)
@@ -326,6 +351,8 @@ export default function Dashboard() {
     }
   }
 
+  carregarDadosRef.current = carregarDados
+
   const abrirModalAcoes = (consulta) => {
     if (!consulta) return
     setAcaoConsulta(consulta)
@@ -381,18 +408,12 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-    carregarReceitaPorHora(dailyChartDate)
-  }, [dailyChartDate])
+    carregarReceitaPorHoraRef.current?.(dailyChartDate)
+  }, [dailyChartDate, consultasAll])
 
   useEffect(() => {
-    carregarReceitaMensalSemanas(monthlyChartMonth)
-  }, [monthlyChartMonth])
-
-  useEffect(() => {
-    // sempre que atualizar consultas, recalcula os gráficos do período aplicado
-    carregarReceitaPorHora(dailyChartDate)
-    carregarReceitaMensalSemanas(monthlyChartMonth)
-  }, [consultasAll])
+    carregarReceitaMensalSemanasRef.current?.(monthlyChartMonth)
+  }, [monthlyChartMonth, consultasAll])
 
   const finalizarConsulta = async (consulta) => {
     abrirModalAcoes(consulta)
@@ -631,7 +652,7 @@ export default function Dashboard() {
                   <tr><th>Produto</th><th>Quantidade</th><th>Status</th></tr>
                 </thead>
                 <tbody>
-                  {estoque.slice(0,6).map(p => (
+                  {estoque.slice(0, ESTOQUE_ROWS).map(p => (
                     <tr key={p.id}>
                       <td>{p.nome}</td>
                       <td>{p.quantidade}</td>
@@ -649,6 +670,33 @@ export default function Dashboard() {
                       </td>
                     </tr>
                   ))}
+
+                  {/* Mantém sempre 5 linhas visíveis, sem crescer o card */}
+                  {Array.from({ length: Math.max(0, ESTOQUE_ROWS - estoque.slice(0, ESTOQUE_ROWS).length) }).map((_, i) => (
+                    <tr key={`estoque-placeholder-${i}`} className={styles.estoquePlaceholderRow}>
+                      <td>—</td>
+                      <td>—</td>
+                      <td>—</td>
+                    </tr>
+                  ))}
+
+                  {/* Linha extra fixa para indicar que existem mais itens */}
+                  {(() => {
+                    const outrosCount = Math.max(0, (estoque?.length || 0) - ESTOQUE_ROWS)
+                    return (
+                      <tr key="estoque-outros" className={styles.estoqueOutrosRow}>
+                        <td>Outros</td>
+                        <td>{outrosCount > 0 ? `+${outrosCount} produtos` : '—'}</td>
+                        <td>
+                          {outrosCount > 0 ? (
+                            <a className={styles.panelLink} href="/estoque">Ver todos ›</a>
+                          ) : (
+                            '—'
+                          )}
+                        </td>
+                      </tr>
+                    )
+                  })()}
                 </tbody>
               </table>
             </div>
@@ -764,8 +812,6 @@ function DailyHourChart({ data, startHour = 8 }) {
     valor: Number(v || 0)
   }))
 
-  const formatMoneyCompact = (v) => `R$ ${Number(v || 0).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`
-
   return (
     <ResponsiveContainer width="100%" height={240}>
       <BarChart data={chartData} margin={{ top: 10, right: 16, left: 6, bottom: 8 }}>
@@ -793,21 +839,6 @@ function MonthlyWeeksChartRecharts({ weeks }) {
     total: Number(w?.total || 0)
   }))
 
-  const formatMoneyCompact = (v) => `R$ ${Number(v || 0).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`
-
-  const MoneyLabel = (props) => {
-    const { x, y, width, value } = props || {}
-    const n = Number(value || 0)
-    if (!Number.isFinite(n) || n <= 0) return null
-    const cx = Number(x || 0) + Number(width || 0) / 2
-    const cy = Number(y || 0) - 6
-    return (
-      <text x={cx} y={cy} textAnchor="middle" fontSize={10} fill="#111827">
-        {formatMoneyCompact(n)}
-      </text>
-    )
-  }
-
   return (
     <ResponsiveContainer width="100%" height={220}>
       <BarChart data={chartData} margin={{ top: 10, right: 16, left: 6, bottom: 8 }}>
@@ -816,7 +847,7 @@ function MonthlyWeeksChartRecharts({ weeks }) {
         <YAxis tickFormatter={formatMoneyCompact} tick={{ fontSize: 11, fill: '#6b7280' }} width={64} />
         <Tooltip formatter={(value) => formatMoneyCompact(value)} />
         <Bar dataKey="total" fill="#365c52" radius={[8, 8, 0, 0]}>
-          <LabelList dataKey="total" content={<MoneyLabel />} />
+          <LabelList dataKey="total" content={MoneyLabelContent} />
         </Bar>
       </BarChart>
     </ResponsiveContainer>

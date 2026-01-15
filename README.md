@@ -241,7 +241,7 @@ O dashboard mostra:
 
 ### Backend
 - **Express.js** - Framework web
-- **SQLite3** - Banco de dados (fácil deploy)
+- **Postgres (pg)** - Banco de dados (ideal para deploy em produção)
 - **JWT** - Autenticação segura
 - **bcryptjs** - Criptografia de senhas
 - **PDFKit** - Geração de PDFs

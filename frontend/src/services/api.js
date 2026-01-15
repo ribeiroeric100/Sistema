@@ -17,6 +17,23 @@ const api = async (endpoint, method = 'GET', body = null) => {
   const response = await fetch(`${API_URL}${endpoint}`, options)
   
   if (!response.ok) {
+    // If token is missing/expired/invalid, force logout so the UI returns to /login.
+    if (response.status === 401) {
+      try {
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+      } catch {
+        // ignore
+      }
+      try {
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('auth:logout', { detail: { reason: 'unauthorized' } }))
+        }
+      } catch {
+        // ignore
+      }
+    }
+
     const error = await response.json()
     throw new Error(error.error || 'Erro na requisição')
   }
@@ -37,6 +54,22 @@ const apiBlob = async (endpoint, method = 'GET', body = null) => {
 
   const response = await fetch(`${API_URL}${endpoint}`, options)
   if (!response.ok) {
+    if (response.status === 401) {
+      try {
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+      } catch {
+        // ignore
+      }
+      try {
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('auth:logout', { detail: { reason: 'unauthorized' } }))
+        }
+      } catch {
+        // ignore
+      }
+    }
+
     let errorMsg = 'Erro na requisição'
     try {
       const err = await response.json()

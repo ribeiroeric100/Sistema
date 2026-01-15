@@ -64,36 +64,43 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
 // Inicializar banco de dados
-db.initialize()
+Promise.resolve()
+  .then(() => db.initialize())
+  .then(() => {
+    // Rotas
+    app.use('/api/auth', authRoutes)
+    app.use('/api/estoque', estoqueRoutes)
+    app.use('/api/pacientes', pacientesRoutes)
+    app.use('/api/consultas', consultasRoutes)
+    app.use('/api/relatorios', relatoriosRoutes)
+    app.use('/api/usuarios', usuariosRoutes)
+    app.use('/api/configuracoes', configuracoesRoutes)
+    app.use('/api/auditoria', auditoriaRoutes)
 
-// Rotas
-app.use('/api/auth', authRoutes)
-app.use('/api/estoque', estoqueRoutes)
-app.use('/api/pacientes', pacientesRoutes)
-app.use('/api/consultas', consultasRoutes)
-app.use('/api/relatorios', relatoriosRoutes)
-app.use('/api/usuarios', usuariosRoutes)
-app.use('/api/configuracoes', configuracoesRoutes)
-app.use('/api/auditoria', auditoriaRoutes)
+    // Health check
+    app.get('/api/health', (req, res) => {
+      res.json({ status: 'OK', message: 'Servidor odontológico rodando' })
+    })
 
-// Health check
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Servidor odontológico rodando' })
-})
+    // Handler de erros (inclui CORS)
+    app.use((err, req, res, next) => {
+      if (err && err.message === 'Not allowed by CORS') {
+        return res.status(403).json({ error: 'Origem não permitida (CORS)' })
+      }
+      if (err) {
+        console.error(err)
+        return res.status(500).json({ error: 'Erro interno' })
+      }
+      return next()
+    })
 
-// Handler de erros (inclui CORS)
-app.use((err, req, res, next) => {
-  if (err && err.message === 'Not allowed by CORS') {
-    return res.status(403).json({ error: 'Origem não permitida (CORS)' })
-  }
-  if (err) {
-    console.error(err)
-    return res.status(500).json({ error: 'Erro interno' })
-  }
-  return next()
-})
+    const PORT = process.env.PORT || 3001
+    app.listen(PORT, () => {
+      console.log(`🦷 Servidor odontológico rodando na porta ${PORT}`)
+    })
+  })
+  .catch((err) => {
+    console.error('[FATAL] Falha ao inicializar Postgres:', err?.message || err)
+    process.exit(1)
+  })
 
-const PORT = process.env.PORT || 3001
-app.listen(PORT, () => {
-  console.log(`🦷 Servidor odontológico rodando na porta ${PORT}`)
-})
