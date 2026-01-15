@@ -36,8 +36,8 @@ function AppContent() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Navigate to="/login" />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/forgot-password" element={<Navigate to="/login" />} />
+          <Route path="/reset-password" element={<Navigate to="/login" />} />
           <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
       </Router>

@@ -66,16 +66,6 @@ export default function Login() {
             {loading ? 'Carregando...' : 'Entrar'}
           </button>
         </form>
-
-        <p className={styles.signup}>
-          <button
-            type="button"
-            onClick={() => navigate('/forgot-password')}
-            style={{ background: 'none', border: 'none', color: '#667eea', cursor: 'pointer', textDecoration: 'underline' }}
-          >
-            Esqueci minha senha
-          </button>
-        </p>
       </div>
     </div>
   )
