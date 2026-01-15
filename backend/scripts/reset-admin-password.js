@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 
 const bcrypt = require('bcryptjs')
+const crypto = require('crypto')
+const fs = require('fs')
+const path = require('path')
 
 require('dotenv').config()
 const { db, initialize } = require('../config/database')
@@ -10,9 +13,29 @@ function usage() {
   console.log('Uso:')
   console.log(`  ${cmd} <email> <novaSenha>`)
   console.log(`  ${cmd} --all-admins <novaSenha>`) 
+  console.log(`  ${cmd} --generate <email>`) 
+  console.log(`  ${cmd} --generate-all`) 
   console.log('')
   console.log('Dicas:')
   console.log(`  ${cmd}              # lista usuários admin`) 
+  console.log(`  ${cmd} --generate-all # gera senha, reseta admin(s) e salva em .admin-password.txt`) 
+}
+
+function generatePassword() {
+  // Strong random password without whitespace; good UX for copy/paste.
+  return crypto.randomBytes(18).toString('base64url')
+}
+
+function getOutFilePath() {
+  const p = String(process.env.ADMIN_PASSWORD_OUT || '').trim()
+  if (p) return path.isAbsolute(p) ? p : path.join(process.cwd(), p)
+  return path.join(process.cwd(), '.admin-password.txt')
+}
+
+function writePasswordToFile(password) {
+  const outPath = getOutFilePath()
+  fs.writeFileSync(outPath, `${password}\n`, { encoding: 'utf8' })
+  return outPath
 }
 
 async function listAdmins() {
@@ -48,9 +71,18 @@ async function main() {
     }
 
     const isAllAdmins = arg1 === '--all-admins'
+    const isGenerate = arg1 === '--generate'
+    const isGenerateAll = arg1 === '--generate-all'
 
-    const newPassword = isAllAdmins ? arg2 : arg2
-    const email = isAllAdmins ? null : arg1
+    const newPassword = isGenerate || isGenerateAll ? generatePassword() : arg2
+    const email = isAllAdmins ? null : isGenerate ? arg2 : isGenerateAll ? null : arg1
+
+    if (isGenerate && !email) {
+      console.error('Erro: informe o email. Ex.: node scripts/reset-admin-password.js --generate admin@exemplo.com')
+      usage()
+      process.exitCode = 1
+      return
+    }
 
     if (!newPassword || String(newPassword).length < 6) {
       console.error('Erro: novaSenha deve ter no mínimo 6 caracteres.')
@@ -61,9 +93,11 @@ async function main() {
 
     const senhaHash = bcrypt.hashSync(String(newPassword), 10)
 
-    if (isAllAdmins) {
+    if (isAllAdmins || isGenerateAll) {
       const result = await db.run("UPDATE usuarios SET senha = ? WHERE role = 'admin'", [senhaHash])
+      const outPath = isGenerateAll ? writePasswordToFile(newPassword) : null
       console.log(`OK: senha atualizada para ${result.changes} usuário(s) admin.`)
+      if (outPath) console.log(`OK: senha gerada salva em: ${outPath}`)
       return
     }
 
@@ -90,7 +124,9 @@ async function main() {
       return
     }
 
+    const outPath = isGenerate ? writePasswordToFile(newPassword) : null
     console.log(`OK: senha atualizada para ${user.email} (role=${user.role}).`)
+    if (outPath) console.log(`OK: senha gerada salva em: ${outPath}`)
   } catch (e) {
     console.error('Erro ao resetar senha:', e?.message || e)
     process.exitCode = 1

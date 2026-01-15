@@ -76,10 +76,6 @@ export default function Login() {
             Esqueci minha senha
           </button>
         </p>
-
-        <p className={styles.signup}>
-          Não tem conta? <button type="button" onClick={() => navigate('/register')} style={{background: 'none', border: 'none', color: '#667eea', cursor: 'pointer', textDecoration: 'underline'}}>Registrar-se</button>
-        </p>
       </div>
     </div>
   )

@@ -480,7 +480,7 @@ router.get('/disponibilidade/:data', verifyToken, (req, res) => {
 })
 
 // Deletar consulta
-router.delete('/:id', verifyToken, verifyRole(['admin', 'recepcao']), (req, res) => {
+router.delete('/:id', verifyToken, verifyRole(['admin', 'dentista', 'recepcao']), (req, res) => {
   const id = req.params.id
 
   db.get('SELECT pago, valor, DATE(data_hora) as dia, status, materiais FROM consultas WHERE id = ?', [id], (err, row) => {
