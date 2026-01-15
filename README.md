@@ -89,6 +89,27 @@ No frontend, a base da API é configurável via env:
 
 Veja o modelo em `frontend/.env.example`.
 
+---
+
+## 🌍 Deploy (Render + Netlify)
+
+### Backend no Render
+- Blueprint disponível em `render.yaml` (raiz do repo).
+- Variáveis obrigatórias no Render (Environment):
+  - `NODE_ENV=production`
+  - `CORS_ORIGIN=https://netoabreu.netlify.app` (ou seu domínio)
+  - `APP_URL=https://netoabreu.netlify.app` (para link de reset de senha)
+  - `JWT_SECRET` (segredo forte)
+  - `RESET_TOKEN_SECRET` (opcional)
+  - `DATABASE_URL` e (recomendado no Supabase) `MIGRATIONS_DATABASE_URL`
+
+Healthcheck: `GET /api/health`
+
+### Frontend no Netlify
+- Configure no Netlify (Site settings → Environment variables):
+  - `VITE_API_URL=https://<seu-backend-no-render>.onrender.com/api`
+- Faça redeploy do site para aplicar.
+
 ### 3. Electron (Aplicação Desktop)
 
 ```bash
