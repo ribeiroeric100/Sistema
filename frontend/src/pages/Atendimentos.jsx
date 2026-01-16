@@ -1569,6 +1569,84 @@ export default function Relatorios() {
 
   return (
     <div className={styles.container}>
+      {/* Mobile header + filtros (igual ao padrão da Agenda mobile) */}
+      <div className={styles.mobileToolbar}>
+        <div className={styles.mobileHeaderRow}>
+          <h1 className={styles.mobileTitle}>Relatórios</h1>
+          <button className={styles.mobilePrimaryBtn} onClick={gerarPDF}>
+            Gerar Relatório <span className={styles.btnChevron} aria-hidden="true">›</span>
+          </button>
+        </div>
+
+        <div className={styles.mobileFiltersRow}>
+          <select
+            className={styles.mobileSelect}
+            value={reportPeriodType}
+            onChange={e => {
+              const next = e.target.value
+              setReportPeriodType(next)
+              if (next === 'semanal') {
+                const d = new Date(reportDate)
+                if (!Number.isNaN(d.getTime())) {
+                  const day = d.getDay()
+                  const diffToMonday = (day + 6) % 7
+                  const monday = new Date(d)
+                  monday.setDate(d.getDate() - diffToMonday)
+                  const sunday = new Date(monday)
+                  sunday.setDate(monday.getDate() + 6)
+                  setReportWeekStart(monday.toISOString().split('T')[0])
+                  setReportWeekEnd(sunday.toISOString().split('T')[0])
+                }
+              }
+            }}
+            aria-label="Período"
+          >
+            <option value="diario">Diário</option>
+            <option value="semanal">Semanal</option>
+            <option value="mensal">Mensal</option>
+          </select>
+
+          {reportPeriodType === 'diario' && (
+            <input
+              className={styles.mobileDate}
+              type="date"
+              value={reportDate}
+              onChange={e => setReportDate(e.target.value)}
+              aria-label="Data"
+            />
+          )}
+
+          {reportPeriodType === 'semanal' && (
+            <>
+              <input
+                className={styles.mobileDate}
+                type="date"
+                value={reportWeekStart}
+                onChange={e => setReportWeekStart(e.target.value)}
+                aria-label="Início"
+              />
+              <input
+                className={styles.mobileDate}
+                type="date"
+                value={reportWeekEnd}
+                onChange={e => setReportWeekEnd(e.target.value)}
+                aria-label="Fim"
+              />
+            </>
+          )}
+
+          {reportPeriodType === 'mensal' && (
+            <input
+              className={styles.mobileDate}
+              type="month"
+              value={reportMonth}
+              onChange={e => setReportMonth(e.target.value)}
+              aria-label="Mês"
+            />
+          )}
+        </div>
+      </div>
+
       <h1 className={styles.title}>Relatórios</h1>
 
       <div className={styles.reportFiltersBar}>

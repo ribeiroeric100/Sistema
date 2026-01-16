@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { pacientesService, consultasService } from '@services/api'
 import styles from './Pacientes.module.css'
@@ -11,6 +11,9 @@ export default function Pacientes() {
   const [showForm, setShowForm] = useState(false)
   const [formData, setFormData] = useState({ nome: '', email: '', telefone: '', cpf: '', data_nascimento: '' })
   const [busca, setBusca] = useState('')
+  const [topActionsOpen, setTopActionsOpen] = useState(false)
+  const [primaryActionId, setPrimaryActionId] = useState('add')
+  const topActionsRef = useRef(null)
   const [showHistoryFor, setShowHistoryFor] = useState(null)
   const [historyItems, setHistoryItems] = useState([])
   const [showNewConsultaForm, setShowNewConsultaForm] = useState(false)
@@ -104,6 +107,33 @@ export default function Pacientes() {
     setShowNewConsultaGlobal(true)
   }
 
+  const abrirNovoPaciente = () => {
+    setFormData({ nome: '', email: '', telefone: '', cpf: '', data_nascimento: '' })
+    setShowForm(true)
+    setTopActionsOpen(false)
+  }
+
+  const abrirMarcarConsulta = () => {
+    setTopActionsOpen(false)
+    abrirNovaConsultaGlobal()
+  }
+
+  const ACTIONS = {
+    add: {
+      id: 'add',
+      label: 'Adicionar Paciente',
+      onClick: abrirNovoPaciente
+    },
+    consulta: {
+      id: 'consulta',
+      label: 'Marcar Consulta',
+      onClick: abrirMarcarConsulta
+    }
+  }
+
+  const primaryAction = ACTIONS[primaryActionId] || ACTIONS.add
+  const secondaryAction = primaryAction.id === 'add' ? ACTIONS.consulta : ACTIONS.add
+
   const abrirNovaConsulta = (paciente) => {
     setShowHistoryFor(paciente)
     setNewConsulta({ ...newConsulta, data: new Date().toISOString().split('T')[0], hora: '09:00', procedimentos: [] })
@@ -195,6 +225,25 @@ export default function Pacientes() {
     carregarPacientes()
   }, [])
 
+  useEffect(() => {
+    const onMouseDown = (e) => {
+      const el = topActionsRef.current
+      if (!el) return
+      if (!el.contains(e.target)) setTopActionsOpen(false)
+    }
+
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') setTopActionsOpen(false)
+    }
+
+    document.addEventListener('mousedown', onMouseDown)
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('mousedown', onMouseDown)
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [])
+
   // quando o modal de histórico é aberto, carregar histórico do paciente
   useEffect(() => {
     if (!showHistoryFor) {
@@ -241,8 +290,42 @@ export default function Pacientes() {
       <div className={styles.pageHeader}>
         <h1>Pacientes</h1>
         <div className={styles.topActions}>
-          <button className={`${styles.primary} ${styles.addBtn}`} onClick={() => { setFormData({ nome: '', email: '', telefone: '', cpf: '', data_nascimento: '' }); setShowForm(true) }}>+ Adicionar Paciente</button>
-          <button className={`${styles.primary} ${styles.markBtn}`} onClick={abrirNovaConsultaGlobal}>+ Marcar Consulta</button>
+          <div className={styles.dropdownWrap} ref={topActionsRef}>
+            <button
+              type="button"
+              className={`${styles.primary} ${styles.dropdownMain}`}
+              onClick={primaryAction.onClick}
+            >
+              + {primaryAction.label}
+            </button>
+            <button
+              type="button"
+              className={`${styles.primary} ${styles.dropdownToggle}`}
+              aria-haspopup="menu"
+              aria-expanded={topActionsOpen}
+              onClick={() => setTopActionsOpen(v => !v)}
+              title="Mais ações"
+            >
+              ▼
+            </button>
+
+            {topActionsOpen && (
+              <div className={styles.dropdownMenu} role="menu">
+                <button
+                  type="button"
+                  role="menuitem"
+                  className={styles.dropdownItem}
+                  onClick={() => {
+                    // trocar a ação principal pelo item selecionado
+                    setPrimaryActionId(secondaryAction.id)
+                    secondaryAction.onClick()
+                  }}
+                >
+                  + {secondaryAction.label}
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -270,7 +353,6 @@ export default function Pacientes() {
           <thead>
             <tr>
               <th>Nome</th>
-              <th>Telefone</th>
               <th>Ações</th>
             </tr>
           </thead>
@@ -278,7 +360,6 @@ export default function Pacientes() {
             {filtered.map(p => (
               <tr key={p.id}>
                 <td onClick={() => navigate(`/paciente/${p.id}`)} className={styles.nomeClickable}>{p.nome}</td>
-                <td>{p.telefone || '-'}</td>
                 <td className={styles.actionsCell}>
                   <button onClick={() => navigate(`/paciente/${p.id}`)} className={styles.iconBtn} title="Ver">
                     <img src="/assets/view.svg" alt="Ver" className={styles.actionIcon} />

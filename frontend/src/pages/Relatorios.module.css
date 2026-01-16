@@ -6,6 +6,72 @@
   margin-bottom: 20px;
 }
 
+/* Mobile toolbar (match Agenda mobile pattern) */
+.mobileToolbar { display: none; }
+
+.mobileHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.mobileTitle {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.1;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.mobilePrimaryBtn {
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #f3f4f6;
+  color: #0f172a;
+  font-weight: 800;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.btnChevron {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.mobileFiltersRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.mobileSelect,
+.mobileDate {
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  padding: 0 12px;
+  font-weight: 800;
+  color: #0f172a;
+  min-width: 0;
+}
+
+.mobileSelect:focus,
+.mobileDate:focus {
+  outline: none;
+  border-color: rgba(29, 78, 216, 0.35);
+  box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.10);
+}
+
 /* Barra de filtros do relatório (estilo arredondado como no print) */
 .reportFiltersBar {
   display: flex;
@@ -141,6 +207,48 @@
   margin-bottom: 24px;
 }
 
+@media (max-width: 900px) {
+  .container {
+    padding: 14px 12px;
+  }
+
+  .title { display: none; }
+  .mobileToolbar { display: block; }
+  .reportFiltersBar { display: none; }
+
+  /* 4 cards stacked one under another */
+  .chartsGrid,
+  .dataGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .card {
+    padding: 14px;
+    border-radius: 14px;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+  }
+
+  .cardHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .cardTitleWrap { min-width: 0; }
+
+  .cardControls {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .cardControls input {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
 .card {
   background: #ffffff;
   padding: 16px;
@@ -159,6 +267,13 @@
   align-items: center;
   justify-content: center;
   color: #6b7280;
+}
+
+@media (max-width: 420px) {
+  .chartPlaceholder {
+    min-height: 210px;
+    padding: 10px;
+  }
 }
 
 .cardHeader {

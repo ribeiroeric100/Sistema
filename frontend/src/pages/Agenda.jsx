@@ -143,6 +143,37 @@ export default function Agenda() {
     setShowNewConsultaGlobal(true)
   }
 
+  const irSemanaAnterior = () => {
+    const week = Math.max(1, Number(filterWeek) || 1)
+    if (week > 1) {
+      setFilterWeek(week - 1)
+      return
+    }
+
+    const year = Number(filterYear)
+    let month = Number(filterMonth) - 1
+    if (month < 0) month = 11
+    const weeks = buildWeeksForMonth(year, month)
+    setFilterMonth(month)
+    setFilterWeek(Math.max(1, weeks.length || 1))
+  }
+
+  const irProximaSemana = () => {
+    const week = Math.max(1, Number(filterWeek) || 1)
+    const maxWeek = Math.max(1, (availableWeeks || []).length)
+    if (week < maxWeek) {
+      setFilterWeek(week + 1)
+      return
+    }
+
+    const year = Number(filterYear)
+    let month = Number(filterMonth) + 1
+    if (month > 11) month = 0
+    const weeks = buildWeeksForMonth(year, month)
+    setFilterMonth(month)
+    setFilterWeek(Math.min(1, Math.max(1, weeks.length || 1)))
+  }
+
   const handleCreate = async (e) => {
     e.preventDefault()
     const data_hora = `${newConsulta.data} ${newConsulta.hora}`
@@ -304,8 +335,42 @@ export default function Agenda() {
   return (
     <div className={styles.container}>
 
+      {/* ───── Mobile Header + Filters (match screenshot) ───── */}
+      <div className={styles.mobileToolbar}>
+        <div className={styles.mobileHeaderRow}>
+          <h1 className={styles.mobileTitle}>Agenda</h1>
+          <button className={`${styles.btnNova} ${styles.btnNovaMobile}`} onClick={abrirNovaGlobal}>
+             Marcar Consulta <span className={styles.btnChevron} aria-hidden="true">›</span>
+          </button>
+        </div>
+
+        <div className={styles.mobileFiltersRow}>
+          <button type="button" className={styles.navBtn} onClick={irSemanaAnterior} aria-label="Semana anterior">‹</button>
+
+          <select className={styles.filterSelect} value={filterMonth} onChange={e => setFilterMonth(Number(e.target.value))} aria-label="Mês">
+            {Array.from({ length: 12 }).map((_, i) => (
+              <option key={i} value={i}>
+                {new Date(0, i).toLocaleString('pt-BR', { month: 'long' })}
+              </option>
+            ))}
+          </select>
+
+          <select className={styles.filterSelect} value={filterWeek} onChange={e => setFilterWeek(Number(e.target.value))} aria-label="Semana">
+            {(availableWeeks || []).map((w, idx) => (
+              <option key={idx} value={idx + 1}>{w.label}</option>
+            ))}
+          </select>
+
+          <select className={styles.filterSelect} value={filterYear} onChange={e => setFilterYear(Number(e.target.value))} aria-label="Ano">
+            <option value={new Date().getFullYear()}>{new Date().getFullYear()}</option>
+          </select>
+
+          <button type="button" className={styles.navBtn} onClick={irProximaSemana} aria-label="Próxima semana">›</button>
+        </div>
+      </div>
+
       {/* ───── Toolbar ───── */}
-      <div className={styles.toolbar}>
+      <div className={styles.toolbarDesktop}>
         <select value={filterMonth} onChange={e => setFilterMonth(Number(e.target.value))}>
           {Array.from({length:12}).map((_,i) => (
             <option key={i} value={i}>{new Date(0, i).toLocaleString('pt-BR', { month: 'long' })}</option>
@@ -339,15 +404,14 @@ export default function Agenda() {
         {/* Dias */}
         {weekDays.map(day => {
           const dateKey = day.toISOString().slice(0, 10)
+          const weekdayLabel = day.toLocaleDateString('pt-BR', { weekday: 'long' })
+          const dateLabel = day.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
 
           return (
             <div key={dateKey} className={styles.dayColumn}>
               <div className={styles.dayHeader}>
-                {day.toLocaleDateString('pt-BR', {
-                  weekday: 'long',
-                  day: '2-digit',
-                  month: 'short'
-                })}
+                <div className={styles.dayName}>{weekdayLabel}</div>
+                <div className={styles.dayDate}>{dateLabel}</div>
               </div>
 
               <div className={styles.slotsWrap}>

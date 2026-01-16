@@ -2,38 +2,46 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100dvh;
+  padding: calc(18px + env(safe-area-inset-top))
+    calc(18px + env(safe-area-inset-right))
+    calc(18px + env(safe-area-inset-bottom))
+    calc(18px + env(safe-area-inset-left));
+  background:
+    radial-gradient(900px circle at 20% 15%, rgba(255, 255, 255, 0.65), transparent 55%),
+    radial-gradient(700px circle at 80% 35%, rgba(255, 255, 255, 0.35), transparent 55%),
+    linear-gradient(135deg, #d9d6ff 0%, #9aa2ff 45%, #7b7ff0 100%);
 }
 
 .card {
   background: white;
-  padding: 3rem;
-  border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  padding: 28px;
+  border-radius: 16px;
+  box-shadow: 0 18px 48px rgba(25, 30, 60, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.65);
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
 }
 
 .header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 22px;
 }
 
 .logo {
-  width: 110px;
+  width: 108px;
   max-width: 100%;
   height: auto;
   display: block;
-  margin: 0 auto 0.5rem auto;
+  margin: 0 auto 10px auto;
 }
 
 .brandName {
   margin: 0;
-  color: #111;
+  color: #151733;
   font-size: 18px;
   font-weight: 800;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
 }
 
 .title {
@@ -44,60 +52,138 @@
 }
 
 .formGroup {
-  margin-bottom: 1.5rem;
+  margin-bottom: 16px;
 }
 
 .formGroup label {
   display: block;
-  margin-bottom: 0.5rem;
-  font-weight: bold;
-  color: #2c3e50;
+  margin-bottom: 10px;
+  font-weight: 800;
+  color: #2a2d3a;
 }
 
-.formGroup input {
+.inputRow {
+  display: flex;
+  align-items: center;
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #bdc3c7;
-  border-radius: 4px;
-  font-size: 1rem;
+  border: 1px solid #e2e5f0;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.72);
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.inputRow:focus-within {
+  border-color: #7f89ff;
+  box-shadow: 0 0 0 4px rgba(127, 137, 255, 0.18);
+}
+
+.inputIcon {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  background: rgba(127, 137, 255, 0.14);
+  border-right: 1px solid #e2e5f0;
+  color: rgba(25, 30, 60, 0.65);
+}
+
+.inputRow input {
+  width: 100%;
+  padding: 12px 14px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  background: transparent;
+  color: #151733;
   box-sizing: border-box;
 }
 
-.formGroup input:focus {
-  outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+.inputRow input::placeholder {
+  color: rgba(21, 23, 51, 0.4);
+}
+
+.inputRow input:disabled {
+  color: rgba(21, 23, 51, 0.55);
 }
 
 .error {
   background-color: #f8d7da;
   color: #721c24;
   padding: 0.75rem;
-  border-radius: 4px;
-  margin-bottom: 1rem;
+  border-radius: 10px;
+  margin: 10px 0 14px;
   border: 1px solid #f5c6cb;
 }
 
 .submitBtn {
   width: 100%;
-  padding: 0.75rem;
-  background-color: #667eea;
+  padding: 12px 14px;
+  background: linear-gradient(180deg, #9aa4ff 0%, #7f89ff 100%);
   color: white;
   border: none;
-  border-radius: 4px;
-  font-size: 1rem;
+  border-radius: 10px;
+  font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s;
+  box-shadow: 0 10px 24px rgba(127, 137, 255, 0.35);
+  transition: transform 0.12s ease, filter 0.2s ease;
 }
 
 .submitBtn:hover:not(:disabled) {
-  background-color: #5568d3;
+  filter: brightness(0.98);
+}
+
+.submitBtn:active:not(:disabled) {
+  transform: translateY(1px);
 }
 
 .submitBtn:disabled {
-  opacity: 0.6;
+  opacity: 0.75;
   cursor: not-allowed;
+}
+
+.submitContent {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  border-top-color: rgba(255, 255, 255, 0);
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 20px;
+    border-radius: 14px;
+  }
+
+  .logo {
+    width: 96px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+
+  .submitBtn {
+    transition: none;
+  }
 }
 
 .signup {

@@ -1,0 +1,223 @@
+.root {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .root {
+    display: block;
+    background: var(--bg-surface, #f3f6fb);
+    padding: calc(10px + env(safe-area-inset-top)) 14px 10px 14px;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+  }
+}
+
+.topRow {
+  display: grid;
+  grid-template-columns: 40px 1fr 40px;
+  align-items: center;
+  gap: 8px;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.right {
+  height: 40px;
+}
+
+.leftSpacer {
+  width: 40px;
+  height: 40px;
+}
+
+.iconBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(15, 23, 42, 0.10);
+  background: rgba(255, 255, 255, 0.85);
+  color: rgba(15, 23, 42, 0.82);
+  display: grid;
+  place-items: center;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.brandLogo {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
+.brandText {
+  font-weight: 900;
+  font-size: 14px;
+  letter-spacing: 0.6px;
+  color: rgba(15, 23, 42, 0.85);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.titleRow {
+  padding-top: 10px;
+}
+
+.title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: rgba(15, 23, 42, 0.92);
+}
+
+/* Admin sheet */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(6px);
+  z-index: 3000;
+  padding: 14px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.sheet {
+  width: min(320px, 92vw);
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 16px;
+  box-shadow: 0 22px 60px rgba(15, 23, 42, 0.22);
+  overflow: hidden;
+  position: relative;
+}
+
+.sheetBody {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.profileCard {
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  background: linear-gradient(180deg, rgba(95, 119, 161, 0.34), rgba(95, 119, 161, 0.22));
+  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+}
+
+.profileTop {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 12px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  font-size: 14px;
+  letter-spacing: 0.8px;
+  color: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  flex: 0 0 auto;
+}
+
+.profileMeta {
+  min-width: 0;
+}
+
+.profileName {
+  font-weight: 900;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.15;
+}
+
+.profileEmail {
+  margin-top: 2px;
+  font-weight: 700;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.78);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profileLogout {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  background: rgba(255, 255, 255, 0.12);
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 12px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.profileLogoutIcon {
+  color: rgba(255, 255, 255, 0.90);
+  display: inline-flex;
+}
+
+.profileLogoutText {
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.profileLogout:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.sheetNav {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  gap: 6px;
+}
+
+.sheetLink {
+  text-decoration: none;
+  color: rgba(15, 23, 42, 0.88);
+  font-weight: 900;
+  padding: 12px 12px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.sheetLink:hover {
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.active {
+  background: rgba(37, 99, 235, 0.10);
+  border-color: rgba(37, 99, 235, 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay {
+    backdrop-filter: none;
+  }
+}

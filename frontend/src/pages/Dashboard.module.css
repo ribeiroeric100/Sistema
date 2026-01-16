@@ -70,11 +70,29 @@
 .dashboardWire { padding: 18px 22px 22px 22px; background: transparent; }
 .headerRow { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px }
 .welcome { display:none }
+
+@media (max-width: 900px) {
+  .headerRow {
+    width: 100%;
+  }
+
+  .headerRow > div {
+    width: 100%;
+  }
+
+  .headerRow h1 {
+    display: none;
+  }
+}
 .topStatsRow {
   display: grid;
-  grid-template-columns: repeat(4, minmax(220px, 1fr));
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
   gap: 14px;
   margin-top: 14px;
+}
+
+.topStatsRowTwo {
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
 }
 .smallCard {
   background: var(--surface, #fff);
@@ -86,6 +104,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  min-height: 112px;
 }
 
 .smallTitle {
@@ -109,6 +128,7 @@
 }
 
 .iconMoney { background: rgba(34,197,94,0.18); color: rgba(22,163,74,1); }
+.iconCalendar { background: rgba(37,99,235,0.12); color: rgba(29,78,216,1); }
 .iconCheck { background: rgba(34,197,94,0.14); color: rgba(22,163,74,1); }
 .iconUsers { background: rgba(37,99,235,0.14); color: rgba(29,78,216,1); }
 
@@ -128,6 +148,12 @@
 .topPanels { display:grid; grid-template-columns: 1fr 420px; gap:14px; align-items: start }
 .fullWidthChart { grid-column: 1 / -1 }
 .largeChartPlaceholder { height:260px; background:linear-gradient(180deg,#f6f9fc,#ffffff); border-radius:6px; display:flex; align-items:center; justify-content:center; color:#7f8c8d }
+
+@media (max-width: 900px) {
+  .topPanels {
+    grid-template-columns: 1fr;
+  }
+}
 
 /* Two-column charts grid for daily and monthly revenue panels */
 .chartsGrid {
@@ -204,9 +230,9 @@
 }
 
 /* Zebra striping for Próximas Consultas only */
-.proximasTable tbody tr:nth-child(odd) { background: #ffffff }
-.proximasTable tbody tr:nth-child(even) { background: #f1eef0 }
-.proximasTable tbody tr:hover { background: #e9e6e8 }
+/* Match mock: clean rows (no zebra), subtle hover */
+.proximasTable tbody tr { background: #ffffff }
+.proximasTable tbody tr:hover { background: rgba(243, 246, 251, 0.9) }
 
 /* Make Próximas Consultas fit the card (no horizontal scrollbar) */
 .proximasTable {
@@ -234,6 +260,26 @@
 
 /* Slightly tighter padding helps on narrower cards */
 .proximasTable td { padding: 12px 12px; }
+
+.dateCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.timeCell {
+  color: rgba(15, 23, 42, 0.55);
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+
+.actionTh {
+  text-align: center;
+}
+
+.actionTd {
+  text-align: center;
+}
 
 /* Ensure estoque headers match Próximas Consultas headers when using tableCardTable + estoqueTable */
 .tableCardTable.estoqueTable thead th,
@@ -294,9 +340,9 @@
   margin-left: auto;
 }
 .markPaidBtn {
-  background: rgba(34,197,94,0.14);
-  color: rgba(22,163,74,1);
-  border: 1px solid rgba(34,197,94,0.24);
+  background: rgba(167, 243, 208, 0.55);
+  color: rgba(6, 95, 70, 1);
+  border: 1px solid rgba(16, 185, 129, 0.22);
   cursor: pointer;
   font-weight: 900;
   transition: background-color 0.15s ease, transform 0.08s ease;
@@ -308,7 +354,7 @@
   margin-right: 8px;
 }
 
-.markPaidBtn:hover { background: rgba(34,197,94,0.18); transform: translateY(-1px) }
+.markPaidBtn:hover { background: rgba(167, 243, 208, 0.7); transform: translateY(-1px) }
 .markPaidBtn:active { transform: translateY(0) }
 .paidLabel { color: rgba(22,163,74,1); font-weight: 900; }
 
@@ -633,8 +679,29 @@
   border: 1px solid transparent;
 }
 
-.badgeSuccess { background: rgba(34,197,94,0.14); color: rgba(22,163,74,1); border-color: rgba(34,197,94,0.22); }
+.badgeSuccess { background: rgba(167, 243, 208, 0.55); color: rgba(6, 95, 70, 1); border-color: rgba(16, 185, 129, 0.22); }
 .badgeWarning { background: rgba(245,158,11,0.16); color: rgba(217,119,6,1); border-color: rgba(245,158,11,0.26); }
+
+.stockAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+}
+
+.chevron {
+  color: rgba(15, 23, 42, 0.35);
+  font-weight: 900;
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* Estoque: quantidade mais destacada, como no mock */
+.estoqueTable td:nth-child(2) {
+  font-weight: 900;
+  color: rgba(15, 23, 42, 0.92);
+}
 
 .fullWidthChart { margin-top: 14px; }
 
@@ -670,10 +737,75 @@
 }
 
 @media (max-width: 420px) {
-  .topStatsRow { grid-template-columns: 1fr; }
-  color: #95a5a6;
-  font-size: 0.85rem;
+  /* Cards do topo empilhados (mobile) */
+  .topStatsRow {
+    grid-template-columns: 1fr;
+    overflow-x: hidden;
+    justify-items: center;
+    width: 100%;
+  }
+
+  .smallCard {
+    width: 100%;
+    max-width: 360px;
+  }
+
+  .smallIcon { width: 28px; height: 28px; border-radius: 10px; }
+  .smallTitle { font-size: 0.88rem; }
+  .smallValue { font-size: 1.55rem; }
+  .smallMeta { font-size: 0.8rem; }
+
+  /* Tabelas mais compactas no mobile */
+  .tableCardInner {
+    padding: 10px 10px 12px 10px;
+    overflow-x: hidden;
+  }
+
+  .tableCardTable th,
+  .tableCardTable td {
+    padding: 10px 10px;
+  }
+
+  .proximasTable th:nth-child(1),
+  .proximasTable td:nth-child(1) {
+    width: 96px;
+  }
+
+  .proximasTable th:nth-child(4),
+  .proximasTable td:nth-child(4) {
+    width: 110px;
+  }
+
+  /* Estoque sem scroll horizontal: colunas mais estreitas */
+  .estoqueTable {
+    table-layout: fixed;
+  }
+
+  .estoqueTable th:nth-child(2),
+  .estoqueTable td:nth-child(2) {
+    width: 78px;
+    text-align: center;
+  }
+
+  .estoqueTable th:nth-child(3),
+  .estoqueTable td:nth-child(3) {
+    width: 110px;
+  }
+
+  .chevron {
+    display: none;
+  }
+
+  /* Gráficos menos largos/altos */
+  .chartCard > h3 {
+    padding: 12px 12px;
+  }
+
+  .chartCard .tableCardInner {
+    padding: 10px 10px 12px 10px;
+  }
 }
+
 
 .section {
   background: var(--card-bg);

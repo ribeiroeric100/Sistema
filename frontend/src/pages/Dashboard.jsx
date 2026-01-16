@@ -31,19 +31,19 @@ function MoneyLabelContent(props) {
 
 export default function Dashboard() {
   const { user } = useAuth()
+  const role = String(user?.role || '').toLowerCase()
+  const isRecepcao = role === 'recepcao'
   const [_alertas, setAlertas] = useState([])
   const [receita, setReceita] = useState(0)
   const [totalPacientes, setTotalPacientes] = useState(0)
   const [consultasAll, setConsultasAll] = useState([])
   const [proximas, setProximas] = useState([])
-  const [consultasRealizadasHoje, setConsultasRealizadasHoje] = useState(0)
   const [estoque, setEstoque] = useState([])
   const [consultasAgendadasHoje, setConsultasAgendadasHoje] = useState(0)
   const [consultasAgendadasTotal, setConsultasAgendadasTotal] = useState(0)
   const [suppressAgendadasUntil, _setSuppressAgendadasUntil] = useState(0)
   const [_pacientes, setPacientes] = useState([])
   const [loading, setLoading] = useState(true)
-  const [lastUpdated, setLastUpdated] = useState(null)
 
   const [acaoConsulta, setAcaoConsulta] = useState(null)
   const [acaoTipo, setAcaoTipo] = useState('realizada') // realizada | falta | cancelada | reagendar
@@ -81,7 +81,8 @@ export default function Dashboard() {
   const carregarReceitaPorHoraRef = useRef(null)
   const carregarReceitaMensalSemanasRef = useRef(null)
 
-  const ESTOQUE_ROWS = 5
+  const ESTOQUE_ROWS = 4
+  const PROXIMAS_ROWS = 4
 
   const formatMoney = (v) => `R$ ${Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
 
@@ -248,7 +249,6 @@ export default function Dashboard() {
     const today = new Date().toISOString().split('T')[0]
     if (saved && saved.date === today) {
       if (typeof saved.receita === 'number') setReceita(saved.receita)
-      if (typeof saved.consultasRealizadasHoje === 'number') setConsultasRealizadasHoje(saved.consultasRealizadasHoje)
       if (typeof saved.consultasAgendadasHoje === 'number') setConsultasAgendadasHoje(saved.consultasAgendadasHoje)
       if (typeof saved.consultasAgendadasTotal === 'number') setConsultasAgendadasTotal(saved.consultasAgendadasTotal)
     }
@@ -266,8 +266,8 @@ export default function Dashboard() {
         const now = new Date()
         const ymNow = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
         setReceita(0)
-        setConsultasRealizadasHoje(0)
         setConsultasAgendadasHoje(0)
+        setConsultasAgendadasTotal(0)
         setDailyChartDate(today)
         setMonthlyChartMonth(ymNow)
         // refresh data after reset
@@ -295,7 +295,6 @@ export default function Dashboard() {
 
       // prepare local accumulators for daily values so we can persist them reliably
       let newReceita = dashboard.receita_hoje || 0
-      let newConsultasRealizadasHoje = 0
       // carregar agendamentos para obter contagens: agendadas hoje e total agendadas
       let newAgendadasHoje = 0
       let newAgendadasTotal = 0
@@ -312,13 +311,6 @@ export default function Dashboard() {
         const now = new Date()
         const ymNow = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
         if (monthlyChartMonth !== ymNow) setMonthlyChartMonth(ymNow)
-
-        // Contar consultas realizadas hoje (independente de pago) para não zerar no refresh
-        newConsultasRealizadasHoje = (consultas || []).filter(c => {
-          if (String(c?.status || '') !== 'realizada') return false
-          try { return new Date(c.data_hora).toISOString().split('T')[0] === hojeStr } catch { return false }
-        }).length
-        setConsultasRealizadasHoje(newConsultasRealizadasHoje)
 
         // Importante: este card não deve diminuir ao finalizar uma consulta.
         // Portanto, consideramos tanto 'agendada' quanto 'realizada' nas contagens.
@@ -338,12 +330,11 @@ export default function Dashboard() {
       // persist daily counters (saved with today's date)
       try {
         const today = new Date().toISOString().split('T')[0]
-        saveSavedDaily({ date: today, receita: newReceita, consultasRealizadasHoje: newConsultasRealizadasHoje, consultasAgendadasHoje: newAgendadasHoje, consultasAgendadasTotal: newAgendadasTotal })
+        saveSavedDaily({ date: today, receita: newReceita, consultasAgendadasHoje: newAgendadasHoje, consultasAgendadasTotal: newAgendadasTotal })
       } catch { /* ignore */ }
       // set receita finally
       setReceita(newReceita)
       setPacientes(dashboard.recent_pacientes || [])
-      setLastUpdated(new Date())
     } catch (err) {
       console.error('Erro ao carregar dados:', err)
     } finally {
@@ -480,18 +471,23 @@ export default function Dashboard() {
           <h1>Dashboard</h1>
           <p className={styles.welcome}>Bem-vindo de volta, {user?.nome}!</p>
 
-          <div className={styles.topStatsRow}>
-            <div className={styles.smallCard}>
-              <div className={styles.smallTitle}>
-                <span className={`${styles.smallIcon} ${styles.iconMoney}`}><StatIcon name="money" /></span>
-                Receita Diária
+          <div className={isRecepcao ? `${styles.topStatsRow} ${styles.topStatsRowTwo}` : styles.topStatsRow}>
+            {!isRecepcao && (
+              <div className={styles.smallCard}>
+                <div className={styles.smallTitle}>
+                  <span className={`${styles.smallIcon} ${styles.iconMoney}`}><StatIcon name="money" /></span>
+                  Receita Diária
+                </div>
+                <div className={styles.smallValue}>R$ {Number(receita).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                <div className={styles.smallMeta}>R$ {Number(receita).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} hoje</div>
               </div>
-              <div className={styles.smallValue}>R$ {Number(receita).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
-              <div className={styles.smallMeta}>R$ {Number(receita).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} hoje</div>
-            </div>
+            )}
 
             <div className={`${styles.smallCard} ${styles.agendadasCard}`}>
-              <div className={styles.smallTitle}>Consultas Agendadas</div>
+              <div className={styles.smallTitle}>
+                <span className={`${styles.smallIcon} ${styles.iconCalendar}`}><StatIcon name="calendar" /></span>
+                Consultas Agendadas
+              </div>
               <table className={styles.agendadasTable}>
                 <thead>
                   <tr>
@@ -512,15 +508,6 @@ export default function Dashboard() {
 
             <div className={styles.smallCard}>
               <div className={styles.smallTitle}>
-                <span className={`${styles.smallIcon} ${styles.iconCheck}`}><StatIcon name="check" /></span>
-                Consultas Realizadas
-              </div>
-              <div className={styles.smallValue}>{consultasRealizadasHoje}</div>
-              <div className={styles.smallMeta}>Hoje</div>
-            </div>
-
-            <div className={styles.smallCard}>
-              <div className={styles.smallTitle}>
                 <span className={`${styles.smallIcon} ${styles.iconUsers}`}><StatIcon name="users" /></span>
                 Pacientes
               </div>
@@ -529,14 +516,13 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-        {lastUpdated && <div className={styles.updatedNote}>Atualizado: {new Date(lastUpdated).toLocaleTimeString('pt-BR')}</div>}
       </header>
       <div className={styles.mainGrid}>
         <div className={styles.topPanels}>
           <div className={`${styles.panel} ${styles.tableCard}`}>
             <div className={styles.panelHeader}>
               <h3>Próximas Consultas</h3>
-              <a className={styles.panelLink} href="/agenda">Ver todas ›</a>
+              <a className={styles.panelLink} href="/agenda">Ver todas →</a>
             </div>
             <div className={styles.tableCardInner}>
               <table className={`${styles.tableCardTable} ${styles.proximasTable}`}>
@@ -545,17 +531,22 @@ export default function Dashboard() {
                     <th>Data</th>
                     <th>Nome do Paciente</th>
                     <th>Procedimento</th>
-                    <th style={{textAlign:'right'}}>Ação</th>
+                    <th className={styles.actionTh}>Ação</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {proximas.filter(c => c.status !== 'realizada').slice(0,8).map(c => (
+                  {proximas.filter(c => c.status !== 'realizada').slice(0, PROXIMAS_ROWS).map(c => (
                     <tr key={c.id} className={c.status === 'agendada' ? styles.scheduledRow : ''}>
-                      <td>{new Date(c.data_hora).toLocaleDateString('pt-BR')} {new Date(c.data_hora).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</td>
+                      <td>
+                        <div className={styles.dateCell}>
+                          <div>{new Date(c.data_hora).toLocaleDateString('pt-BR')}</div>
+                          <div className={styles.timeCell}>{new Date(c.data_hora).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
+                        </div>
+                      </td>
                       <td>{c.paciente_nome}</td>
                       <td>{c.tipo_consulta}</td>
-                      <td style={{textAlign:'right'}}>
-                        <button className={styles.markPaidBtn} onClick={() => finalizarConsulta(c)}>Ações</button>
+                      <td className={styles.actionTd}>
+                        <button className={styles.markPaidBtn} onClick={() => finalizarConsulta(c)}>Finalizar</button>
                       </td>
                     </tr>
                   ))}
@@ -644,12 +635,12 @@ export default function Dashboard() {
           <div className={`${styles.panel} ${styles.tableCard}`}>
             <div className={styles.panelHeader}>
               <h3>Estoque</h3>
-              <a className={styles.panelLink} href="/estoque">Ver todos ›</a>
+              <a className={styles.panelLink} href="/estoque">Ver todos →</a>
             </div>
-            <div className={styles.tableCardInner} style={{overflowX:'auto'}}>
+            <div className={styles.tableCardInner}>
               <table className={`${styles.tableCardTable} ${styles.estoqueTable}`}>
                 <thead>
-                  <tr><th>Produto</th><th>Quantidade</th><th>Status</th></tr>
+                  <tr><th>Produto</th><th>Quantidade</th><th>Ação</th></tr>
                 </thead>
                 <tbody>
                   {estoque.slice(0, ESTOQUE_ROWS).map(p => (
@@ -662,138 +653,115 @@ export default function Dashboard() {
                           const min = Number(p?.quantidade_minima || 0)
                           const low = Number.isFinite(q) && Number.isFinite(min) && q <= min
                           return (
-                            <span className={`${styles.badge} ${low ? styles.badgeWarning : styles.badgeSuccess}`}>
-                              {low ? 'Baixo estoque' : 'Em estoque'}
-                            </span>
+                            <div className={styles.stockAction}>
+                              <span className={`${styles.badge} ${low ? styles.badgeWarning : styles.badgeSuccess}`}>
+                                {low ? 'Baixo estoque' : 'Em estoque'}
+                              </span>
+                              <span className={styles.chevron} aria-hidden="true">›</span>
+                            </div>
                           )
                         })()}
                       </td>
                     </tr>
                   ))}
-
-                  {/* Mantém sempre 5 linhas visíveis, sem crescer o card */}
-                  {Array.from({ length: Math.max(0, ESTOQUE_ROWS - estoque.slice(0, ESTOQUE_ROWS).length) }).map((_, i) => (
-                    <tr key={`estoque-placeholder-${i}`} className={styles.estoquePlaceholderRow}>
-                      <td>—</td>
-                      <td>—</td>
-                      <td>—</td>
-                    </tr>
-                  ))}
-
-                  {/* Linha extra fixa para indicar que existem mais itens */}
-                  {(() => {
-                    const outrosCount = Math.max(0, (estoque?.length || 0) - ESTOQUE_ROWS)
-                    return (
-                      <tr key="estoque-outros" className={styles.estoqueOutrosRow}>
-                        <td>Outros</td>
-                        <td>{outrosCount > 0 ? `+${outrosCount} produtos` : '—'}</td>
-                        <td>
-                          {outrosCount > 0 ? (
-                            <a className={styles.panelLink} href="/estoque">Ver todos ›</a>
-                          ) : (
-                            '—'
-                          )}
-                        </td>
-                      </tr>
-                    )
-                  })()}
                 </tbody>
               </table>
             </div>
           </div>
         </div>
 
-        
-        <div className={styles.fullWidthChart}>
-          <div className={styles.chartsGrid}>
-            <div className={`${styles.panel} ${styles.chartCard}`}>
-              <h3>Receita diária</h3>
-              <div className={styles.tableCardInner}>
-                <div className={reportStyles.cardHeader}>
-                  <div className={reportStyles.cardTitleWrap}>
-                    <div className={reportStyles.cardSubtitle}>Hora × Receita (08h–17h)</div>
-                  </div>
+        {!isRecepcao && (
+          <div className={styles.fullWidthChart}>
+            <div className={styles.chartsGrid}>
+              <div className={`${styles.panel} ${styles.chartCard}`}>
+                <h3>Receita diária</h3>
+                <div className={styles.tableCardInner}>
+                  <div className={reportStyles.cardHeader}>
+                    <div className={reportStyles.cardTitleWrap}>
+                      <div className={reportStyles.cardSubtitle}>Hora × Receita (08h–17h)</div>
+                    </div>
 
-                  <div className={reportStyles.cardControls}>
-                    <div className={reportStyles.metricValueMuted}>{new Date().toLocaleDateString('pt-BR')}</div>
-                  </div>
-                </div>
-
-                <div className={reportStyles.metricsRow}>
-                  <div className={reportStyles.metricItem}>
-                    <div className={reportStyles.metricLabel}>Total do dia</div>
-                    <div className={reportStyles.metricValue}>
-                      {formatMoney((receitaDiaHoras || []).reduce((s, v) => s + Number(v || 0), 0))}
+                    <div className={reportStyles.cardControls}>
+                      <div className={reportStyles.metricValueMuted}>{new Date().toLocaleDateString('pt-BR')}</div>
                     </div>
                   </div>
-                  <div className={reportStyles.metricItem}>
-                    <div className={reportStyles.metricLabel}>Dia</div>
-                    <div className={reportStyles.metricValueMuted}>{new Date(`${dailyChartDate}T00:00:00`).toLocaleDateString('pt-BR')}</div>
-                  </div>
-                </div>
 
-                <div className={reportStyles.chartPlaceholder}>
-                  {dailyChartLoading ? (
-                    <div className={reportStyles.chartMessage}>Carregando gráfico…</div>
-                  ) : dailyChartError ? (
-                    <div className={reportStyles.chartMessageError}>{dailyChartError}</div>
-                  ) : (
-                    <DailyHourChart data={receitaDiaHoras} startHour={HOUR_START} />
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className={`${styles.panel} ${styles.chartCard}`}>
-              <h3>Receita mensal</h3>
-              <div className={styles.tableCardInner}>
-                <div className={reportStyles.cardHeader}>
-                  <div className={reportStyles.cardTitleWrap}>
-                    <div className={reportStyles.cardSubtitle}>Relatório mensal • receita agrupada por semana</div>
-                  </div>
-
-                  <div className={reportStyles.cardControls}>
-                    <div className={reportStyles.metricValueMuted}>{monthlyChartMonth}</div>
-                  </div>
-                </div>
-
-                <div className={reportStyles.metricsRow}>
-                  <div className={reportStyles.metricItem}>
-                    <div className={reportStyles.metricLabel}>Total do mês</div>
-                    <div className={reportStyles.metricValue}>
-                      {formatMoney((monthlyChartWeeks || []).reduce((s, w) => s + Number(w?.total || 0), 0))}
-                    </div>
-                  </div>
-                  <div className={reportStyles.metricItem}>
-                    <div className={reportStyles.metricLabel}>Mês</div>
-                    <div className={reportStyles.metricValueMuted}>{monthlyChartMonth}</div>
-                  </div>
-                </div>
-
-                <div className={reportStyles.chartPlaceholder}>
-                  {monthlyChartLoading ? (
-                    <div className={reportStyles.chartMessage}>Carregando gráfico…</div>
-                  ) : monthlyChartError ? (
-                    <div className={reportStyles.chartMessageError}>{monthlyChartError}</div>
-                  ) : (
-                    <div className={reportStyles.chartStack}>
-                      <MonthlyWeeksChartRecharts weeks={monthlyChartWeeks} />
-                      <div className={reportStyles.chartFootnote}>
-                        {(() => {
-                          const list = (monthlyChartWeeks || []).map(w => ({ label: w?.label, total: Number(w?.total || 0) }))
-                          const max = Math.max(...list.map(x => x.total), 0)
-                          if (max <= 0) return 'Sem receitas (consultas realizadas/pagas) para o período selecionado.'
-                          const bestWeek = list.slice().sort((a, b) => (b.total || 0) - (a.total || 0))[0]
-                          return bestWeek ? `A ${bestWeek.label} foi a mais lucrativa, com ${formatMoney(bestWeek.total)}.` : 'Sem dados para o período selecionado.'
-                        })()}
+                  <div className={reportStyles.metricsRow}>
+                    <div className={reportStyles.metricItem}>
+                      <div className={reportStyles.metricLabel}>Total do dia</div>
+                      <div className={reportStyles.metricValue}>
+                        {formatMoney((receitaDiaHoras || []).reduce((s, v) => s + Number(v || 0), 0))}
                       </div>
                     </div>
-                  )}
+                    <div className={reportStyles.metricItem}>
+                      <div className={reportStyles.metricLabel}>Dia</div>
+                      <div className={reportStyles.metricValueMuted}>{new Date(`${dailyChartDate}T00:00:00`).toLocaleDateString('pt-BR')}</div>
+                    </div>
+                  </div>
+
+                  <div className={reportStyles.chartPlaceholder}>
+                    {dailyChartLoading ? (
+                      <div className={reportStyles.chartMessage}>Carregando gráfico…</div>
+                    ) : dailyChartError ? (
+                      <div className={reportStyles.chartMessageError}>{dailyChartError}</div>
+                    ) : (
+                      <DailyHourChart data={receitaDiaHoras} startHour={HOUR_START} />
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className={`${styles.panel} ${styles.chartCard}`}>
+                <h3>Receita mensal</h3>
+                <div className={styles.tableCardInner}>
+                  <div className={reportStyles.cardHeader}>
+                    <div className={reportStyles.cardTitleWrap}>
+                      <div className={reportStyles.cardSubtitle}>Relatório mensal • receita agrupada por semana</div>
+                    </div>
+
+                    <div className={reportStyles.cardControls}>
+                      <div className={reportStyles.metricValueMuted}>{monthlyChartMonth}</div>
+                    </div>
+                  </div>
+
+                  <div className={reportStyles.metricsRow}>
+                    <div className={reportStyles.metricItem}>
+                      <div className={reportStyles.metricLabel}>Total do mês</div>
+                      <div className={reportStyles.metricValue}>
+                        {formatMoney((monthlyChartWeeks || []).reduce((s, w) => s + Number(w?.total || 0), 0))}
+                      </div>
+                    </div>
+                    <div className={reportStyles.metricItem}>
+                      <div className={reportStyles.metricLabel}>Mês</div>
+                      <div className={reportStyles.metricValueMuted}>{monthlyChartMonth}</div>
+                    </div>
+                  </div>
+
+                  <div className={reportStyles.chartPlaceholder}>
+                    {monthlyChartLoading ? (
+                      <div className={reportStyles.chartMessage}>Carregando gráfico…</div>
+                    ) : monthlyChartError ? (
+                      <div className={reportStyles.chartMessageError}>{monthlyChartError}</div>
+                    ) : (
+                      <div className={reportStyles.chartStack}>
+                        <MonthlyWeeksChartRecharts weeks={monthlyChartWeeks} />
+                        <div className={reportStyles.chartFootnote}>
+                          {(() => {
+                            const list = (monthlyChartWeeks || []).map(w => ({ label: w?.label, total: Number(w?.total || 0) }))
+                            const max = Math.max(...list.map(x => x.total), 0)
+                            if (max <= 0) return 'Sem receitas (consultas realizadas/pagas) para o período selecionado.'
+                            const bestWeek = list.slice().sort((a, b) => (b.total || 0) - (a.total || 0))[0]
+                            return bestWeek ? `A ${bestWeek.label} foi a mais lucrativa, com ${formatMoney(bestWeek.total)}.` : 'Sem dados para o período selecionado.'
+                          })()}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   )

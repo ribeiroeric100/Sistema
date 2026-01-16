@@ -59,6 +59,10 @@ body {
   display: flex;
 }
 
+.appSidebar {
+  display: block;
+}
+
 .appContent {
   flex: 1;
   display: flex;
@@ -95,5 +99,13 @@ body {
 @media (max-width: 900px) {
   .appViewport { padding: 0; }
   .appShell { height: 100vh; border-radius: 0; }
+
+  .appSidebar {
+    display: none;
+  }
+
+  .appMain {
+    padding-bottom: calc(78px + env(safe-area-inset-bottom));
+  }
 }
 

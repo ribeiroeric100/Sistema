@@ -2,6 +2,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from '@context/AuthContext'
 import { useAuth } from '@context/useAuth'
 import Sidebar from '@components/layout/Sidebar'
+import MobileHeader from '@components/layout/MobileHeader'
+import MobileBottomTabs from '@components/layout/MobileBottomTabs'
 import Login from '@pages/auth/Login'
 import ForgotPassword from '@pages/auth/ForgotPassword'
 import ResetPassword from '@pages/auth/ResetPassword'
@@ -48,8 +50,11 @@ function AppContent() {
     <Router>
       <div className="appViewport">
         <div className="appShell">
-          <Sidebar />
+          <div className="appSidebar">
+            <Sidebar />
+          </div>
           <div className="appContent">
+            <MobileHeader />
             <main className="appMain">
               <Routes>
               <Route path="/dashboard" element={<Dashboard />} />
@@ -80,6 +85,7 @@ function AppContent() {
               <Route path="*" element={<Navigate to="/dashboard" />} />
               </Routes>
             </main>
+            <MobileBottomTabs />
           </div>
         </div>
       </div>

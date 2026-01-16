@@ -3,10 +3,152 @@
   background: #f6f6f6;
 }
 
+/* Mobile-first toolbar (screenshot-like) */
+.mobileToolbar { display: none; }
+
+.mobileHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.mobileTitle {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.1;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.btnNovaMobile {
+  margin-left: 0;
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btnChevron {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.mobileFiltersRow {
+  display: grid;
+  grid-template-columns: 36px 1fr 1.2fr 0.7fr 36px;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.navBtn {
+  height: 36px;
+  width: 36px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #0f172a;
+  font-weight: 900;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filterSelect {
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  padding: 0 12px;
+  font-weight: 700;
+  color: #0f172a;
+  min-width: 0;
+}
+
 .toolbar {
   display: flex;
   gap: 12px;
   margin-bottom: 20px;
+}
+
+.toolbarDesktop {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+  align-items: center;
+}
+
+/* Desktop filters (match screenshot pills) */
+.toolbarDesktop select {
+  height: 38px;
+  padding: 0 40px 0 14px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #f3f4f6;
+  color: #0f172a;
+  font-weight: 800;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #64748b 50%),
+    linear-gradient(135deg, #64748b 50%, transparent 50%),
+    linear-gradient(to right, transparent, transparent);
+  background-position:
+    calc(100% - 18px) 55%,
+    calc(100% - 13px) 55%,
+    calc(100% - 40px) 0.5em;
+  background-size:
+    6px 6px,
+    6px 6px,
+    1px 1.8em;
+  background-repeat: no-repeat;
+}
+
+/* Estilo das opções (limitado pelo browser/OS, mas melhora em vários casos) */
+.toolbarDesktop select option {
+  background: #f3f4f6;
+  color: #0f172a;
+  font-weight: 800;
+}
+
+.toolbarDesktop select optgroup {
+  background: #f3f4f6;
+  color: #0f172a;
+  font-weight: 900;
+}
+
+.toolbarDesktop select:hover {
+  border-color: #d1d5db;
+  background: #eef2f6;
+}
+
+.toolbarDesktop select:focus {
+  outline: none;
+  border-color: rgba(29, 78, 216, 0.35);
+  box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.10);
+}
+
+.toolbarDesktop .btnNova {
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 10px;
+  margin-left: auto;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  color: #0f172a;
+  font-weight: 800;
+}
+
+.toolbarDesktop .btnNova:hover {
+  background: #eef2f6;
+  border-color: #d1d5db;
 }
 
 .toolbar select,
@@ -59,6 +201,19 @@
   border-bottom: 1px solid #eee;
 }
 
+.dayName {
+  font-weight: 800;
+  font-size: 13px;
+  color: #111827;
+  text-transform: lowercase;
+}
+
+.dayDate {
+  margin-top: 2px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
 .slot {
   height: 60px;
   border-top: 1px solid #f0f0f0;
@@ -107,6 +262,55 @@
 }
 
 .appTime { font-size: 12px; color: #666; margin-top: 4px }
+
+@media (max-width: 900px) {
+  .container {
+    padding: 14px 12px;
+    background: transparent;
+  }
+
+  .toolbarDesktop { display: none; }
+  .mobileToolbar { display: block; }
+
+  .grid {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 12px;
+  }
+
+  /* Fixar colunas com largura mínima e permitir scroll horizontal (como no print) */
+  .grid {
+    grid-template-columns: 64px repeat(6, minmax(150px, 1fr));
+    min-width: 964px;
+  }
+
+  .dayHeader {
+    height: auto;
+    min-height: 48px;
+    padding: 10px 10px 8px 10px;
+    background: #ffffff;
+  }
+
+  .hour {
+    height: 60px;
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+
+  .appCard {
+    border-radius: 10px;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.10);
+    background: rgba(34, 197, 94, 0.10);
+    border-left-width: 4px;
+    border-left-color: rgba(16, 185, 129, 0.75);
+  }
+
+  .appTime {
+    font-size: 12px;
+    color: rgba(15, 23, 42, 0.70);
+  }
+}
 
 /* Tooltip para preview da consulta (hover) */
 .tooltip {
