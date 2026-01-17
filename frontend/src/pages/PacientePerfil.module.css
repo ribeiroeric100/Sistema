@@ -84,10 +84,28 @@
   padding: 18px;
 }
 
+.detalhesHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
 .detalhesTitle {
-  margin: 0 0 12px;
+  margin: 0;
   color: var(--text, #0f172a);
   font-size: 20px;
+}
+
+@media (max-width: 520px) {
+  .detalhesHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .btnExportarPdf {
+    width: 100%;
+  }
 }
 
 .cardsGrid {
@@ -186,9 +204,9 @@
 }
 
 .btnNovoAtendimento {
-  background: var(--primary);
-  color: white;
-  border-color: var(--primary);
+  background: var(--btn-primary-bg, var(--primary));
+  color: var(--btn-primary-fg, #ffffff);
+  border-color: var(--btn-primary-border, var(--primary));
 }
 
 .btnNovoAtendimento:hover {
@@ -495,13 +513,22 @@
   height: 36px;
   padding: 0 16px;
   border-radius: 999px;
-  border: none;
-  background: #2563eb;
-  color: #fff;
+  border: 1px solid var(--btn-primary-border, rgba(37, 99, 235, 0.35));
+  background: var(--btn-primary-bg, #2563eb);
+  color: var(--btn-primary-fg, #fff);
   font-weight: 900;
   cursor: pointer;
-  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.20);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.12);
   transition: transform 0.08s ease, filter 0.15s ease;
+}
+
+html[data-theme="dark"] .detailIcon {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.10);
+}
+
+html[data-theme="dark"] .dataNascIcon {
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .btnExportarPdf:hover { filter: brightness(1.03); transform: translateY(-1px); }

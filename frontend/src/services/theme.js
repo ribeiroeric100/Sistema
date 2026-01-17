@@ -2,6 +2,8 @@ export const DEFAULT_PRIMARY = '#2563eb'
 
 export const THEME_UI_VALUES = ['light', 'dark', 'system']
 
+const THEME_UI_STORAGE_PREFIX = 'odonto_theme_ui_v1:'
+
 export function normalizeThemeUi(value) {
   const v = String(value || '').trim().toLowerCase()
   return THEME_UI_VALUES.includes(v) ? v : 'system'
@@ -34,7 +36,12 @@ const THEME_VARS = {
     '--sidebar-active-bar': 'rgba(15, 23, 42, 0.92)',
 
     '--sidebar-start': '#f8fafc',
-    '--sidebar-end': '#eef2f7'
+    '--sidebar-end': '#eef2f7',
+
+    // Buttons (regras por modo: light=preto, system=azul, dark=branco)
+    '--btn-primary-bg': '#0f172a',
+    '--btn-primary-fg': '#ffffff',
+    '--btn-primary-border': 'rgba(15, 23, 42, 0.14)'
   },
   system: {
     // Base claro (como era o sistema), mas com sidebar lilás original
@@ -64,35 +71,72 @@ const THEME_VARS = {
     '--sidebar-active-bar': 'rgba(255, 255, 255, 0.95)',
 
     '--sidebar-start': '#7b7ff0',
-    '--sidebar-end': '#7f89ff'
+    '--sidebar-end': '#7f89ff',
+
+    // Buttons: manter azul (cor primária)
+    '--btn-primary-bg': 'var(--primary)',
+    '--btn-primary-fg': '#ffffff',
+    '--btn-primary-border': 'rgba(37, 99, 235, 0.35)'
   },
   dark: {
-    '--bg-app': 'radial-gradient(1200px circle at 18% 12%, rgba(99, 102, 241, 0.16), transparent 55%), radial-gradient(900px circle at 82% 22%, rgba(59, 130, 246, 0.14), transparent 58%), linear-gradient(180deg, #0b1220 0%, #0a1020 100%)',
-    '--bg-surface': 'radial-gradient(900px circle at 22% 18%, rgba(99, 102, 241, 0.10), transparent 55%), radial-gradient(760px circle at 88% 28%, rgba(59, 130, 246, 0.08), transparent 58%), linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(11, 18, 32, 0.96))',
-    '--surface': 'rgba(17, 24, 39, 0.90)',
-    '--text': '#e5e7eb',
-    '--muted': '#94a3b8',
-    '--border': 'rgba(255, 255, 255, 0.08)',
+    // Cores solicitadas
+    '--bg-app': '#323641',
+    '--bg-surface': '#323641',
+    '--surface': '#262a35',
+    '--text': '#ffffff',
+    '--muted': 'rgba(255, 255, 255, 0.70)',
+    '--border': 'rgba(255, 255, 255, 0.10)',
 
-    '--row-hover': 'rgba(255, 255, 255, 0.05)',
-    '--table-head-bg': 'rgba(255, 255, 255, 0.06)',
+    '--row-hover': '#262a35',
+    '--table-head-bg': '#262a35',
 
-    '--sidebar-bg': 'radial-gradient(900px circle at 20% 12%, rgba(255, 255, 255, 0.06), transparent 56%), linear-gradient(180deg, rgba(30, 41, 59, 0.92) 0%, rgba(15, 23, 42, 0.96) 100%)',
+    '--sidebar-bg': '#393d49',
     '--sidebar-overlay': 'transparent',
     '--sidebar-overlay-opacity': '0',
     '--sidebar-blur': '0px',
-    '--sidebar-border': 'rgba(255, 255, 255, 0.08)',
-    '--sidebar-fg': 'rgba(226, 232, 240, 0.95)',
-    '--sidebar-fg-muted': 'rgba(226, 232, 240, 0.78)',
-    '--sidebar-item-hover': 'rgba(255, 255, 255, 0.06)',
-    '--sidebar-item-active': 'rgba(255, 255, 255, 0.08)',
+    '--sidebar-border': 'rgba(0, 0, 0, 0.35)',
+    '--sidebar-fg': '#ffffff',
+    '--sidebar-fg-muted': 'rgba(255, 255, 255, 0.78)',
+    '--sidebar-item-hover': '#262a35',
+    '--sidebar-item-active': 'rgba(255, 255, 255, 0.10)',
     '--sidebar-card-bg': 'rgba(255, 255, 255, 0.06)',
     '--sidebar-card-border': 'rgba(255, 255, 255, 0.10)',
 
-    '--sidebar-active-bar': 'rgba(255, 255, 255, 0.95)',
+    '--sidebar-active-bar': '#ffffff',
 
-    '--sidebar-start': '#1f2a44',
-    '--sidebar-end': '#0f172a'
+    '--sidebar-start': '#393d49',
+    '--sidebar-end': '#393d49',
+
+    // Buttons: branco
+    '--btn-primary-bg': '#ffffff',
+    '--btn-primary-fg': '#0f172a',
+    '--btn-primary-border': 'rgba(0, 0, 0, 0.35)'
+  }
+}
+
+function getUserThemeStorageKey(userKey) {
+  const safe = encodeURIComponent(String(userKey || '').trim().toLowerCase() || 'anon')
+  return `${THEME_UI_STORAGE_PREFIX}${safe}`
+}
+
+export function loadUserThemeUiPreference(userKey) {
+  try {
+    if (typeof window === 'undefined') return null
+    const raw = localStorage.getItem(getUserThemeStorageKey(userKey))
+    if (!raw) return null
+    return normalizeThemeUi(raw)
+  } catch {
+    return null
+  }
+}
+
+export function saveUserThemeUiPreference(userKey, themeUi) {
+  try {
+    if (typeof window === 'undefined') return
+    const v = normalizeThemeUi(themeUi)
+    localStorage.setItem(getUserThemeStorageKey(userKey), v)
+  } catch {
+    // ignore
   }
 }
 

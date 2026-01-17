@@ -29,9 +29,9 @@
   height: 38px;
   padding: 0 12px;
   border-radius: 10px;
-  border: 1px solid #e5e7eb;
-  background: #f3f4f6;
-  color: #0f172a;
+  border: 1px solid var(--btn-primary-border, #e5e7eb);
+  background: var(--btn-primary-bg, #f3f4f6);
+  color: var(--btn-primary-fg, #0f172a);
   font-weight: 800;
   cursor: pointer;
   display: inline-flex;
@@ -138,12 +138,12 @@
   height: 36px;
   padding: 0 16px;
   border-radius: 999px;
-  border: none;
-  background: #2563eb;
-  color: #fff;
+  border: 1px solid var(--btn-primary-border, rgba(37, 99, 235, 0.35));
+  background: var(--btn-primary-bg, #2563eb);
+  color: var(--btn-primary-fg, #fff);
   font-weight: 900;
   cursor: pointer;
-  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.20);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.12);
   transition: transform 0.08s ease, filter 0.15s ease;
 }
 
@@ -170,9 +170,9 @@
 }
 
 .btnPrimary {
-  background: #2563eb;
-  color: #fff;
-  border: none;
+  background: var(--btn-primary-bg, #2563eb);
+  color: var(--btn-primary-fg, #fff);
+  border: 1px solid var(--btn-primary-border, rgba(37, 99, 235, 0.35));
   padding: 8px 14px;
   border-radius: 6px;
   cursor: pointer;
@@ -256,6 +256,9 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
+/* Tema escuro: manter infos dos gráficos em "preto" (padrão do sistema).
+   Não forçar cards/inputs para branco. */
+
 .chartPlaceholder {
   background: linear-gradient(180deg, #fbfdff 0%, #f6f9ff 100%);
   border: 1px solid #e6eef8;
@@ -267,6 +270,37 @@
   align-items: center;
   justify-content: center;
   color: #6b7280;
+}
+
+/* Tema escuro: esses cards/gráficos continuam claros, então o texto do Recharts
+   precisa ser "preto do sistema" para não sumir (App.css deixa branco no dark). */
+html[data-theme="dark"] .chartPlaceholder :global(.recharts-text),
+html[data-theme="dark"] .card :global(.recharts-text) {
+  fill: #0f172a;
+}
+
+html[data-theme="dark"] .chartPlaceholder :global(.recharts-cartesian-axis-tick-value),
+html[data-theme="dark"] .card :global(.recharts-cartesian-axis-tick-value) {
+  fill: rgba(15, 23, 42, 0.78);
+}
+
+html[data-theme="dark"] .chartPlaceholder :global(.recharts-cartesian-grid line),
+html[data-theme="dark"] .card :global(.recharts-cartesian-grid line) {
+  stroke: rgba(15, 23, 42, 0.12);
+}
+
+html[data-theme="dark"] .chartPlaceholder :global(.recharts-default-tooltip),
+html[data-theme="dark"] .card :global(.recharts-default-tooltip) {
+  background-color: #ffffff !important;
+  border: 1px solid rgba(15, 23, 42, 0.16) !important;
+  color: #0f172a !important;
+}
+
+html[data-theme="dark"] .chartPlaceholder :global(.recharts-tooltip-item),
+html[data-theme="dark"] .chartPlaceholder :global(.recharts-tooltip-label),
+html[data-theme="dark"] .card :global(.recharts-tooltip-item),
+html[data-theme="dark"] .card :global(.recharts-tooltip-label) {
+  color: #0f172a !important;
 }
 
 @media (max-width: 420px) {

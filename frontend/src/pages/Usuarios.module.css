@@ -38,7 +38,7 @@
 }
 
 .card {
-  background: #ffffff;
+  background: var(--surface, #ffffff);
   border-radius: 16px;
   border: 1px solid rgba(15, 23, 42, 0.08);
   box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
@@ -57,13 +57,13 @@
   margin: 0;
   font-size: 18px;
   font-weight: 900;
-  color: #0f172a;
+  color: var(--text, #0f172a);
 }
 
 .cardHint {
   margin-top: 4px;
   font-size: 12px;
-  color: #64748b;
+  color: var(--muted, #64748b);
   font-weight: 700;
 }
 
@@ -105,7 +105,7 @@
 .label {
   font-size: 13px;
   font-weight: 900;
-  color: rgba(15, 23, 42, 0.75);
+  color: var(--muted, rgba(15, 23, 42, 0.75));
 }
 
 .input,
@@ -113,8 +113,9 @@
   width: 100%;
   padding: 12px 12px;
   border-radius: 12px;
-  border: 1px solid rgba(15, 23, 42, 0.10);
-  background: #ffffff;
+  border: 1px solid var(--border, rgba(15, 23, 42, 0.10));
+  background: var(--surface, #ffffff);
+  color: var(--text, #0f172a);
   outline: none;
   font-size: 14px;
   transition: border-color 0.12s ease, box-shadow 0.12s ease;
@@ -137,9 +138,9 @@
 .primaryBtn {
   padding: 10px 14px;
   border-radius: 12px;
-  border: 1px solid rgba(15, 23, 42, 0.12);
-  background: var(--primary, #111827);
-  color: #ffffff;
+  border: 1px solid var(--btn-primary-border, rgba(15, 23, 42, 0.12));
+  background: var(--btn-primary-bg, var(--primary, #111827));
+  color: var(--btn-primary-fg, #ffffff);
   font-weight: 900;
   cursor: pointer;
 }
@@ -152,9 +153,9 @@
 .secondaryBtn {
   padding: 10px 14px;
   border-radius: 12px;
-  border: 1px solid rgba(15, 23, 42, 0.12);
-  background: #ffffff;
-  color: rgba(15, 23, 42, 0.86);
+  border: 1px solid var(--border, rgba(15, 23, 42, 0.12));
+  background: var(--surface, #ffffff);
+  color: var(--text, rgba(15, 23, 42, 0.86));
   font-weight: 900;
   cursor: pointer;
 }
@@ -179,26 +180,43 @@
 }
 
 .table thead tr {
-  background: rgba(248, 250, 252, 1);
+  background: var(--table-head-bg, rgba(248, 250, 252, 1));
   text-align: left;
 }
 
 .table th,
 .table td {
   padding: 12px 12px;
-  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+  border-bottom: 1px solid var(--border, rgba(15, 23, 42, 0.06));
 }
 
 .table th {
-  color: rgba(15, 23, 42, 0.55);
+  color: var(--muted, rgba(15, 23, 42, 0.55));
   font-weight: 900;
   font-size: 12px;
 }
 
 .table td {
-  color: rgba(15, 23, 42, 0.86);
+  color: var(--text, rgba(15, 23, 42, 0.86));
   font-weight: 700;
   font-size: 14px;
+}
+
+html[data-theme="dark"] .card {
+  border-color: var(--border, rgba(255, 255, 255, 0.10));
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+}
+
+html[data-theme="dark"] .table th,
+html[data-theme="dark"] .table td {
+  border-bottom-color: var(--border, rgba(255, 255, 255, 0.10));
+}
+
+html[data-theme="dark"] .smallBtn,
+html[data-theme="dark"] .secondaryBtn {
+  background: var(--surface, #262a35);
+  color: var(--text);
+  border-color: var(--border, rgba(255, 255, 255, 0.10));
 }
 
 .actionsCell {

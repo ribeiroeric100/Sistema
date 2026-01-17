@@ -1,6 +1,6 @@
 .container {
   padding: 24px;
-  background: #f6f6f6;
+  background: var(--bg-app, #f6f6f6);
 }
 
 /* Mobile-first toolbar (screenshot-like) */
@@ -19,7 +19,7 @@
   font-size: 28px;
   line-height: 1.1;
   font-weight: 900;
-  color: #0f172a;
+  color: var(--text, #0f172a);
 }
 
 .btnNovaMobile {
@@ -30,6 +30,12 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
+}
+
+html[data-theme="dark"] .btnNovaMobile {
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid rgba(0, 0, 0, 0.35);
 }
 
 .btnChevron {
@@ -49,9 +55,9 @@
   height: 36px;
   width: 36px;
   border-radius: 10px;
-  border: 1px solid #e5e7eb;
-  background: #ffffff;
-  color: #0f172a;
+  border: 1px solid var(--border, #e5e7eb);
+  background: var(--surface, #ffffff);
+  color: var(--text, #0f172a);
   font-weight: 900;
   cursor: pointer;
   display: inline-flex;
@@ -62,11 +68,11 @@
 .filterSelect {
   height: 36px;
   border-radius: 10px;
-  border: 1px solid #e5e7eb;
-  background: #ffffff;
+  border: 1px solid var(--border, #e5e7eb);
+  background: var(--surface, #ffffff);
   padding: 0 12px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text, #0f172a);
   min-width: 0;
 }
 
@@ -88,9 +94,9 @@
   height: 38px;
   padding: 0 40px 0 14px;
   border-radius: 10px;
-  border: 1px solid #e5e7eb;
-  background: #f3f4f6;
-  color: #0f172a;
+  border: 1px solid var(--border, #e5e7eb);
+  background: var(--surface, #f3f4f6);
+  color: var(--text, #0f172a);
   font-weight: 800;
   cursor: pointer;
   appearance: none;
@@ -113,14 +119,14 @@
 
 /* Estilo das opções (limitado pelo browser/OS, mas melhora em vários casos) */
 .toolbarDesktop select option {
-  background: #f3f4f6;
-  color: #0f172a;
+  background: var(--surface, #f3f4f6);
+  color: var(--text, #0f172a);
   font-weight: 800;
 }
 
 .toolbarDesktop select optgroup {
-  background: #f3f4f6;
-  color: #0f172a;
+  background: var(--surface, #f3f4f6);
+  color: var(--text, #0f172a);
   font-weight: 900;
 }
 
@@ -140,10 +146,16 @@
   padding: 0 14px;
   border-radius: 10px;
   margin-left: auto;
-  background: #f3f4f6;
-  border: 1px solid #e5e7eb;
-  color: #0f172a;
+  background: var(--surface, #f3f4f6);
+  border: 1px solid var(--border, #e5e7eb);
+  color: var(--text, #0f172a);
   font-weight: 800;
+}
+
+html[data-theme="dark"] .toolbarDesktop .btnNova {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: rgba(0, 0, 0, 0.35);
 }
 
 .toolbarDesktop .btnNova:hover {
@@ -166,10 +178,16 @@
   border: 1px solid #E4E4E8;
 }
 
+html[data-theme="dark"] .btnNova {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: rgba(0, 0, 0, 0.35);
+}
+
 .grid {
   display: grid;
   grid-template-columns: 80px repeat(6, 1fr);
-  background: white;
+  background: var(--surface, #ffffff);
   border-radius: 12px;
   overflow: hidden;
 }
@@ -186,37 +204,37 @@
 .hour {
   height: 60px;
   padding: 10px;
-  color: #666;
-  border-top: 1px solid #eee;
+  color: var(--muted, #666);
+  border-top: 1px solid var(--border, #eee);
 }
 
 .dayColumn {
-  border-left: 1px solid #eee;
+  border-left: 1px solid var(--border, #eee);
 }
 
 .dayHeader {
   height: 48px;
   padding: 10px;
   font-weight: 600;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border, #eee);
 }
 
 .dayName {
   font-weight: 800;
   font-size: 13px;
-  color: #111827;
+  color: var(--text, #111827);
   text-transform: lowercase;
 }
 
 .dayDate {
   margin-top: 2px;
   font-size: 12px;
-  color: #6b7280;
+  color: var(--muted, #6b7280);
 }
 
 .slot {
   height: 60px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--border, #f0f0f0);
   padding: 4px;
 }
 
@@ -259,9 +277,11 @@
   padding: 8px 10px;
   position: relative;
   box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  color: #0f172a;
 }
 
-.appTime { font-size: 12px; color: #666; margin-top: 4px }
+.appCard strong { color: #0f172a; }
+.appTime { font-size: 12px; color: #0f172a; margin-top: 4px; opacity: 0.85 }
 
 @media (max-width: 900px) {
   .container {
@@ -308,7 +328,8 @@
 
   .appTime {
     font-size: 12px;
-    color: rgba(15, 23, 42, 0.70);
+    color: #0f172a;
+    opacity: 0.85;
   }
 }
 

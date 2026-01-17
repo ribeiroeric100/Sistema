@@ -277,12 +277,17 @@ export default function MobileHeader() {
                     <span className={styles.drawerChevron} aria-hidden="true"><ChevronRightIcon /></span>
                   </NavLink>
                 ))}
-              </nav>
 
-              <button type="button" className={styles.drawerLogout} onClick={handleLogout}>
-                <span className={styles.drawerLogoutIcon} aria-hidden="true"><LogoutIcon /></span>
-                <span className={styles.drawerLogoutText}>Sair</span>
-              </button>
+                <button
+                  type="button"
+                  className={`${styles.drawerItem} ${styles.drawerButtonItem}`}
+                  onClick={handleLogout}
+                >
+                  <span className={styles.drawerIcon} aria-hidden="true"><LogoutIcon /></span>
+                  <span className={styles.drawerLabel}>Sair</span>
+                  <span className={styles.drawerChevron} aria-hidden="true" />
+                </button>
+              </nav>
             </div>
           </div>
         </div>

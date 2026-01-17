@@ -113,11 +113,15 @@
   justify-content: flex-start;
 }
 
+:global(html[data-theme="dark"]) .overlay {
+  background: rgba(0, 0, 0, 0.60);
+}
+
 .sheet {
   width: min(340px, 86vw);
   height: 100vh;
-  background: rgba(255, 255, 255, 0.98);
-  border-right: 1px solid rgba(15, 23, 42, 0.12);
+  background: var(--sidebar-bg, rgba(255, 255, 255, 0.98));
+  border-right: 1px solid var(--sidebar-border, rgba(15, 23, 42, 0.12));
   border-top-right-radius: 18px;
   border-bottom-right-radius: 18px;
   box-shadow: 0 22px 60px rgba(15, 23, 42, 0.22);
@@ -193,12 +197,12 @@
 
 .drawerItem {
   text-decoration: none;
-  color: rgba(15, 23, 42, 0.88);
+  color: var(--sidebar-fg, rgba(15, 23, 42, 0.88));
   font-weight: 800;
   padding: 12px 12px;
   border-radius: 12px;
-  border: 1px solid rgba(15, 23, 42, 0.06);
-  background: rgba(255, 255, 255, 0.90);
+  border: 1px solid var(--sidebar-border, rgba(15, 23, 42, 0.06));
+  background: var(--surface, rgba(255, 255, 255, 0.90));
   display: grid;
   grid-template-columns: 34px 1fr 24px;
   align-items: center;
@@ -206,7 +210,16 @@
 }
 
 .drawerItem:hover {
-  background: rgba(37, 99, 235, 0.08);
+  background: var(--sidebar-item-hover, rgba(37, 99, 235, 0.08));
+}
+
+.drawerButtonItem {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
 }
 
 .drawerIcon {
@@ -216,15 +229,15 @@
   display: grid;
   place-items: center;
   background: rgba(37, 99, 235, 0.10);
-  color: rgba(37, 99, 235, 0.95);
+  color: var(--sidebar-fg, rgba(37, 99, 235, 0.95));
 }
 
 .drawerLabel {
-  color: rgba(15, 23, 42, 0.88);
+  color: var(--sidebar-fg, rgba(15, 23, 42, 0.88));
 }
 
 .drawerChevron {
-  color: rgba(15, 23, 42, 0.35);
+  color: var(--sidebar-fg-muted, rgba(15, 23, 42, 0.35));
   display: inline-flex;
   justify-content: flex-end;
 }

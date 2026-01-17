@@ -17,7 +17,7 @@ import Auditoria from '@pages/Auditoria'
 import Usuarios from '@pages/Usuarios'
 import './App.css'
 import { configuracoesService } from '@services/api'
-import { applyClinicTheme, normalizeThemeUi } from '@services/theme'
+import { applyClinicTheme, loadUserThemeUiPreference, normalizeThemeUi } from '@services/theme'
 import { useEffect } from 'react'
 
 function RequireRoles({ role, roles, children }) {
@@ -34,19 +34,16 @@ function AppContent() {
     let alive = true
     let cleanup = null
 
+    const userThemeKey = String(user?.email || user?.nome || '').trim().toLowerCase()
+
     const run = async () => {
       try {
         const data = await configuracoesService.buscar()
         if (!alive) return
-        const roleKey = role === 'admin'
-          ? 'tema_ui_admin'
-          : role === 'dentista'
-            ? 'tema_ui_dentista'
-            : role === 'recepcao'
-              ? 'tema_ui_recepcao'
-              : 'tema_ui'
 
-        const themeUi = normalizeThemeUi(data?.[roleKey] || data?.tema_ui || 'system')
+        // Preferência por usuário (salva localmente) > legado global (tema_ui) > system
+        const stored = loadUserThemeUiPreference(userThemeKey)
+        const themeUi = normalizeThemeUi(stored || data?.tema_ui || 'system')
         cleanup = applyClinicTheme(data?.cor_primaria ?? '#2563eb', themeUi)
       } catch {
         cleanup = applyClinicTheme('#2563eb', 'system')

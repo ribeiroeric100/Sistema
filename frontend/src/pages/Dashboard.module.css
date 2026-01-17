@@ -86,13 +86,20 @@
 }
 .topStatsRow {
   display: grid;
-  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
   margin-top: 14px;
 }
 
 .topStatsRowTwo {
-  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* Mobile: evitar scroll horizontal e empilhar cards do topo */
+@media (max-width: 700px) {
+  .dashboardWire { padding: 14px 14px 18px 14px; overflow-x: hidden; }
+  .topStatsRow { grid-template-columns: 1fr; }
+  .topStatsRowTwo { grid-template-columns: 1fr; }
 }
 .smallCard {
   background: var(--surface, #fff);
@@ -123,7 +130,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #0f172a;
+  color: var(--text, #0f172a);
   flex: 0 0 auto;
 }
 
@@ -242,6 +249,14 @@
   width: 100%;
 }
 
+:global(html[data-theme="dark"]) .proximasTable th {
+  color: #ffffff;
+}
+
+:global(html[data-theme="dark"]) .proximasTable td {
+  color: #ffffff;
+}
+
 .proximasTable th,
 .proximasTable td {
   white-space: normal;
@@ -275,6 +290,10 @@
   font-size: 0.82rem;
 }
 
+:global(html[data-theme="dark"]) .timeCell {
+  color: rgba(255, 255, 255, 0.85);
+}
+
 .actionTh {
   text-align: center;
 }
@@ -292,6 +311,12 @@
   font-weight: 700;
   border-bottom: 1px solid #e6e6e6;
   text-align: left;
+}
+
+:global(html[data-theme="dark"]) .tableCardTable.estoqueTable thead th,
+:global(html[data-theme="dark"]) .tableCardTable.estoqueTable th {
+  color: #ffffff;
+  border-bottom-color: var(--border, rgba(255, 255, 255, 0.10));
 }
 
 /* make table headers sit flush under the card title */
@@ -384,6 +409,25 @@
   box-shadow: 0 18px 60px rgba(15, 23, 42, 0.28);
   border: 1px solid rgba(15, 23, 42, 0.10);
   overflow: hidden;
+}
+
+:global(html[data-theme="dark"]) .actionOverlay {
+  background: rgba(0, 0, 0, 0.60);
+}
+
+:global(html[data-theme="dark"]) .actionModal {
+  background: var(--surface);
+  border-color: rgba(255, 255, 255, 0.10);
+}
+
+:global(html[data-theme="dark"]) .actionInfoRow {
+  background: #262a35;
+  border-bottom-color: rgba(255, 255, 255, 0.10);
+}
+
+:global(html[data-theme="dark"]) .actionIconBox {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.80);
 }
 
 .actionHeader {
@@ -601,16 +645,16 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
-.nextDate { width:90px; color:#7f8c8d; font-weight:700 }
+.nextDate { width:90px; color: var(--muted, #7f8c8d); font-weight:700 }
 .nextTimes { flex:1; display:flex; gap:0.5rem; align-items:center }
-.time { font-weight:700; color:#083344; width:70px }
-.patient { color:#34495e }
-.nextType { color:#7f8c8d; font-size:0.9rem }
+.time { font-weight:700; color: var(--text, #083344); width:70px }
+.patient { color: var(--text, #34495e) }
+.nextType { color: var(--muted, #7f8c8d); font-size:0.9rem }
 .linkRow { text-align:right; margin-top:0.6rem }
 
-.chartPanel .chartPlaceholder { height:160px; background:linear-gradient(180deg,#f6f9fc,#ffffff); border-radius:6px; display:flex; align-items:center; justify-content:center; color:#7f8c8d }
+.chartPanel .chartPlaceholder { height:160px; background:linear-gradient(180deg, var(--bg-surface, #f6f9fc), var(--surface, #ffffff)); border-radius:6px; display:flex; align-items:center; justify-content:center; color: var(--muted, #7f8c8d) }
 .periods { display:flex; gap:0.5rem; margin-top:0.65rem }
-.periods button { padding:0.35rem 0.6rem; border-radius:6px; border:1px solid #e6eef8; background:white; cursor:pointer }
+.periods button { padding:0.35rem 0.6rem; border-radius:6px; border:1px solid var(--border, #e6eef8); background: var(--surface, #fff); color: var(--text, #0f172a); cursor:pointer }
 .activePeriod { background:var(--primary-2); color:white }
 
 .estoqueTable {
@@ -621,24 +665,24 @@
 
 .estoqueTable th,
 .estoqueTable td {
-  border: 1px solid #e6eef8;
+  border: 1px solid var(--border, #e6eef8);
   padding: 0.6rem 0.8rem;
   vertical-align: middle;
   text-align: left;
 }
 
 .estoqueTable th {
-  background: rgba(243,246,251,0.8);
-  color: rgba(15,23,42,0.55);
+  background: var(--table-head-bg, rgba(243,246,251,0.8));
+  color: var(--muted, rgba(15,23,42,0.55));
   font-weight: 900;
-  border-bottom: 1px solid rgba(15,23,42,0.08);
+  border-bottom: 1px solid var(--border, rgba(15,23,42,0.08));
 }
 
-.estoqueTable td { background: #ffffff }
+.estoqueTable td { background: var(--surface, #ffffff); color: var(--text, #0f172a) }
 
-.estoqueTable tbody tr:nth-child(odd) { background: #ffffff }
-.estoqueTable tbody tr:nth-child(even) { background: #f1eef0 }
-.estoqueTable tbody tr:hover { background: #e9e6e8 }
+.estoqueTable tbody tr:nth-child(odd) { background: var(--surface, #ffffff) }
+.estoqueTable tbody tr:nth-child(even) { background: var(--bg-surface, #f1eef0) }
+.estoqueTable tbody tr:hover { background: var(--row-hover, #e9e6e8) }
 
 .estoquePlaceholderRow td {
   color: var(--muted, #6b7280);
@@ -664,15 +708,15 @@
 .agendadasCard { display:block; padding: 14px 14px 12px 14px; min-width:0 }
 .agendadasCard .smallTitle { padding: 0; background: transparent; border-bottom: none }
 .agendadasTable { width:100%; border-collapse: collapse; }
-.agendadasTable thead th { text-align:left; padding: 10px 0 8px 0; font-weight: 900; color: rgba(15,23,42,0.55); border-bottom: 1px solid rgba(15,23,42,0.06) }
-.agendadasTable tbody td { padding: 12px 0; font-weight: 900; font-size: 1.7rem; color:#0f172a; }
+.agendadasTable thead th { text-align:left; padding: 10px 0 8px 0; font-weight: 900; color: var(--muted, rgba(15,23,42,0.55)); border-bottom: 1px solid var(--border, rgba(15,23,42,0.06)) }
+.agendadasTable tbody td { padding: 12px 0; font-weight: 900; font-size: 1.7rem; color: var(--text, #0f172a); }
 .agendadasTable tbody tr + tr td { border-top:1px solid #e6e6e6 }
 
 /* spacer column and larger values */
 .agendadasTable thead th.agSpacerHead { width: 18px; padding:0; }
 .agendadasTable tbody td.agSpacer { width:18px; padding:0; }
 .agendadasTable tbody td.agSpacer {
-  border-left: 1px solid rgba(15,23,42,0.08); /* vertical divider */
+  border-left: 1px solid var(--border, rgba(15,23,42,0.08)); /* vertical divider */
 }
 
 .badge {
@@ -703,10 +747,22 @@
   line-height: 1;
 }
 
+html[data-theme="dark"] .chevron {
+  color: #ffffff;
+}
+
+/* Tema escuro: Ação do estoque com "botão" branco */
+html[data-theme="dark"] .stockAction .badgeSuccess,
+html[data-theme="dark"] .stockAction .badgeWarning {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: rgba(0, 0, 0, 0.35);
+}
+
 /* Estoque: quantidade mais destacada, como no mock */
 .estoqueTable td:nth-child(2) {
   font-weight: 900;
-  color: rgba(15, 23, 42, 0.92);
+  color: var(--text, rgba(15, 23, 42, 0.92));
 }
 
 .fullWidthChart { margin-top: 14px; }
@@ -720,8 +776,23 @@
   padding: 14px 16px;
   font-size: 1.02rem;
   font-weight: 900;
+  color: var(--text, #0f172a);
+  border-bottom: 1px solid var(--border, rgba(15,23,42,0.06));
+}
+
+/* Tema escuro: botão Finalizar branco (pedido) */
+html[data-theme="dark"] .markPaidBtn {
+  background: #ffffff;
   color: #0f172a;
-  border-bottom: 1px solid rgba(15,23,42,0.06);
+  border: 1px solid rgba(0, 0, 0, 0.35);
+}
+
+html[data-theme="dark"] .markPaidBtn:hover {
+  background: rgba(255, 255, 255, 0.92);
+}
+
+html[data-theme="dark"] .paidLabel {
+  color: rgba(34, 197, 94, 1);
 }
 
 .chartCard .tableCardInner {

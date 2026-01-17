@@ -3,12 +3,15 @@ import { useNavigate } from 'react-router-dom'
 import styles from './Configuracoes.module.css'
 import { configuracoesService } from '../services/api'
 import { useAuth } from '../context/useAuth'
-import { applyClinicTheme, normalizeHex, normalizeThemeUi } from '../services/theme'
+import { applyClinicTheme, loadUserThemeUiPreference, normalizeHex, normalizeThemeUi, saveUserThemeUiPreference } from '../services/theme'
 
 export default function Configuracoes() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const isAdmin = useMemo(() => user?.role === 'admin', [user?.role])
+
+  const userThemeKey = useMemo(() => String(user?.email || user?.nome || '').trim().toLowerCase(), [user?.email, user?.nome])
+  const [userThemeUi, setUserThemeUi] = useState(() => normalizeThemeUi(loadUserThemeUiPreference(userThemeKey) || 'system'))
 
   const TABS = useMemo(() => ([
     { id: 'identidade', label: 'Identidade da Clínica' },
@@ -44,8 +47,6 @@ export default function Configuracoes() {
     mensagem_lembrete: 'Olá {{paciente}}, sua consulta com o Dr. {{dentista}} é amanhã às {{hora}}.'
   })
 
-  const [previewLogo, setPreviewLogo] = useState(null)
-
   const currentRole = useMemo(() => String(user?.role || '').toLowerCase(), [user?.role])
   const currentRoleThemeKey = useMemo(() => {
     if (currentRole === 'admin') return 'tema_ui_admin'
@@ -59,11 +60,21 @@ export default function Configuracoes() {
     return normalizeThemeUi(form?.[currentRoleThemeKey] || form?.tema_ui || 'system')
   }, [form, currentRoleThemeKey])
 
+  const appliedThemeUi = useMemo(() => {
+    // Preferência do usuário (local) > preferências legadas do backend
+    return normalizeThemeUi(userThemeUi || effectiveThemeUi || 'system')
+  }, [userThemeUi, effectiveThemeUi])
+
   // Mantém o tema (claro/escuro/sistema) e a cor primária aplicados globalmente.
   useEffect(() => {
-    const cleanup = applyClinicTheme(form.cor_primaria, effectiveThemeUi)
+    const cleanup = applyClinicTheme(form.cor_primaria, appliedThemeUi)
     return () => cleanup?.()
-  }, [form.cor_primaria, effectiveThemeUi])
+  }, [form.cor_primaria, appliedThemeUi])
+
+  useEffect(() => {
+    // Quando troca de usuário, restaura preferências locais
+    setUserThemeUi(normalizeThemeUi(loadUserThemeUiPreference(userThemeKey) || 'system'))
+  }, [userThemeKey])
 
   useEffect(() => {
     let alive = true
@@ -114,45 +125,13 @@ export default function Configuracoes() {
     setForm((prev) => ({ ...prev, [key]: checked }))
   }
 
-  const handleThemeChangeFor = (key, value) => {
+  const handleUserThemeChange = (value) => {
     const v = normalizeThemeUi(value)
-    setForm((prev) => ({ ...prev, [key]: v }))
+    setUserThemeUi(v)
+    saveUserThemeUiPreference(userThemeKey, v)
+    setSuccess('Aparência salva para seu usuário neste dispositivo.')
   }
 
-  const handlePrimaryColorChange = (value) => {
-    setForm((prev) => {
-      const nextColor = normalizeHex(value)
-      return { ...prev, cor_primaria: nextColor }
-    })
-  }
-
-  const pickFileAsDataUrl = async (file) => {
-    if (!file) return ''
-    const maxMb = 2.5
-    if (file.size > maxMb * 1024 * 1024) {
-      throw new Error(`Arquivo muito grande. Máx: ${maxMb}MB`)
-    }
-    return await new Promise((resolve, reject) => {
-      const reader = new FileReader()
-      reader.onerror = () => reject(new Error('Falha ao ler arquivo'))
-      reader.onload = () => resolve(String(reader.result || ''))
-      reader.readAsDataURL(file)
-    })
-  }
-
-  const handleLogoUpload = (key) => async (e) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    try {
-      setError('')
-      const dataUrl = await pickFileAsDataUrl(file)
-      setForm((prev) => ({ ...prev, [key]: dataUrl }))
-    } catch (err) {
-      setError(err?.message || 'Erro ao carregar imagem')
-    } finally {
-      e.target.value = ''
-    }
-  }
 
   const handleSave = async () => {
     setSaving(true)
@@ -283,48 +262,6 @@ export default function Configuracoes() {
               />
             </div>
 
-            <div className={styles.logoRow}>
-              <div className={styles.logoCard}>
-                <div className={styles.logoTitle}>Logo claro</div>
-                <div className={styles.logoDrop}>
-                  {form.logo_claro ? (
-                    <img className={styles.logoImg} src={form.logo_claro} alt="Logo claro" />
-                  ) : (
-                    <div className={styles.logoPlaceholder}>Área de upload</div>
-                  )}
-                </div>
-                <div className={styles.logoActions}>
-                  <label className={styles.secondaryBtn}>
-                    Upload
-                    <input type="file" accept="image/*" className={styles.fileInput} onChange={handleLogoUpload('logo_claro')} disabled={!isAdmin || loading} />
-                  </label>
-                  <button type="button" className={styles.ghostBtn} disabled={!form.logo_claro} onClick={() => setPreviewLogo({ title: 'Logo claro', src: form.logo_claro })}>
-                    Pré-visualizar
-                  </button>
-                </div>
-              </div>
-
-              <div className={styles.logoCard}>
-                <div className={styles.logoTitle}>Logo escuro</div>
-                <div className={styles.logoDrop}>
-                  {form.logo_escuro ? (
-                    <img className={styles.logoImg} src={form.logo_escuro} alt="Logo escuro" />
-                  ) : (
-                    <div className={styles.logoPlaceholder}>Área de upload</div>
-                  )}
-                </div>
-                <div className={styles.logoActions}>
-                  <label className={styles.secondaryBtn}>
-                    Upload
-                    <input type="file" accept="image/*" className={styles.fileInput} onChange={handleLogoUpload('logo_escuro')} disabled={!isAdmin || loading} />
-                  </label>
-                  <button type="button" className={styles.ghostBtn} disabled={!form.logo_escuro} onClick={() => setPreviewLogo({ title: 'Logo escuro', src: form.logo_escuro })}>
-                    Pré-visualizar
-                  </button>
-                </div>
-              </div>
-            </div>
-
             <div className={styles.field} style={{ gridColumn: '1 / -1' }}>
               <label className={styles.label}>Assinatura Profissional</label>
               <textarea
@@ -416,43 +353,19 @@ export default function Configuracoes() {
             <div className={styles.appearanceLeft}>
               <div className={styles.themePanel}>
                 <div className={styles.themePanelTop}>
-                  <div className={styles.themePanelTitle}>TEMAS (POR PERFIL)</div>
+                  <div className={styles.themePanelTitle}>TEMA (ESTE USUÁRIO)</div>
                 </div>
 
                 <div className={styles.roleThemes}>
                   <div className={styles.roleRow}>
                     <div className={styles.roleMeta}>
-                      <div className={styles.roleName}>Administrador</div>
-                      <div className={styles.roleHint}>Tema usado por usuários admin</div>
+                      <div className={styles.roleName}>Aparência</div>
+                      <div className={styles.roleHint}>Preferência salva para o seu usuário neste dispositivo</div>
                     </div>
-                    <div className={styles.segmented} role="group" aria-label="Tema administrador">
-                      <button type="button" className={normalizeThemeUi(form.tema_ui_admin) === 'light' ? `${styles.segment} ${styles.segmentActive}` : styles.segment} onClick={() => handleThemeChangeFor('tema_ui_admin', 'light')} disabled={!isAdmin || loading}>Claro</button>
-                      <button type="button" className={normalizeThemeUi(form.tema_ui_admin) === 'system' ? `${styles.segment} ${styles.segmentActive}` : styles.segment} onClick={() => handleThemeChangeFor('tema_ui_admin', 'system')} disabled={!isAdmin || loading}>Sistema</button>
-                      <button type="button" className={normalizeThemeUi(form.tema_ui_admin) === 'dark' ? `${styles.segment} ${styles.segmentActive}` : styles.segment} onClick={() => handleThemeChangeFor('tema_ui_admin', 'dark')} disabled={!isAdmin || loading}>Escuro</button>
-                    </div>
-                  </div>
-
-                  <div className={styles.roleRow}>
-                    <div className={styles.roleMeta}>
-                      <div className={styles.roleName}>Dentista</div>
-                      <div className={styles.roleHint}>Tema usado por usuários dentista</div>
-                    </div>
-                    <div className={styles.segmented} role="group" aria-label="Tema dentista">
-                      <button type="button" className={normalizeThemeUi(form.tema_ui_dentista) === 'light' ? `${styles.segment} ${styles.segmentActive}` : styles.segment} onClick={() => handleThemeChangeFor('tema_ui_dentista', 'light')} disabled={!isAdmin || loading}>Claro</button>
-                      <button type="button" className={normalizeThemeUi(form.tema_ui_dentista) === 'system' ? `${styles.segment} ${styles.segmentActive}` : styles.segment} onClick={() => handleThemeChangeFor('tema_ui_dentista', 'system')} disabled={!isAdmin || loading}>Sistema</button>
-                      <button type="button" className={normalizeThemeUi(form.tema_ui_dentista) === 'dark' ? `${styles.segment} ${styles.segmentActive}` : styles.segment} onClick={() => handleThemeChangeFor('tema_ui_dentista', 'dark')} disabled={!isAdmin || loading}>Escuro</button>
-                    </div>
-                  </div>
-
-                  <div className={styles.roleRow}>
-                    <div className={styles.roleMeta}>
-                      <div className={styles.roleName}>Recepção</div>
-                      <div className={styles.roleHint}>Tema usado por usuários recepção</div>
-                    </div>
-                    <div className={styles.segmented} role="group" aria-label="Tema recepção">
-                      <button type="button" className={normalizeThemeUi(form.tema_ui_recepcao) === 'light' ? `${styles.segment} ${styles.segmentActive}` : styles.segment} onClick={() => handleThemeChangeFor('tema_ui_recepcao', 'light')} disabled={!isAdmin || loading}>Claro</button>
-                      <button type="button" className={normalizeThemeUi(form.tema_ui_recepcao) === 'system' ? `${styles.segment} ${styles.segmentActive}` : styles.segment} onClick={() => handleThemeChangeFor('tema_ui_recepcao', 'system')} disabled={!isAdmin || loading}>Sistema</button>
-                      <button type="button" className={normalizeThemeUi(form.tema_ui_recepcao) === 'dark' ? `${styles.segment} ${styles.segmentActive}` : styles.segment} onClick={() => handleThemeChangeFor('tema_ui_recepcao', 'dark')} disabled={!isAdmin || loading}>Escuro</button>
+                    <div className={styles.segmented} role="group" aria-label="Tema do usuário">
+                      <button type="button" className={normalizeThemeUi(userThemeUi) === 'light' ? `${styles.segment} ${styles.segmentActive}` : styles.segment} onClick={() => handleUserThemeChange('light')} disabled={loading}>Claro</button>
+                      <button type="button" className={normalizeThemeUi(userThemeUi) === 'system' ? `${styles.segment} ${styles.segmentActive}` : styles.segment} onClick={() => handleUserThemeChange('system')} disabled={loading}>Sistema</button>
+                      <button type="button" className={normalizeThemeUi(userThemeUi) === 'dark' ? `${styles.segment} ${styles.segmentActive}` : styles.segment} onClick={() => handleUserThemeChange('dark')} disabled={loading}>Escuro</button>
                     </div>
                   </div>
                 </div>
@@ -532,20 +445,6 @@ export default function Configuracoes() {
 
           <div className={styles.accountBox}>
             <button className={styles.dangerBtn} onClick={handleLogout}>Sair do sistema</button>
-          </div>
-        </div>
-      ) : null}
-
-      {previewLogo ? (
-        <div className={styles.overlay} role="dialog" aria-modal="true" aria-label="Pré-visualizar logo" onMouseDown={() => setPreviewLogo(null)}>
-          <div className={styles.modal} onMouseDown={(e) => e.stopPropagation()}>
-            <div className={styles.modalTop}>
-              <div className={styles.modalTitle}>{previewLogo.title}</div>
-              <button type="button" className={styles.closeBtn} onClick={() => setPreviewLogo(null)} aria-label="Fechar">×</button>
-            </div>
-            <div className={styles.logoPreviewArea}>
-              <img className={styles.logoPreviewImg} src={previewLogo.src} alt={previewLogo.title} />
-            </div>
           </div>
         </div>
       ) : null}

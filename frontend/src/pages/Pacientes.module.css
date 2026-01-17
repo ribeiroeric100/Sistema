@@ -285,6 +285,10 @@
 
 .actionIcon { width: 16px; height: 16px; display: block }
 
+:global(html[data-theme="dark"]) .actionIcon {
+  filter: invert(1) brightness(1.1);
+}
+
 .fab {
 	position: fixed;
 	right: 28px;
@@ -543,6 +547,116 @@
   border-radius: 10px;
   padding: 12px 14px;
   background: #fff;
+}
+
+/* ===== Tema escuro (overrides) ===== */
+:global(html[data-theme="dark"]) .topActions .primary,
+:global(html[data-theme="dark"]) .addBtn,
+:global(html[data-theme="dark"]) .searchBtn,
+:global(html[data-theme="dark"]) .markBtn {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+/* Pedido: no tema escuro, "Adicionar paciente" branco com letra preta */
+:global(html[data-theme="dark"]) .addBtn {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: rgba(0, 0, 0, 0.35);
+}
+
+:global(html[data-theme="dark"]) .dropdownWrap,
+:global(html[data-theme="dark"]) .dropdownMenu,
+:global(html[data-theme="dark"]) .searchInput,
+:global(html[data-theme="dark"]) .tableWrap {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+:global(html[data-theme="dark"]) .searchIcon {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+:global(html[data-theme="dark"]) .dropdownToggle {
+  background: #262a35;
+  border-left-color: rgba(255, 255, 255, 0.10);
+  color: var(--text);
+}
+
+:global(html[data-theme="dark"]) .dropdownItem {
+  background: #262a35;
+  border-color: rgba(255, 255, 255, 0.10);
+  color: var(--text);
+}
+
+:global(html[data-theme="dark"]) .dropdownItem:hover,
+:global(html[data-theme="dark"]) .topActions .primary:hover,
+:global(html[data-theme="dark"]) .searchBtn:hover,
+:global(html[data-theme="dark"]) .markBtn:hover {
+  background: #2d3140;
+}
+
+:global(html[data-theme="dark"]) .table th {
+  background: #262a35;
+  color: rgba(255, 255, 255, 0.78);
+  border-bottom-color: rgba(255, 255, 255, 0.10);
+}
+
+:global(html[data-theme="dark"]) .table td {
+  color: var(--text);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+:global(html[data-theme="dark"]) .table tbody tr:hover {
+  background: #262a35;
+}
+
+:global(html[data-theme="dark"]) .nomeClickable {
+  color: rgba(147, 197, 253, 0.95);
+}
+
+:global(html[data-theme="dark"]) .modalContent,
+:global(html[data-theme="dark"]) .sheet .form,
+:global(html[data-theme="dark"]) .dialogContent,
+:global(html[data-theme="dark"]) .patientDialog {
+  background: var(--surface);
+  color: var(--text);
+  border-color: rgba(0, 0, 0, 0.0);
+}
+
+:global(html[data-theme="dark"]) .sheet .modalHeader,
+:global(html[data-theme="dark"]) .dialogHeader,
+:global(html[data-theme="dark"]) .patientDialogHeader,
+:global(html[data-theme="dark"]) .patientDialogFooter {
+  background: #262a35;
+  border-bottom-color: rgba(255, 255, 255, 0.10);
+  border-top-color: rgba(255, 255, 255, 0.10);
+}
+
+:global(html[data-theme="dark"]) .sheet .modalHeader h2,
+:global(html[data-theme="dark"]) .dialogHeader h2,
+:global(html[data-theme="dark"]) .patientDialogHeader h2 {
+  color: var(--text);
+}
+
+:global(html[data-theme="dark"]) .patientDialogBody .formLabel {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+:global(html[data-theme="dark"]) .patientClose,
+:global(html[data-theme="dark"]) .modalClose,
+:global(html[data-theme="dark"]) .dialogClose {
+  background: #262a35;
+  border-color: rgba(255, 255, 255, 0.10);
+  color: rgba(255, 255, 255, 0.80);
+}
+
+:global(html[data-theme="dark"]) .patientCancelBtn {
+  background: #262a35;
+  border-color: rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.88);
 }
 
 .phoneIcon {

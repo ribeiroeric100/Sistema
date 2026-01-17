@@ -37,6 +37,29 @@
   color: #0f172a;
 }
 
+html[data-theme="dark"] .container {
+  background: var(--bg-app);
+}
+
+html[data-theme="dark"] .header {
+  border-bottom-color: var(--border, rgba(255, 255, 255, 0.10));
+}
+
+html[data-theme="dark"] .title {
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .subtitle {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .cardNeutral {
+  background: var(--surface, #262a35);
+  border-color: var(--border, rgba(255, 255, 255, 0.10));
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+}
+
 .subtitle {
   margin-top: 4px;
   color: #64748b;
@@ -112,11 +135,19 @@
   color: #0f172a;
 }
 
+html[data-theme="dark"] .cardTitle {
+  color: #ffffff;
+}
+
 .cardDesc {
   margin-top: 4px;
   color: #64748b;
   font-weight: 700;
   font-size: 13px;
+}
+
+html[data-theme="dark"] .cardDesc {
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .cardTopActions {
@@ -173,6 +204,33 @@
   outline: none;
   font-size: 14px;
   transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+html[data-theme="dark"] .tab {
+  background: rgba(255, 255, 255, 0.10);
+  border-color: var(--border, rgba(255, 255, 255, 0.10));
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .tabActive {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .label {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+html[data-theme="dark"] .textInput,
+html[data-theme="dark"] .textArea {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--border, rgba(255, 255, 255, 0.12));
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .helper {
+  color: rgba(255, 255, 255, 0.70);
 }
 
 .textInput:focus {
@@ -295,13 +353,13 @@
   padding-top: 12px;
   display: flex;
   justify-content: flex-end;
-  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.94) 38%, rgba(255,255,255,1) 100%);
+  background: transparent;
 }
 
 .primaryBtn {
-  background: var(--primary, #2563eb);
-  color: #fff;
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: var(--btn-primary-bg, var(--primary, #2563eb));
+  color: var(--btn-primary-fg, #fff);
+  border: 1px solid var(--btn-primary-border, rgba(15, 23, 42, 0.08));
   padding: 12px 16px;
   border-radius: 14px;
   font-weight: 900;

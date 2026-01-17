@@ -774,7 +774,12 @@ export default function PacientePerfil() {
 
       {abaSelecionada === 'detalhes' && (
         <div className={styles.detalhesPanel}>
-          <h2 className={styles.detalhesTitle}>Detalhes do Paciente</h2>
+          <div className={styles.detalhesHeader}>
+            <h2 className={styles.detalhesTitle}>Detalhes do Paciente</h2>
+            <button className={styles.btnExportarPdf} type="button" onClick={exportarProntuarioPdf} disabled={exportandoPdf}>
+              {exportandoPdf ? 'Gerando PDF...' : 'Exportar PDF'}
+            </button>
+          </div>
 
           <div className={styles.cardsGrid}>
             <button type="button" className={styles.detailCard} onClick={() => abrirAba('dados')}>
@@ -919,9 +924,6 @@ export default function PacientePerfil() {
           <div className={styles.abaProntuario}>
             <div className={styles.headerProntuario}>
               <h2>Prontuário: Histórico de Atendimentos</h2>
-              <button className={styles.btnExportarPdf} type="button" onClick={exportarProntuarioPdf} disabled={exportandoPdf}>
-                {exportandoPdf ? 'Gerando PDF...' : 'Exportar PDF'}
-              </button>
             </div>
             {consultas.length === 0 ? (
               <p>Nenhum atendimento registrado</p>
