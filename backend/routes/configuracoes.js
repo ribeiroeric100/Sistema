@@ -7,10 +7,21 @@ const router = express.Router()
 
 const ALLOWED_KEYS = [
   'nome_clinica',
+  'cro_responsavel',
   'telefone_clinica',
   'email_clinica',
   'endereco_clinica',
-  'rodape_pdf'
+  'rodape_pdf',
+  'logo_claro',
+  'logo_escuro',
+  'tema_ui',
+  'tema_ui_admin',
+  'tema_ui_dentista',
+  'tema_ui_recepcao',
+  'cor_primaria',
+  'lembrete_whatsapp_ativo',
+  'lembrete_email_ativo',
+  'mensagem_lembrete'
 ]
 
 const rowsToObject = (rows) => {

@@ -1,19 +1,14 @@
 .sidebar {
-  /* Background (prioridade): gradiente azul acinzentado, fosco, corporativo */
-  background-color: #5F7799;
-  background-image:
-    radial-gradient(900px 520px at 18% -12%, rgba(255, 255, 255, 0.12), transparent 58%),
-    radial-gradient(720px 460px at 0% 60%, rgba(255, 255, 255, 0.07), transparent 62%),
-    linear-gradient(180deg, #6F86A6 0%, #5F7799 45%, #4F678A 100%);
-  backdrop-filter: blur(10px);
-  color: #e5eefc;
+  background: var(--sidebar-bg, linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%));
+  color: var(--sidebar-fg, #0f172a);
+  backdrop-filter: blur(var(--sidebar-blur, 0px));
   width: 240px;
   min-height: 100%;
   height: 100vh;
   padding: 16px 12px;
   display: flex;
   flex-direction: column;
-  box-shadow: 1px 0 0 rgba(255,255,255,0.10);
+  box-shadow: 1px 0 0 var(--sidebar-border, rgba(15, 23, 42, 0.08));
   position: relative;
   isolation: isolate;
 }
@@ -23,9 +18,8 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  /* leve camada fosca (sem ruído) */
-  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(0,0,0,0.06));
-  opacity: 0.38;
+  background: var(--sidebar-overlay, transparent);
+  opacity: var(--sidebar-overlay-opacity, 0);
   z-index: 0;
 }
 
@@ -66,7 +60,7 @@
 .navItem {
   padding: 10px 12px;
   margin: 0;
-  color: rgba(229,238,252,0.92);
+  color: var(--sidebar-fg-muted, rgba(51, 65, 85, 0.85));
   text-decoration: none;
   border-radius: 12px;
   transition: background-color 0.18s ease, transform 0.12s ease, box-shadow 0.18s ease;
@@ -78,20 +72,32 @@
 }
 
 .navItem:hover {
-  background: rgba(255,255,255,0.10);
+  background: var(--sidebar-item-hover, rgba(15, 23, 42, 0.04));
 }
 
 .active {
-  background: rgba(255,255,255,0.14);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
+  background: var(--sidebar-item-active, var(--primary-a12, rgba(37, 99, 235, 0.12)));
+  color: var(--sidebar-fg, #0f172a);
+  box-shadow: inset 0 0 0 1px var(--sidebar-border, rgba(15, 23, 42, 0.08));
+}
+
+.active::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  border-radius: 999px;
+  background: var(--sidebar-active-bar, var(--primary, #2563eb));
 }
 
 .label {
   display: inline-block;
   font-size: 0.92rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.2px;
-  color: rgba(255,255,255,0.96);
+  color: inherit;
 }
 
 /* icons inside nav items */
@@ -116,8 +122,8 @@
 .userCard {
   padding: 12px;
   border-radius: 14px;
-  background: rgba(255,255,255,0.12);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.10);
+  background: var(--sidebar-card-bg, rgba(255, 255, 255, 0.70));
+  box-shadow: inset 0 0 0 1px var(--sidebar-card-border, rgba(15, 23, 42, 0.08));
 }
 
 .userTopRow {
@@ -133,9 +139,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,0.16);
-  border: 1px solid rgba(255,255,255,0.20);
-  color: rgba(229,238,252,0.96);
+  background: var(--primary-a12, rgba(37, 99, 235, 0.12));
+  border: 1px solid var(--sidebar-card-border, rgba(15, 23, 42, 0.08));
+  color: var(--sidebar-fg, #0f172a);
   font-weight: 900;
   letter-spacing: 0.5px;
   flex: 0 0 auto;
@@ -150,7 +156,7 @@
 
 .userName {
   font-weight: 900;
-  color: rgba(229,238,252,0.98);
+  color: var(--sidebar-fg, #0f172a);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -160,7 +166,7 @@
 .userEmail {
   margin-top: 2px;
   font-weight: 700;
-  color: rgba(229,238,252,0.82);
+  color: var(--sidebar-fg-muted, rgba(51, 65, 85, 0.85));
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -172,9 +178,9 @@
   margin-top: 10px;
   height: 34px;
   border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.16);
-  background: rgba(255,255,255,0.12);
-  color: rgba(229,238,252,0.96);
+  border: 1px solid var(--sidebar-card-border, rgba(15, 23, 42, 0.08));
+  background: var(--primary-a08, rgba(37, 99, 235, 0.08));
+  color: var(--sidebar-fg, #0f172a);
   font-weight: 900;
   cursor: pointer;
   display: inline-flex;
@@ -184,7 +190,7 @@
   transition: background-color 0.15s ease, transform 0.08s ease;
 }
 
-.logoutBtn:hover { background: rgba(255,255,255,0.16); transform: translateY(-1px); }
+.logoutBtn:hover { background: var(--primary-a12, rgba(37, 99, 235, 0.12)); transform: translateY(-1px); }
 .logoutBtn:active { transform: translateY(0); }
 
 .logoutIcon {
@@ -241,6 +247,6 @@
 
 .footerCopy {
   margin: 8px 0 0 0;
-  color: rgba(229,238,252,0.9);
+  color: var(--sidebar-fg-muted, rgba(51, 65, 85, 0.85));
   text-align: center;
 }

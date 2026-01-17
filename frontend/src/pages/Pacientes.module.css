@@ -232,14 +232,19 @@
   font-size: 0.78rem;
 }
 
+.actionsHeader {
+  width: 160px;
+  text-align: right;
+}
+
 .table tbody tr:hover { background: rgba(248, 250, 252, 1) }
 
 .actionsCell { 
-	width: 120px;
+  width: 160px;
 	display: flex;
   gap: 8px;
 	align-items: center;
-  justify-content: flex-start;
+  justify-content: flex-end;
 }
 
 .nomeClickable {

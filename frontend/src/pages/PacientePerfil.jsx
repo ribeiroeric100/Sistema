@@ -11,7 +11,7 @@ export default function PacientePerfil() {
   const { id } = useParams()
   const [paciente, setPaciente] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [abaSelecionada, setAbaSelecionada] = useState('prontuario')
+  const [abaSelecionada, setAbaSelecionada] = useState('detalhes')
   const [consultas, setConsultas] = useState([])
   const [selectedConsulta, setSelectedConsulta] = useState(null)
   const [produtoIdToNome, setProdutoIdToNome] = useState(() => new Map())
@@ -683,21 +683,86 @@ export default function PacientePerfil() {
   if (loading) return <div className={styles.loading}>Carregando...</div>
   if (!paciente) return <div className={styles.notFound}>Paciente não encontrado</div>
 
-  const dataNascFormatada = new Date(paciente.data_nascimento).toLocaleDateString('pt-BR')
-  const idade = calcularIdade(paciente.data_nascimento)
+  const hasDataNascimento = Boolean(paciente?.data_nascimento)
+  const dataNascFormatada = hasDataNascimento
+    ? new Date(paciente.data_nascimento).toLocaleDateString('pt-BR')
+    : '—'
+  const idade = hasDataNascimento ? calcularIdade(paciente.data_nascimento) : null
+
+  const resumoConsultas = consultas.length
+  const resumoAtendimentos = consultas.length
+  const resumoGaleria = galeriaImagens.length
+
+  const IconUser = (props) => (
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" {...props}>
+      <path d="M12 12a4.5 4.5 0 1 0-4.5-4.5A4.5 4.5 0 0 0 12 12Z" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M20 20.5c0-4.1-3.6-7.5-8-7.5s-8 3.4-8 7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  )
+
+  const IconCalendar = (props) => (
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" {...props}>
+      <path d="M7 3v3M17 3v3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M4.5 9.2h15" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M6.5 6h11A2.5 2.5 0 0 1 20 8.5v11A2.5 2.5 0 0 1 17.5 22h-11A2.5 2.5 0 0 1 4 19.5v-11A2.5 2.5 0 0 1 6.5 6Z" stroke="currentColor" strokeWidth="1.8" />
+    </svg>
+  )
+
+  const IconClipboard = (props) => (
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" {...props}>
+      <path d="M9 4.5h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M9 3h6a2 2 0 0 1 2 2v1.2a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M7 7.7H6.4A2.4 2.4 0 0 0 4 10.1v9A2.4 2.4 0 0 0 6.4 21.5h11.2A2.4 2.4 0 0 0 20 19.1v-9A2.4 2.4 0 0 0 17.6 7.7H17" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M8 12h8M8 15.5h8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  )
+
+  const IconTooth = (props) => (
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" {...props}>
+      <path d="M8.2 3.8c1.1-.6 2.4-.8 3.8-.8s2.7.2 3.8.8c2.2 1.2 3.3 3.6 2.7 6.6-.3 1.7-1.1 3.3-1.8 4.6-.3.6-.6 1.2-.8 1.7-.4 1.1-.7 2.4-1.8 2.4-1 0-1.2-1.1-1.4-2.2l-.1-.5c-.2-1.1-.4-1.8-.6-2.1-.2.3-.4 1-.6 2.1l-.1.5c-.2 1.1-.4 2.2-1.4 2.2-1.1 0-1.4-1.3-1.8-2.4-.2-.5-.5-1.1-.8-1.7-.7-1.3-1.5-2.9-1.8-4.6-.6-3 0-5.4 2.7-6.6Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+    </svg>
+  )
+
+  const IconImage = (props) => (
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" {...props}>
+      <path d="M6.5 5h11A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9A2.5 2.5 0 0 1 6.5 5Z" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M9 10a1.2 1.2 0 1 0-1.2-1.2A1.2 1.2 0 0 0 9 10Z" fill="currentColor" />
+      <path d="M20 15l-4.2-4.2a1.4 1.4 0 0 0-2 0L6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+
+  const IconWallet = (props) => (
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" {...props}>
+      <path d="M5.8 7.5h12.4A2.8 2.8 0 0 1 21 10.3v7.4A2.8 2.8 0 0 1 18.2 20.5H5.8A2.8 2.8 0 0 1 3 17.7V10.3A2.8 2.8 0 0 1 5.8 7.5Z" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M18.5 12h2.5v4h-2.5a2 2 0 0 1 0-4Z" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M6 7.5V6.2A2.7 2.7 0 0 1 8.7 3.5h7.6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  )
+
+  const IconChevronRight = (props) => (
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" {...props}>
+      <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+
+  const abrirAba = (aba) => setAbaSelecionada(aba)
+  const voltarDetalhes = () => setAbaSelecionada('detalhes')
 
   return (
     <div className={styles.container}>
       {/* Card de informações principais */}
       <div className={styles.cardPrincipal}>
         <div className={styles.fotoNome}>
-          <div className={styles.foto}>
-            <span>👤</span>
+          <div className={styles.avatar}>
+            <IconUser />
           </div>
           <div className={styles.infoBasica}>
             <h1>{paciente.nome}</h1>
             <p>CPF: {paciente.cpf || '—'}</p>
-            <p>📅 {dataNascFormatada} ({idade} anos)</p>
+            <p className={styles.dataNascLine}>
+              <span className={styles.dataNascIcon}><IconCalendar /></span>
+              <span>{dataNascFormatada}{idade !== null ? ` (${idade} anos)` : ''}</span>
+            </p>
           </div>
         </div>
         <div className={styles.botoesAcao}>
@@ -707,48 +772,94 @@ export default function PacientePerfil() {
         </div>
       </div>
 
-      {/* Abas */}
-      <div className={styles.abas}>
-        <button
-          className={`${styles.aba} ${abaSelecionada === 'dados' ? styles.abaSelecionada : ''}`}
-          onClick={() => setAbaSelecionada('dados')}
-        >
-          Dados
-        </button>
-        <button
-          className={`${styles.aba} ${abaSelecionada === 'consultas' ? styles.abaSelecionada : ''}`}
-          onClick={() => setAbaSelecionada('consultas')}
-        >
-          Consultas
-        </button>
-        <button
-          className={`${styles.aba} ${abaSelecionada === 'prontuario' ? styles.abaSelecionada : ''}`}
-          onClick={() => setAbaSelecionada('prontuario')}
-        >
-          Prontuário
-        </button>
-        <button
-          className={`${styles.aba} ${abaSelecionada === 'odontograma' ? styles.abaSelecionada : ''}`}
-          onClick={() => setAbaSelecionada('odontograma')}
-        >
-          Odontograma
-        </button>
-        <button
-          className={`${styles.aba} ${abaSelecionada === 'galeria' ? styles.abaSelecionada : ''}`}
-          onClick={() => setAbaSelecionada('galeria')}
-        >
-          Galeria
-        </button>
-        <button
-          className={`${styles.aba} ${abaSelecionada === 'financeiro' ? styles.abaSelecionada : ''}`}
-          onClick={() => setAbaSelecionada('financeiro')}
-        >
-          Financeiro
-        </button>
-      </div>
+      {abaSelecionada === 'detalhes' && (
+        <div className={styles.detalhesPanel}>
+          <h2 className={styles.detalhesTitle}>Detalhes do Paciente</h2>
+
+          <div className={styles.cardsGrid}>
+            <button type="button" className={styles.detailCard} onClick={() => abrirAba('dados')}>
+              <div className={styles.detailCardLeft}>
+                <div className={styles.detailIcon}><IconUser /></div>
+                <div className={styles.detailText}>
+                  <div className={styles.detailTitle}>Dados do Paciente</div>
+                  <div className={styles.detailSubtitle}>CPF: {paciente.cpf || '—'}{idade !== null ? `, ${idade} anos` : ''}</div>
+                </div>
+              </div>
+              <div className={styles.detailArrow}><IconChevronRight /></div>
+            </button>
+
+            <button type="button" className={styles.detailCard} onClick={() => abrirAba('consultas')}>
+              <div className={styles.detailCardLeft}>
+                <div className={styles.detailIcon}><IconCalendar /></div>
+                <div className={styles.detailText}>
+                  <div className={styles.detailTitle}>Consultas</div>
+                  <div className={styles.detailSubtitle}>
+                    {resumoConsultas ? `${resumoConsultas} consulta${resumoConsultas > 1 ? 's' : ''} registrada${resumoConsultas > 1 ? 's' : ''}` : 'Nenhuma consulta registrada'}
+                  </div>
+                </div>
+              </div>
+              <div className={styles.detailArrow}><IconChevronRight /></div>
+            </button>
+
+            <button type="button" className={styles.detailCard} onClick={() => abrirAba('prontuario')}>
+              <div className={styles.detailCardLeft}>
+                <div className={styles.detailIcon}><IconClipboard /></div>
+                <div className={styles.detailText}>
+                  <div className={styles.detailTitle}>Prontuário</div>
+                  <div className={styles.detailSubtitle}>
+                    {resumoAtendimentos ? `${resumoAtendimentos} atendimento${resumoAtendimentos > 1 ? 's' : ''} registrado${resumoAtendimentos > 1 ? 's' : ''}` : 'Nenhum atendimento registrado'}
+                  </div>
+                </div>
+              </div>
+              <div className={styles.detailArrow}><IconChevronRight /></div>
+            </button>
+
+            <button type="button" className={styles.detailCard} onClick={() => abrirAba('odontograma')}>
+              <div className={styles.detailCardLeft}>
+                <div className={styles.detailIcon}><IconTooth /></div>
+                <div className={styles.detailText}>
+                  <div className={styles.detailTitle}>Odontograma</div>
+                  <div className={styles.detailSubtitle}>Visualizar e atualizar odontograma</div>
+                </div>
+              </div>
+              <div className={styles.detailArrow}><IconChevronRight /></div>
+            </button>
+
+            <button type="button" className={styles.detailCard} onClick={() => abrirAba('galeria')}>
+              <div className={styles.detailCardLeft}>
+                <div className={styles.detailIcon}><IconImage /></div>
+                <div className={styles.detailText}>
+                  <div className={styles.detailTitle}>Galeria</div>
+                  <div className={styles.detailSubtitle}>
+                    {resumoGaleria ? `${resumoGaleria} imagem${resumoGaleria > 1 ? 'ns' : ''} enviada${resumoGaleria > 1 ? 's' : ''}` : 'Nenhuma imagem registrada'}
+                  </div>
+                </div>
+              </div>
+              <div className={styles.detailArrow}><IconChevronRight /></div>
+            </button>
+
+            <button type="button" className={styles.detailCard} onClick={() => abrirAba('financeiro')}>
+              <div className={styles.detailCardLeft}>
+                <div className={styles.detailIcon}><IconWallet /></div>
+                <div className={styles.detailText}>
+                  <div className={styles.detailTitle}>Financeiro</div>
+                  <div className={styles.detailSubtitle}>Resumo de valores por consulta</div>
+                </div>
+              </div>
+              <div className={styles.detailArrow}><IconChevronRight /></div>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Conteúdo das abas */}
-      <div className={styles.conteudoAba}>
+      {abaSelecionada !== 'detalhes' && (
+        <div className={styles.conteudoAba}>
+          <div className={styles.conteudoHeader}>
+            <button type="button" className={styles.btnVoltar} onClick={voltarDetalhes}>
+              Voltar
+            </button>
+          </div>
         {abaSelecionada === 'dados' && (
           <div className={styles.abaDados}>
             <h2>Dados Pessoais</h2>
@@ -958,7 +1069,8 @@ export default function PacientePerfil() {
             </div>
           </div>
         )}
-      </div>
+        </div>
+      )}
 
       {/* Modal de Edição */}
       {showEditForm && (

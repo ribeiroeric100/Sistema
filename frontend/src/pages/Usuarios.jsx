@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { usuariosService } from '@services/api'
+import styles from './Usuarios.module.css'
 
 const ROLES = [
   { value: 'admin', label: 'Admin' },
@@ -34,15 +35,6 @@ export default function Usuarios() {
   useEffect(() => {
     carregar()
   }, [])
-
-  const byRole = useMemo(() => {
-    const map = { admin: 0, dentista: 0, recepcao: 0 }
-    for (const it of items) {
-      const r = String(it.role || '').toLowerCase()
-      if (r in map) map[r] += 1
-    }
-    return map
-  }, [items])
 
   const criar = async (e) => {
     e.preventDefault()
@@ -95,124 +87,157 @@ export default function Usuarios() {
   }
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2 style={{ marginBottom: 8 }}>Usuários</h2>
-      <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 14 }}>
-        Admin: {byRole.admin} • Dentistas: {byRole.dentista} • Recepção: {byRole.recepcao}
+    <div className={styles.container}>
+      <div className={styles.pageHeading}>
+        <h1 className={styles.pageTitle}>Usuários</h1>
+        <div className={styles.subtitle}>Gerencie usuários e permissões do sistema</div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 16 }}>
-        <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 12, padding: 14 }}>
-          <h3 style={{ marginTop: 0 }}>Criar usuário</h3>
-          <form onSubmit={criar} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <label>Nome</label>
-              <input value={novo.nome} onChange={(e) => setNovo((p) => ({ ...p, nome: e.target.value }))} required />
+      <div className={styles.grid}>
+        <div className={styles.card}>
+          <div className={styles.cardHeader}>
+            <div>
+              <h2 className={styles.cardTitle}>Usuários</h2>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <label>Email</label>
-              <input type="email" value={novo.email} onChange={(e) => setNovo((p) => ({ ...p, email: e.target.value }))} required />
+          </div>
+
+          <form onSubmit={criar} className={styles.form}>
+            <div className={styles.field}>
+              <label className={styles.label}>Nome</label>
+              <input className={styles.input} value={novo.nome} onChange={(e) => setNovo((p) => ({ ...p, nome: e.target.value }))} required />
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <label>Senha (mín. 6)</label>
-              <input type="password" value={novo.senha} onChange={(e) => setNovo((p) => ({ ...p, senha: e.target.value }))} required />
+            <div className={styles.field}>
+              <label className={styles.label}>Email</label>
+              <input className={styles.input} type="email" value={novo.email} onChange={(e) => setNovo((p) => ({ ...p, email: e.target.value }))} required />
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <label>Perfil</label>
-              <select value={novo.role} onChange={(e) => setNovo((p) => ({ ...p, role: e.target.value }))}>
+            <div className={styles.field}>
+              <label className={styles.label}>Senha (mín. 6)</label>
+              <input className={styles.input} type="password" value={novo.senha} onChange={(e) => setNovo((p) => ({ ...p, senha: e.target.value }))} required />
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>Perfil</label>
+              <select className={styles.select} value={novo.role} onChange={(e) => setNovo((p) => ({ ...p, role: e.target.value }))}>
                 {ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
               </select>
             </div>
-            <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'flex-end' }}>
-              <button type="submit" disabled={salvando} style={{ padding: '10px 14px', borderRadius: 10, border: 'none', background: '#111827', color: '#fff', cursor: 'pointer' }}>
-                {salvando ? 'Salvando...' : 'Criar'}
+            <div className={styles.actionsRow}>
+              <button type="submit" disabled={salvando} className={styles.primaryBtn}>
+                {salvando ? 'Salvando...' : 'Criar usuário'}
               </button>
             </div>
           </form>
         </div>
 
-        <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 12, padding: 14 }}>
-          <h3 style={{ marginTop: 0 }}>Lista</h3>
+        <div className={styles.card}>
+          <div className={styles.cardHeader}>
+            <h2 className={styles.cardTitle}>Lista</h2>
+          </div>
+
           {loading ? (
             <div>Carregando...</div>
           ) : erro ? (
-            <div style={{ color: '#b91c1c' }}>{erro}</div>
+            <div className={styles.error}>{erro}</div>
           ) : (
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead>
-                  <tr style={{ background: '#f9fafb', textAlign: 'left' }}>
-                    <th style={{ padding: 10, borderBottom: '1px solid #e5e7eb' }}>Nome</th>
-                    <th style={{ padding: 10, borderBottom: '1px solid #e5e7eb' }}>Email</th>
-                    <th style={{ padding: 10, borderBottom: '1px solid #e5e7eb' }}>Perfil</th>
-                    <th style={{ padding: 10, borderBottom: '1px solid #e5e7eb' }}>Ativo</th>
-                    <th style={{ padding: 10, borderBottom: '1px solid #e5e7eb' }}></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {items.map(u => (
-                    <tr key={u.id}>
-                      <td style={{ padding: 10, borderBottom: '1px solid #f3f4f6' }}>{u.nome}</td>
-                      <td style={{ padding: 10, borderBottom: '1px solid #f3f4f6' }}>{u.email}</td>
-                      <td style={{ padding: 10, borderBottom: '1px solid #f3f4f6' }}>{String(u.role || '').toLowerCase()}</td>
-                      <td style={{ padding: 10, borderBottom: '1px solid #f3f4f6' }}>{u.ativo ? 'Sim' : 'Não'}</td>
-                      <td style={{ padding: 10, borderBottom: '1px solid #f3f4f6', textAlign: 'right' }}>
-                        <button type="button" onClick={() => abrirEdicao(u)} style={{ padding: '8px 10px', borderRadius: 10, border: '1px solid #e5e7eb', background: '#fff', cursor: 'pointer' }}>
-                          Editar
-                        </button>
-                      </td>
+            <>
+              <div className={styles.mobileList}>
+                {items.map((u) => (
+                  <div key={u.id} className={styles.userCard}>
+                    <div className={styles.userTop}>
+                      <div>
+                        <div className={styles.userName}>{u.nome || '—'}</div>
+                        <div className={styles.userMeta}>
+                          <div>{u.email || '—'}</div>
+                        </div>
+                      </div>
+                      <button type="button" className={styles.smallBtn} onClick={() => abrirEdicao(u)}>Editar</button>
+                    </div>
+                    <div className={styles.badges}>
+                      <span className={styles.badge}>{String(u.role || '').toLowerCase() || '—'}</span>
+                      <span className={u.ativo ? styles.badge : `${styles.badge} ${styles.badgeOff}`}>{u.ativo ? 'Ativo' : 'Inativo'}</span>
+                    </div>
+                  </div>
+                ))}
+                {items.length === 0 && (
+                  <div style={{ color: '#64748b', fontWeight: 700 }}>Nenhum usuário.</div>
+                )}
+              </div>
+
+              <div className={styles.tableWrap}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>Nome</th>
+                      <th>Email</th>
+                      <th>Perfil</th>
+                      <th>Ativo</th>
+                      <th />
                     </tr>
-                  ))}
-                  {items.length === 0 && (
-                    <tr><td colSpan={5} style={{ padding: 14, color: '#6b7280' }}>Nenhum usuário.</td></tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {items.map(u => (
+                      <tr key={u.id}>
+                        <td>{u.nome}</td>
+                        <td>{u.email}</td>
+                        <td>{String(u.role || '').toLowerCase()}</td>
+                        <td>{u.ativo ? 'Sim' : 'Não'}</td>
+                        <td className={styles.actionsCell}>
+                          <button type="button" onClick={() => abrirEdicao(u)} className={styles.smallBtn}>
+                            Editar
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                    {items.length === 0 && (
+                      <tr><td colSpan={5} style={{ padding: 14, color: '#64748b', fontWeight: 700 }}>Nenhum usuário.</td></tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </>
           )}
         </div>
       </div>
 
       {edit && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-          <div style={{ width: 'min(720px, 100%)', background: '#fff', borderRadius: 12, border: '1px solid #e5e7eb', padding: 14 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-              <h3 style={{ margin: 0 }}>Editar usuário</h3>
-              <button type="button" onClick={() => setEdit(null)} style={{ border: 'none', background: 'transparent', fontSize: 18, cursor: 'pointer' }}>×</button>
+        <div className={styles.overlay} role="dialog" aria-modal="true" aria-label="Editar usuário" onMouseDown={() => setEdit(null)}>
+          <div className={styles.modal} onMouseDown={(e) => e.stopPropagation()}>
+            <div className={styles.modalTop}>
+              <h3 className={styles.modalTitle}>Editar usuário</h3>
+              <button type="button" className={styles.closeBtn} onClick={() => setEdit(null)} aria-label="Fechar">×</button>
             </div>
 
-            <form onSubmit={salvarEdicao} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                <label>Nome</label>
-                <input value={editForm.nome} onChange={(e) => setEditForm((p) => ({ ...p, nome: e.target.value }))} required />
+            <form onSubmit={salvarEdicao} className={styles.form}>
+              <div className={styles.field}>
+                <label className={styles.label}>Nome</label>
+                <input className={styles.input} value={editForm.nome} onChange={(e) => setEditForm((p) => ({ ...p, nome: e.target.value }))} required />
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                <label>Email</label>
-                <input type="email" value={editForm.email} onChange={(e) => setEditForm((p) => ({ ...p, email: e.target.value }))} required />
+              <div className={styles.field}>
+                <label className={styles.label}>Email</label>
+                <input className={styles.input} type="email" value={editForm.email} onChange={(e) => setEditForm((p) => ({ ...p, email: e.target.value }))} required />
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                <label>Perfil</label>
-                <select value={editForm.role} onChange={(e) => setEditForm((p) => ({ ...p, role: e.target.value }))}>
+              <div className={styles.field}>
+                <label className={styles.label}>Perfil</label>
+                <select className={styles.select} value={editForm.role} onChange={(e) => setEditForm((p) => ({ ...p, role: e.target.value }))}>
                   {ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
                 </select>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                <label>Ativo</label>
-                <select value={editForm.ativo ? 1 : 0} onChange={(e) => setEditForm((p) => ({ ...p, ativo: Number(e.target.value) }))}>
+              <div className={styles.field}>
+                <label className={styles.label}>Ativo</label>
+                <select className={styles.select} value={editForm.ativo ? 1 : 0} onChange={(e) => setEditForm((p) => ({ ...p, ativo: Number(e.target.value) }))}>
                   <option value={1}>Sim</option>
                   <option value={0}>Não</option>
                 </select>
               </div>
-              <div style={{ gridColumn: '1 / -1', display: 'flex', flexDirection: 'column', gap: 6 }}>
-                <label>Nova senha (opcional)</label>
-                <input type="password" value={editForm.senha} onChange={(e) => setEditForm((p) => ({ ...p, senha: e.target.value }))} placeholder="Deixe vazio para manter" />
+              <div className={styles.field} style={{ gridColumn: '1 / -1' }}>
+                <label className={styles.label}>Nova senha (opcional)</label>
+                <input className={styles.input} type="password" value={editForm.senha} onChange={(e) => setEditForm((p) => ({ ...p, senha: e.target.value }))} placeholder="Deixe vazio para manter" />
               </div>
 
-              <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
-                <button type="button" onClick={() => setEdit(null)} style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid #e5e7eb', background: '#fff', cursor: 'pointer' }}>
+              <div className={styles.actionsRow}>
+                <button type="button" onClick={() => setEdit(null)} className={styles.secondaryBtn}>
                   Cancelar
                 </button>
-                <button type="submit" disabled={salvando} style={{ padding: '10px 14px', borderRadius: 10, border: 'none', background: '#111827', color: '#fff', cursor: 'pointer' }}>
+                <button type="submit" disabled={salvando} className={styles.primaryBtn}>
                   {salvando ? 'Salvando...' : 'Salvar'}
                 </button>
               </div>

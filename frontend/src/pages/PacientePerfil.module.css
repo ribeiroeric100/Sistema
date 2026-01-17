@@ -1,38 +1,60 @@
-.container { padding: 24px }
+.container {
+  padding: 24px;
+  --accent: var(--primary, #4f46e5);
+  background: var(--bg-surface, #f4f7fb);
+  color: var(--text, #0f172a);
+  min-height: 100%;
+}
 
-.loading, .notFound { padding: 40px; text-align: center; color: #666 }
+.loading, .notFound { padding: 40px; text-align: center; color: var(--muted, #666) }
 
 .cardPrincipal {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: white;
+  background: var(--surface, #ffffff);
   padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  margin-bottom: 20px;
+  border-radius: 16px;
+  border: 1px solid var(--border, rgba(15, 23, 42, 0.08));
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+  margin-bottom: 18px;
 }
 
 .fotoNome {
   display: flex;
   gap: 20px;
-  align-items: flex-start;
+  align-items: center;
 }
 
-.foto {
-  width: 100px;
-  height: 100px;
-  border-radius: 8px;
-  background: #f5f5f5;
+.avatar {
+  width: 88px;
+  height: 88px;
+  border-radius: 14px;
+  background: var(--primary-a12, rgba(79, 70, 229, 0.12));
+  color: var(--accent);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 48px;
   flex-shrink: 0;
 }
 
-.infoBasica h1 { margin: 0; color: #083344; font-size: 24px }
-.infoBasica p { margin: 4px 0; color: #666; font-size: 14px }
+.dataNascLine {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dataNascIcon {
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted, #64748b);
+}
+
+.infoBasica h1 { margin: 0; color: var(--text, #083344); font-size: 24px }
+.infoBasica p { margin: 4px 0; color: var(--muted, #666); font-size: 14px }
 
 .botoesAcao {
   display: flex;
@@ -41,12 +63,126 @@
 
 .btnEditar, .btnNovoAtendimento {
   padding: 10px 16px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  background: white;
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 10px;
+  background: var(--surface, #ffffff);
+  color: var(--text, #0f172a);
   cursor: pointer;
   font-size: 14px;
   transition: all 0.2s;
+}
+
+.btnEditar:hover {
+  background: var(--row-hover, rgba(15, 23, 42, 0.04));
+}
+
+.detalhesPanel {
+  background: var(--surface, #ffffff);
+  border-radius: 16px;
+  border: 1px solid var(--border, rgba(15, 23, 42, 0.08));
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
+  padding: 18px;
+}
+
+.detalhesTitle {
+  margin: 0 0 12px;
+  color: var(--text, #0f172a);
+  font-size: 20px;
+}
+
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 860px) {
+  .cardsGrid { grid-template-columns: 1fr; }
+}
+
+.detailCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: var(--surface, #ffffff);
+  border: 1px solid var(--border, #e6ebf3);
+  border-radius: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+
+.detailCard:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.06);
+  background: var(--row-hover, #fbfcff);
+}
+
+.detailCardLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.detailIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(79, 70, 229, 0.10);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.detailText { min-width: 0; }
+
+.detailTitle {
+  font-weight: 700;
+  color: var(--text, #0f172a);
+  font-size: 16px;
+  line-height: 1.25;
+}
+
+.detailSubtitle {
+  margin-top: 3px;
+  color: var(--muted, #64748b);
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 52ch;
+}
+
+.detailArrow {
+  color: var(--muted, #94a3b8);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.conteudoHeader {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+}
+
+.btnVoltar {
+  border: 1px solid var(--border, #e5e7eb);
+  background: var(--surface, #fff);
+  color: var(--text, #0f172a);
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.btnVoltar:hover {
+  background: var(--row-hover, rgba(15, 23, 42, 0.04));
 }
 
 .btnNovoAtendimento {
@@ -62,9 +198,9 @@
 .abas {
   display: flex;
   gap: 12px;
-  border-bottom: 2px solid #f1f1f1;
+  border-bottom: 2px solid var(--border, #f1f1f1);
   margin-bottom: 24px;
-  background: white;
+  background: var(--surface, #ffffff);
   padding: 0 24px;
 }
 
@@ -74,7 +210,7 @@
   background: transparent;
   cursor: pointer;
   font-size: 14px;
-  color: #666;
+  color: var(--muted, #666);
   border-bottom: 3px solid transparent;
   transition: all 0.2s;
   font-weight: 500;
@@ -88,13 +224,15 @@
 }
 
 .conteudoAba {
-  background: white;
+  background: var(--surface, #ffffff);
   padding: 24px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  border-radius: 16px;
+  border: 1px solid var(--border, rgba(15, 23, 42, 0.08));
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
+  margin-top: 18px;
 }
 
-.conteudoAba h2 { margin-top: 0; color: #083344 }
+.conteudoAba h2 { margin-top: 0; color: var(--text, #083344) }
 
 .abaDados .dadosGrid {
   display: grid;
@@ -105,19 +243,19 @@
 
 .dadosGrid > div {
   padding: 12px 0;
-  border-bottom: 1px solid #f1f1f1;
+  border-bottom: 1px solid var(--border, #f1f1f1);
 }
 
 .dadosGrid label {
   display: block;
   font-size: 12px;
-  color: #999;
+  color: var(--muted, #999);
   text-transform: uppercase;
   font-weight: 600;
   margin-bottom: 4px;
 }
 
-.dadosGrid p { margin: 0; color: #333; font-size: 16px }
+.dadosGrid p { margin: 0; color: var(--text, #333); font-size: 16px }
 
 .abaConsultas .consultasList,
 .abaProntuario .prontuarioList {

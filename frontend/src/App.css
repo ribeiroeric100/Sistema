@@ -105,7 +105,7 @@ body {
   }
 
   .appMain {
-    padding-bottom: calc(78px + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }
 

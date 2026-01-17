@@ -23,7 +23,7 @@ function MoneyLabelContent(props) {
   const cx = Number(x || 0) + Number(width || 0) / 2
   const cy = Number(y || 0) - 6
   return (
-    <text x={cx} y={cy} textAnchor="middle" fontSize={10} fill="#111827">
+    <text x={cx} y={cy} textAnchor="middle" fontSize={10} fill="var(--text, #111827)">
       {formatMoneyCompact(n)}
     </text>
   )
@@ -493,7 +493,7 @@ export default function Dashboard() {
                   <tr>
                     <th>Hoje</th>
                     <th className={styles.agSpacerHead}></th>
-                    <th>Total</th>
+                    <th>Mensal</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -674,7 +674,7 @@ export default function Dashboard() {
           <div className={styles.fullWidthChart}>
             <div className={styles.chartsGrid}>
               <div className={`${styles.panel} ${styles.chartCard}`}>
-                <h3>Receita diária</h3>
+                <h3>Receita Diária</h3>
                 <div className={styles.tableCardInner}>
                   <div className={reportStyles.cardHeader}>
                     <div className={reportStyles.cardTitleWrap}>
@@ -712,11 +712,11 @@ export default function Dashboard() {
               </div>
 
               <div className={`${styles.panel} ${styles.chartCard}`}>
-                <h3>Receita mensal</h3>
+                <h3>Receita Mensal</h3>
                 <div className={styles.tableCardInner}>
                   <div className={reportStyles.cardHeader}>
                     <div className={reportStyles.cardTitleWrap}>
-                      <div className={reportStyles.cardSubtitle}>Relatório mensal • receita agrupada por semana</div>
+                      <div className={reportStyles.cardSubtitle}>Relatório Mensal • receita agrupada por semana</div>
                     </div>
 
                     <div className={reportStyles.cardControls}>

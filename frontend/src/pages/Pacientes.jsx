@@ -353,7 +353,7 @@ export default function Pacientes() {
           <thead>
             <tr>
               <th>Nome</th>
-              <th>Ações</th>
+              <th className={styles.actionsHeader}>Ações</th>
             </tr>
           </thead>
           <tbody>

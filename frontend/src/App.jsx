@@ -3,7 +3,6 @@ import { AuthProvider } from '@context/AuthContext'
 import { useAuth } from '@context/useAuth'
 import Sidebar from '@components/layout/Sidebar'
 import MobileHeader from '@components/layout/MobileHeader'
-import MobileBottomTabs from '@components/layout/MobileBottomTabs'
 import Login from '@pages/auth/Login'
 import ForgotPassword from '@pages/auth/ForgotPassword'
 import ResetPassword from '@pages/auth/ResetPassword'
@@ -17,6 +16,9 @@ import Configuracoes from '@pages/Configuracoes'
 import Auditoria from '@pages/Auditoria'
 import Usuarios from '@pages/Usuarios'
 import './App.css'
+import { configuracoesService } from '@services/api'
+import { applyClinicTheme, normalizeThemeUi } from '@services/theme'
+import { useEffect } from 'react'
 
 function RequireRoles({ role, roles, children }) {
   if (!roles || roles.includes(role)) return children
@@ -27,6 +29,37 @@ function AppContent() {
   const { user, loading } = useAuth()
 
   const role = String(user?.role || '').toLowerCase()
+
+  useEffect(() => {
+    let alive = true
+    let cleanup = null
+
+    const run = async () => {
+      try {
+        const data = await configuracoesService.buscar()
+        if (!alive) return
+        const roleKey = role === 'admin'
+          ? 'tema_ui_admin'
+          : role === 'dentista'
+            ? 'tema_ui_dentista'
+            : role === 'recepcao'
+              ? 'tema_ui_recepcao'
+              : 'tema_ui'
+
+        const themeUi = normalizeThemeUi(data?.[roleKey] || data?.tema_ui || 'system')
+        cleanup = applyClinicTheme(data?.cor_primaria ?? '#2563eb', themeUi)
+      } catch {
+        cleanup = applyClinicTheme('#2563eb', 'system')
+      }
+    }
+
+    if (user) run()
+
+    return () => {
+      alive = false
+      cleanup?.()
+    }
+  }, [user, role])
 
   if (loading) {
     return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Carregando...</div>
@@ -85,7 +118,6 @@ function AppContent() {
               <Route path="*" element={<Navigate to="/dashboard" />} />
               </Routes>
             </main>
-            <MobileBottomTabs />
           </div>
         </div>
       </div>
