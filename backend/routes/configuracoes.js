@@ -24,6 +24,25 @@ const ALLOWED_KEYS = [
   'mensagem_lembrete'
 ]
 
+const DEFAULTS = {
+  nome_clinica: 'DR. NETO ABREU',
+  cro_responsavel: '',
+  telefone_clinica: '',
+  email_clinica: '',
+  endereco_clinica: '',
+  rodape_pdf: '',
+  logo_claro: '',
+  logo_escuro: '',
+  tema_ui: 'system',
+  tema_ui_admin: '',
+  tema_ui_dentista: '',
+  tema_ui_recepcao: '',
+  cor_primaria: '#2563eb',
+  lembrete_whatsapp_ativo: 'true',
+  lembrete_email_ativo: 'false',
+  mensagem_lembrete: 'Olá {{paciente}}, sua consulta com o Dr. {{dentista}} é amanhã às {{hora}}.'
+}
+
 const rowsToObject = (rows) => {
   const obj = {}
   for (const row of rows || []) {
@@ -31,7 +50,7 @@ const rowsToObject = (rows) => {
   }
   // ensure all allowed keys exist
   for (const key of ALLOWED_KEYS) {
-    if (!(key in obj)) obj[key] = ''
+    if (!(key in obj)) obj[key] = Object.prototype.hasOwnProperty.call(DEFAULTS, key) ? DEFAULTS[key] : ''
   }
   return obj
 }
@@ -51,7 +70,7 @@ router.get('/', verifyToken, (req, res) => {
 })
 
 // Atualizar configurações básicas (somente admin)
-router.put('/', verifyToken, verifyRole(['admin']), (req, res) => {
+router.put('/', verifyToken, verifyRole(['admin']), async (req, res) => {
   const payload = req.body
   if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
     return res.status(400).json({ error: 'Payload inválido' })
@@ -62,42 +81,32 @@ router.put('/', verifyToken, verifyRole(['admin']), (req, res) => {
     return res.status(400).json({ error: 'Nenhuma configuração válida para atualizar' })
   }
 
-  db.serialize(() => {
-    const stmt = db.prepare(
-      `INSERT INTO configuracoes (chave, valor, atualizado_em)
-       VALUES (?, ?, CURRENT_TIMESTAMP)
-       ON CONFLICT(chave) DO UPDATE SET
-         valor = excluded.valor,
-         atualizado_em = CURRENT_TIMESTAMP`
+  try {
+    await db.tx(async (trx) => {
+      for (const key of keysToUpdate) {
+        const value = payload[key]
+        await trx.run(
+          `INSERT INTO configuracoes (chave, valor, atualizado_em)
+           VALUES (?, ?, CURRENT_TIMESTAMP)
+           ON CONFLICT (chave) DO UPDATE SET
+             valor = excluded.valor,
+             atualizado_em = CURRENT_TIMESTAMP`,
+          [key, value === null || value === undefined ? '' : String(value)]
+        )
+      }
+    })
+
+    const placeholders = ALLOWED_KEYS.map(() => '?').join(',')
+    const rows = await db.all(
+      `SELECT chave, valor FROM configuracoes WHERE chave IN (${placeholders})`,
+      ALLOWED_KEYS
     )
 
-    let hadError = false
-    for (const key of keysToUpdate) {
-      const value = payload[key]
-      stmt.run([key, value === null || value === undefined ? '' : String(value)], (err) => {
-        if (err && !hadError) {
-          hadError = true
-          return res.status(500).json({ error: err.message })
-        }
-      })
-    }
-
-    stmt.finalize((finalizeErr) => {
-      if (finalizeErr) return res.status(500).json({ error: finalizeErr.message })
-      if (hadError) return
-
-      const placeholders = ALLOWED_KEYS.map(() => '?').join(',')
-      db.all(
-        `SELECT chave, valor FROM configuracoes WHERE chave IN (${placeholders})`,
-        ALLOWED_KEYS,
-        (err2, rows) => {
-          if (err2) return res.status(500).json({ error: err2.message })
-          logAudit(req, 'configuracoes.update', { details: { keys: keysToUpdate } })
-          res.json(rowsToObject(rows))
-        }
-      )
-    })
-  })
+    logAudit(req, 'configuracoes.update', { details: { keys: keysToUpdate } })
+    return res.json(rowsToObject(rows))
+  } catch (err) {
+    return res.status(500).json({ error: err?.message || 'Erro interno' })
+  }
 })
 
 module.exports = router

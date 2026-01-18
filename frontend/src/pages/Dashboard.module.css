@@ -416,18 +416,19 @@
 }
 
 :global(html[data-theme="dark"]) .actionModal {
-  background: var(--surface);
-  border-color: rgba(255, 255, 255, 0.10);
+  /* Keep the legacy (light) modal styling even in dark theme */
+  background: #fff;
+  border-color: rgba(15, 23, 42, 0.10);
 }
 
 :global(html[data-theme="dark"]) .actionInfoRow {
-  background: #262a35;
-  border-bottom-color: rgba(255, 255, 255, 0.10);
+  background: rgba(243, 246, 251, 0.95);
+  border-bottom-color: rgba(15, 23, 42, 0.08);
 }
 
 :global(html[data-theme="dark"]) .actionIconBox {
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.80);
+  background: rgba(15, 23, 42, 0.06);
+  color: rgba(15, 23, 42, 0.75);
 }
 
 .actionHeader {

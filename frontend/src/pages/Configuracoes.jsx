@@ -444,7 +444,7 @@ export default function Configuracoes() {
           </div>
 
           <div className={styles.accountBox}>
-            <button className={styles.dangerBtn} onClick={handleLogout}>Sair do sistema</button>
+            <button className={styles.dangerBtn} onClick={handleLogout}>Sair</button>
           </div>
         </div>
       ) : null}

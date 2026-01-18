@@ -1,6 +1,6 @@
 import { consultasService, pacientesService, estoqueService, configuracoesService, odontogramaService } from '@services/api'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import Odontograma from '../components/common/Odontograma'
 import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
@@ -9,6 +9,7 @@ import styles from './PacientePerfil.module.css'
 
 export default function PacientePerfil() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const [paciente, setPaciente] = useState(null)
   const [loading, setLoading] = useState(true)
   const [abaSelecionada, setAbaSelecionada] = useState('detalhes')
@@ -747,9 +748,20 @@ export default function PacientePerfil() {
 
   const abrirAba = (aba) => setAbaSelecionada(aba)
   const voltarDetalhes = () => setAbaSelecionada('detalhes')
+  const voltarPagina = () => navigate(-1)
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${abaSelecionada === 'detalhes' ? styles.containerWithFloatingBack : ''}`}>
+      {abaSelecionada === 'detalhes' && (
+        <div className={styles.floatingBack}>
+          <button type="button" className={styles.floatingBackBtn} onClick={voltarPagina} aria-label="Voltar">
+            <svg className={styles.floatingBackIcon} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </div>
+      )}
+
       {/* Card de informações principais */}
       <div className={styles.cardPrincipal}>
         <div className={styles.fotoNome}>

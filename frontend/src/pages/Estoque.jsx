@@ -158,10 +158,10 @@ export default function Estoque() {
                 <input className={styles.formInput} type="date" value={form.data_vencimento} onChange={e => setForm({...form, data_vencimento: e.target.value})} />
 
                 <div className={styles.modalFooter}>
-                  <div className="left">
+                  <div className={styles.modalFooterLeft}>
                     <button type="button" className={styles.btnSecondary} onClick={() => setShowNewForm(false)}>Cancelar</button>
                   </div>
-                  <div className="right">
+                  <div className={styles.modalFooterRight}>
                     <button type="submit" className={styles.btnPrimary}>{editing ? 'Salvar Produto' : 'Salvar Produto'}</button>
                   </div>
                 </div>

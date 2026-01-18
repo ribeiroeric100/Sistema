@@ -60,11 +60,17 @@
   border-radius: 8px;
   cursor: pointer;
   font-weight: 500;
-  transition: background-color 0.2s;
+  transition: filter 0.15s ease, transform 0.08s ease;
 }
 
 .btnBuscar:hover {
-  background: var(--primary-2, #4d5a63);
+  /* Avoid blue hover in dark theme */
+  filter: brightness(0.96);
+  transform: translateY(-1px);
+}
+
+.btnBuscar:active {
+  transform: translateY(0);
 }
 
 .tableContainer {
@@ -153,11 +159,17 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  transition: background-color 0.2s;
+  transition: filter 0.15s ease, transform 0.08s ease;
 }
 
 .btnNovoItem:hover {
-  background: var(--primary-2, #4d5a63);
+  /* Avoid blue hover in dark theme */
+  filter: brightness(0.96);
+  transform: translateY(-1px);
+}
+
+.btnNovoItem:active {
+  transform: translateY(0);
 }
 
 .btnNovoItem span {
@@ -207,4 +219,45 @@
 .btnSecondary { background: #fff; border:1px solid #cfcfcf; padding:10px 18px; border-radius:8px; cursor:pointer }
 
 .form { display: flex; flex-direction: column; gap: 10px; margin-top: 8px }
+
+/* New item modal: missing form styles */
+.formLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted, #6b7280);
+  margin-top: 2px;
+}
+
+.formInput {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border, rgba(148, 163, 184, 0.45));
+  border-radius: 10px;
+  font-size: 14px;
+  background: var(--surface, #ffffff);
+  color: var(--text, #111827);
+  outline: none;
+}
+
+.formInput:focus {
+  border-color: rgba(59, 130, 246, 0.75);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.14);
+}
+
+.twoCols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 640px) {
+  .twoCols { grid-template-columns: 1fr; }
+}
+
+.modalFooterLeft,
+.modalFooterRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
