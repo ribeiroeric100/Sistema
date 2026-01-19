@@ -1,8 +1,3 @@
-Boa 😎
-Segue um **README de portfólio**, bem direto, com linguagem dev, focado em mostrar valor do projeto (ideal pra recrutador dar aquela olhada rápida 👀).
-
----
-
 # 🦷 Sistema de Gestão Odontológica
 
 O **Sistema de Gestão** é um sistema completo de gestão para clínicas odontológicas, desenvolvido como projeto de portfólio com foco em **organização**, **segurança** e **boa experiência do usuário**.
