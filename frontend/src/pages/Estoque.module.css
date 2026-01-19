@@ -228,6 +228,20 @@
   margin-top: 2px;
 }
 
+/* Tema escuro: botão Cancelar do modal Estoque */
+:global(html[data-theme="dark"]) .btnSecondary {
+  background: #262a35 !important;
+  color: #fff !important;
+  border: 1px solid #444 !important;
+}
+
+/* Tema escuro: botão Salvar Produto branco com texto preto */
+:global(html[data-theme="dark"]) .btnPrimary {
+  background: #fff !important;
+  color: #181818 !important;
+  border: 1px solid #181818 !important;
+}
+
 .formInput {
   width: 100%;
   padding: 10px 12px;

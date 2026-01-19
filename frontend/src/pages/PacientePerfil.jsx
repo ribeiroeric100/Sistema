@@ -1088,9 +1088,9 @@ export default function PacientePerfil() {
 
       {/* Modal de Edição */}
       {showEditForm && (
-        <div className={styles.modal}>
-          <div className={styles.modalContent}>
-            <h2>Editar Paciente</h2>
+        <div className={styles.modal} style={{ background: '#181818', color: '#fff' }}>
+          <div className={styles.modalContent} style={{ background: '#181818', color: '#fff', borderRadius: 12 }}>
+            <h2 style={{ color: '#fff' }}>Editar Paciente</h2>
             <form onSubmit={handleSalvarEdicao} className={styles.formEdicao}>
               <input
                 type="text"
@@ -1098,33 +1098,38 @@ export default function PacientePerfil() {
                 value={formData.nome || ''}
                 onChange={e => setFormData({ ...formData, nome: e.target.value })}
                 required
+                style={{ background: '#222', color: '#fff', border: '1px solid #333' }}
               />
               <input
                 type="text"
                 placeholder="CPF"
                 value={formData.cpf || ''}
                 onChange={e => setFormData({ ...formData, cpf: e.target.value })}
+                style={{ background: '#222', color: '#fff', border: '1px solid #333' }}
               />
               <input
                 type="tel"
                 placeholder="Telefone"
                 value={formData.telefone || ''}
                 onChange={e => setFormData({ ...formData, telefone: e.target.value })}
+                style={{ background: '#222', color: '#fff', border: '1px solid #333' }}
               />
               <input
                 type="email"
                 placeholder="Email"
                 value={formData.email || ''}
                 onChange={e => setFormData({ ...formData, email: e.target.value })}
+                style={{ background: '#222', color: '#fff', border: '1px solid #333' }}
               />
               <input
                 type="date"
                 value={formData.data_nascimento || ''}
                 onChange={e => setFormData({ ...formData, data_nascimento: e.target.value })}
+                style={{ background: '#222', color: '#fff', border: '1px solid #333' }}
               />
               <div className={styles.modalActions}>
-                <button type="submit" className={styles.save}>Salvar</button>
-                <button type="button" onClick={() => setShowEditForm(false)} className={styles.cancel}>
+                <button type="submit" className={styles.save} style={{ background: '#0057ff', color: '#fff', border: 'none' }}>Salvar</button>
+                <button type="button" onClick={() => setShowEditForm(false)} className={styles.cancel} style={{ background: '#333', color: '#fff', border: 'none' }}>
                   Cancelar
                 </button>
               </div>
@@ -1134,26 +1139,24 @@ export default function PacientePerfil() {
       )}
       {/* Modal de Detalhes da Consulta */}
       {selectedConsulta && (
-        <div className={styles.viewModal}>
-          <div className={styles.viewCard}>
+        <div className={styles.viewModal} style={{ background: '#232733', color: '#fff' }}>
+          <div className={styles.viewCard} style={{ background: '#232733', color: '#fff', borderRadius: 12, boxShadow: '0 2px 16px #0006' }}>
             {(() => {
               const dt = new Date(selectedConsulta.data_hora)
               const dataHoraFmt = `${dt.toLocaleDateString('pt-BR')}, ${dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
               return (
                 <>
                   <div className={styles.viewHeader}>
-                    <h2 className={styles.viewTitle}>Consulta — {dataHoraFmt}</h2>
+                    <h2 className={styles.viewTitle} style={{ color: '#fff' }}>Consulta — {dataHoraFmt}</h2>
                   </div>
-
                   <div className={styles.viewBody}>
                     <div className={styles.section}>
-                      <div className={styles.sectionLabel}>Dia e Hora:</div>
-                      <div className={styles.sectionValue}>{dataHoraFmt}</div>
+                      <div className={styles.sectionLabel} style={{ color: '#fff' }}>Dia e Hora:</div>
+                      <div className={styles.sectionValue} style={{ color: '#fff' }}>{dataHoraFmt}</div>
                     </div>
-
                     <div className={styles.section}>
-                      <div className={styles.sectionLabel}>Procedimentos</div>
-                      <ul className={styles.list}>
+                      <div className={styles.sectionLabel} style={{ color: '#fff' }}>Procedimentos</div>
+                      <ul className={styles.list} style={{ color: '#fff' }}>
                         {(() => {
                           let procedimentos = selectedConsulta.procedimentos
                           if (!procedimentos) return <li>&nbsp;</li>
@@ -1163,16 +1166,14 @@ export default function PacientePerfil() {
                           const procList = Array.isArray(procedimentos)
                             ? procedimentos
                             : (procedimentos ? [procedimentos] : [])
-
                           if (procList.length === 0) return <li>&nbsp;</li>
                           return procList.map((p, i) => <li key={i}>{(p && (p.descricao || p)) || String(p)}</li>)
                         })()}
                       </ul>
                     </div>
-
                     <div className={styles.section}>
-                      <div className={styles.sectionLabel}>Materiais usados</div>
-                      <ul className={styles.list}>
+                      <div className={styles.sectionLabel} style={{ color: '#fff' }}>Materiais usados</div>
+                      <ul className={styles.list} style={{ color: '#fff' }}>
                         {(() => {
                           let materiais = selectedConsulta.materiais
                           if (!materiais) return <li>Não informado</li>
@@ -1182,7 +1183,6 @@ export default function PacientePerfil() {
                           const matList = Array.isArray(materiais)
                             ? materiais
                             : (materiais ? [materiais] : [])
-
                           if (matList.length === 0) return <li>Não informado</li>
                           return matList.map((m, i) => {
                             const isObj = m && typeof m === 'object'
@@ -1191,34 +1191,29 @@ export default function PacientePerfil() {
                             const idKey = (rawId !== undefined && rawId !== null) ? String(rawId) : ''
                             const resolvedName = idKey ? (produtoIdToNome.get(idKey) || '') : ''
                             const nome = explicitName || resolvedName || idKey
-
                             const qtdRaw = isObj ? m.quantidade : undefined
                             const qtd = Number(qtdRaw)
                             const qtdText = Number.isFinite(qtd) && qtd > 0 ? ` — Qtd: ${qtd}` : ''
-
                             return <li key={i}>{nome ? `${nome}${qtdText}` : 'Não informado'}</li>
                           })
                         })()}
                       </ul>
                     </div>
-
                     <div className={styles.section}>
-                      <div className={styles.sectionLabel}>Observações</div>
-                      <div className={styles.sectionValue}>
+                      <div className={styles.sectionLabel} style={{ color: '#fff' }}>Observações</div>
+                      <div className={styles.sectionValue} style={{ color: '#fff' }}>
                         {(() => {
                           const obs = selectedConsulta.observacoes
                           const desc = selectedConsulta.descricao
                           const texto = (obs && String(obs).trim())
                             ? obs
                             : ((desc && String(desc).trim()) ? desc : '')
-
                           return texto ? String(texto) : 'Não informado'
                         })()}
                       </div>
                     </div>
-
                     <div className={styles.footer}>
-                      <button className={styles.btnClose} onClick={() => setSelectedConsulta(null)}>Fechar</button>
+                      <button className={styles.btnClose} onClick={() => setSelectedConsulta(null)} style={{ background: '#333', color: '#fff', border: 'none' }}>Fechar</button>
                     </div>
                   </div>
                 </>

@@ -1,3 +1,109 @@
+:global(html[data-theme="dark"]) .modalContent .patientDialogBody .patientPhoneGroup {
+  background: #262a35 !important;
+  border: 1px solid #fff !important;
+  border-radius: 10px !important;
+}
+:global(html[data-theme="dark"]) .patientPhoneGroup {
+  background: #262a35 !important;
+  border: 1px solid #fff !important;
+  border-radius: 10px !important;
+}
+:global(html[data-theme="dark"]) input[type="tel"],
+:global(html[data-theme="dark"]) .phoneField {
+  background: #262a35 !important;
+  color: #fff !important;
+  border: none !important;
+}
+:global(html[data-theme="dark"]) .phoneField {
+  background: #262a35 !important;
+  color: #fff !important;
+  border: none !important;
+}
+:global(html[data-theme="dark"]) input.phoneField {
+  background: #262a35 !important;
+  color: #fff !important;
+  border: none !important;
+}
+:global(html[data-theme="dark"]) input.formInput,
+:global(html[data-theme="dark"]) input.smallInput,
+:global(html[data-theme="dark"]) input.phoneField,
+:global(html[data-theme="dark"]) select.formInput,
+:global(html[data-theme="dark"]) textarea.formInput {
+  background: #262a35 !important;
+  color: #fff !important;
+  border-color: #fff !important;
+}
+:global(html[data-theme="dark"]) .formInput,
+:global(html[data-theme="dark"]) .smallInput,
+:global(html[data-theme="dark"]) .phoneField {
+  background: #262a35 !important;
+  color: #fff !important;
+}
+:global(html[data-theme="dark"]) .patientPhoneGroup {
+  background: #262a35 !important;
+}
+:global(html[data-theme="dark"]) .phoneField {
+  border: none !important;
+}
+:global(html[data-theme="dark"]) .patientPhoneGroup {
+  background: #262a35 !important;
+  border: 1px solid #fff !important;
+  border-radius: 10px !important;
+}
+:global(html[data-theme="dark"]) .phoneField {
+  background: #262a35 !important;
+  color: #fff !important;
+}
+:global(html[data-theme="dark"]) .dialogClose {
+  background: transparent !important;
+  color: #fff !important;
+  border: none !important;
+  right: 16px !important;
+}
+:global(html[data-theme="dark"]) .dialogClose {
+  background: transparent !important;
+  color: #fff !important;
+  border: none !important;
+}
+:global(html[data-theme="dark"]) .mcBlockHeader,
+:global(html[data-theme="dark"]) .mcBlockBody {
+  background: #262a35 !important;
+  color: #fff !important;
+  border-color: #222 !important;
+}
+:global(html[data-theme="dark"]) .modalContent,
+:global(html[data-theme="dark"]) .dialogContent.mcDialog {
+  background: #262a35 !important;
+  color: #fff !important;
+  border-color: #262a35 !important;
+}
+
+:global(html[data-theme="dark"]) .modalHeader,
+:global(html[data-theme="dark"]) .modalFooter,
+:global(html[data-theme="dark"]) .mcBlockHeader {
+  background: #262a35 !important;
+  color: #fff !important;
+  border-bottom-color: #222 !important;
+  border-top-color: #222 !important;
+}
+
+:global(html[data-theme="dark"]) .formInput,
+:global(html[data-theme="dark"]) .smallInput {
+  background: #262a35 !important;
+  color: #fff !important;
+  border: 1px solid #fff !important;
+}
+
+:global(html[data-theme="dark"]) .formLabel {
+  color: #fff !important;
+}
+
+:global(html[data-theme="dark"]) .btnPrimary,
+:global(html[data-theme="dark"]) .btnSecondary {
+  background: #262a35 !important;
+  color: #fff !important;
+  border: 1px solid #fff !important;
+}
 .container {
 	padding: 24px;
 	position: relative;
