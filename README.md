@@ -124,8 +124,8 @@ npm run dev:all
 > É necessário configurar o arquivo `.env` com as variáveis do banco de dados.
 
 # user para teste: 
-recepcao@local
-323232
+email: recepcao@local
+senha: 323232
 
 ## 🎯 Objetivo do projeto
 
