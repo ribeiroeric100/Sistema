@@ -9,19 +9,43 @@ export default function Configuracoes() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const isAdmin = useMemo(() => user?.role === 'admin', [user?.role])
+  const isDentista = useMemo(() => user?.role === 'dentista', [user?.role])
+  const isRecepcao = useMemo(() => user?.role === 'recepcao', [user?.role])
 
   const userThemeKey = useMemo(() => String(user?.email || user?.nome || '').trim().toLowerCase(), [user?.email, user?.nome])
   const [userThemeUi, setUserThemeUi] = useState(() => normalizeThemeUi(loadUserThemeUiPreference(userThemeKey) || 'system'))
 
-  const TABS = useMemo(() => ([
-    { id: 'identidade', label: 'Identidade da Clínica' },
-    { id: 'contato', label: 'Contato & Localização' },
-    { id: 'aparencia', label: 'Aparência' },
-    { id: 'comunicacao', label: 'Comunicação' },
-    { id: 'conta', label: 'Conta' }
-  ]), [])
+  // Tabs para cada perfil
+  const TABS = useMemo(() => {
+    if (isRecepcao) {
+      return [
+        { id: 'aparencia', label: 'Aparência' },
+        { id: 'conta', label: 'Conta' }
+      ]
+    }
+    if (isDentista) {
+      return [
+        { id: 'identidade', label: 'Identidade da Clínica' },
+        { id: 'contato', label: 'Contato & Localização' },
+        { id: 'aparencia', label: 'Aparência' },
+        { id: 'comunicacao', label: 'Comunicação' },
+        { id: 'conta', label: 'Conta' }
+      ]
+    }
+    // Admin e outros
+    return [
+      { id: 'identidade', label: 'Identidade da Clínica' },
+      { id: 'contato', label: 'Contato & Localização' },
+      { id: 'aparencia', label: 'Aparência' },
+      { id: 'comunicacao', label: 'Comunicação' },
+      { id: 'conta', label: 'Conta' }
+    ]
+  }, [isRecepcao, isDentista])
 
-  const [activeTab, setActiveTab] = useState('identidade')
+  const [activeTab, setActiveTab] = useState(() => {
+    if (isRecepcao) return 'aparencia';
+    return 'identidade';
+  })
 
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -193,7 +217,7 @@ export default function Configuracoes() {
       <button
         className={styles.primaryBtn}
         onClick={handleSave}
-        disabled={!isAdmin || saving || loading}
+        disabled={saving || loading}
       >
         {saving ? 'Salvando...' : 'Salvar Alterações'}
       </button>
@@ -211,7 +235,7 @@ export default function Configuracoes() {
 
       {error ? <div className={styles.alertError}>{error}</div> : null}
       {success ? <div className={styles.alertSuccess}>{success}</div> : null}
-      {!isAdmin ? (
+      {!isAdmin && !isDentista && !isRecepcao ? (
         <div className={styles.alertInfo}>Você está em modo somente leitura. Apenas administradores podem editar.</div>
       ) : null}
 
@@ -245,7 +269,7 @@ export default function Configuracoes() {
               <input
                 className={styles.textInput}
                 value={form.nome_clinica}
-                disabled={!isAdmin || loading}
+                disabled={!(isAdmin || isDentista) || loading}
                 onChange={onChange('nome_clinica')}
                 placeholder="Dr. Neto Abreu – Clínica Odontológica"
               />
@@ -256,7 +280,7 @@ export default function Configuracoes() {
               <input
                 className={styles.textInput}
                 value={form.cro_responsavel}
-                disabled={!isAdmin || loading}
+                disabled={!(isAdmin || isDentista) || loading}
                 onChange={onChange('cro_responsavel')}
                 placeholder="SP-123456"
               />
@@ -267,7 +291,7 @@ export default function Configuracoes() {
               <textarea
                 className={styles.textArea}
                 value={form.rodape_pdf}
-                disabled={!isAdmin || loading}
+                disabled={!(isAdmin || isDentista) || loading}
                 onChange={onChange('rodape_pdf')}
                 placeholder="Dr. Neto Abreu – CRO/SP 00000"
                 rows={3}
@@ -276,7 +300,7 @@ export default function Configuracoes() {
             </div>
           </div>
 
-          {isAdmin ? renderSaveBar() : null}
+          {(isAdmin || isDentista) ? renderSaveBar() : null}
         </div>
       ) : null}
 
@@ -307,7 +331,7 @@ export default function Configuracoes() {
               <input
                 className={styles.textInput}
                 value={form.telefone_clinica}
-                disabled={!isAdmin || loading}
+                disabled={!(isAdmin || isDentista) || loading}
                 onChange={onChange('telefone_clinica')}
                 placeholder="(11) 99999-9999"
               />
@@ -319,7 +343,7 @@ export default function Configuracoes() {
                 type="email"
                 className={styles.textInput}
                 value={form.email_clinica}
-                disabled={!isAdmin || loading}
+                disabled={!(isAdmin || isDentista) || loading}
                 onChange={onChange('email_clinica')}
                 placeholder="admin@clinica.com"
               />
@@ -329,7 +353,7 @@ export default function Configuracoes() {
               <input
                 className={styles.textInput}
                 value={form.endereco_clinica}
-                disabled={!isAdmin || loading}
+                disabled={!(isAdmin || isDentista) || loading}
                 onChange={onChange('endereco_clinica')}
                 placeholder="Rua, nº, bairro, cidade"
               />
@@ -348,14 +372,12 @@ export default function Configuracoes() {
               <div className={styles.cardDesc}>Personalize o visual da sua clínica</div>
             </div>
           </div>
-
           <div className={styles.appearanceGrid}>
             <div className={styles.appearanceLeft}>
               <div className={styles.themePanel}>
                 <div className={styles.themePanelTop}>
                   <div className={styles.themePanelTitle}>TEMA (ESTE USUÁRIO)</div>
                 </div>
-
                 <div className={styles.roleThemes}>
                   <div className={styles.roleRow}>
                     <div className={styles.roleMeta}>
@@ -372,8 +394,7 @@ export default function Configuracoes() {
               </div>
             </div>
           </div>
-
-          {isAdmin ? renderSaveBar() : null}
+          {isAdmin || isRecepcao ? renderSaveBar() : null}
         </div>
       ) : null}
 
@@ -442,10 +463,10 @@ export default function Configuracoes() {
               <div className={styles.cardDesc}>Sessão e segurança</div>
             </div>
           </div>
-
           <div className={styles.accountBox}>
             <button className={styles.dangerBtn} onClick={handleLogout}>Sair</button>
           </div>
+          <div className={styles.helper} style={{marginTop:8}}>Você pode sair do sistema a qualquer momento.</div>
         </div>
       ) : null}
     </div>

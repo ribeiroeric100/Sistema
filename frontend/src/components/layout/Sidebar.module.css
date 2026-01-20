@@ -1,3 +1,15 @@
+.logoLight, .logoDark {
+  width: 150px;
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 10px 22px rgba(0,0,0,0.22));
+  display: none;
+}
+.logoLight { display: block; }
+@media (prefers-color-scheme: dark) {
+  .logoLight { display: none; }
+  .logoDark { display: block; }
+}
 .sidebar {
   background: var(--sidebar-bg, linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%));
   color: var(--sidebar-fg, #0f172a);
@@ -43,13 +55,6 @@
   z-index: 1;
 }
 
-.brand img {
-  width: 150px;
-  max-width: 100%;
-  height: auto;
-  display: inline-block;
-  filter: drop-shadow(0 10px 22px rgba(0,0,0,0.22));
-}
 
 .brandDivider {
   height: 0;
@@ -249,4 +254,18 @@
   margin: 8px 0 0 0;
   color: var(--sidebar-fg-muted, rgba(51, 65, 85, 0.85));
   text-align: center;
+}
+
+/* Força o nome do logo para preto no modo claro */
+.brand img + span,
+.brand span {
+  color: #111 !important;
+  text-shadow: none !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .brand img + span,
+  .brand span {
+    color: #0f172a !important;
+  }
 }

@@ -69,8 +69,8 @@ router.get('/', verifyToken, (req, res) => {
   )
 })
 
-// Atualizar configurações básicas (somente admin)
-router.put('/', verifyToken, verifyRole(['admin']), async (req, res) => {
+// Atualizar configurações básicas (admin, dentista e recepcao)
+router.put('/', verifyToken, verifyRole(['admin', 'dentista', 'recepcao']), async (req, res) => {
   const payload = req.body
   if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
     return res.status(400).json({ error: 'Payload inválido' })

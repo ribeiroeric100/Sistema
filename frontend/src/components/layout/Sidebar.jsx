@@ -3,7 +3,8 @@ import { NavLink } from 'react-router-dom'
 import { useAuth } from '../../context/useAuth'
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import logo from '../../assets/dr-neto-logo.png'
+import logoWhite from '../../assets/dr-neto-logo.png'
+import logoBlack from '../../assets/dr-neto-logo-black.png'
 
 export default function Sidebar() {
   const { user, logout } = useAuth()
@@ -17,7 +18,7 @@ export default function Sidebar() {
     { label: 'Estoque', path: '/estoque', icon: 'estoque', roles: ['admin', 'dentista', 'recepcao'] },
     { label: 'Usuários', path: '/usuarios', icon: 'usuarios', roles: ['admin'] },
     { label: 'Auditoria', path: '/auditoria', icon: 'relatorios', roles: ['admin'] },
-    { label: 'Configurações', path: '/settings', icon: 'config', roles: ['admin'] }
+    { label: 'Configurações', path: '/settings', icon: 'config', roles: ['admin', 'dentista', 'recepcao'] }
   ]
 
   function renderIcon(name) {
@@ -88,7 +89,7 @@ export default function Sidebar() {
         return (
           <svg {...common}>
             <circle cx="12" cy="12" r="3" />
-            <path d="M19.4 15a7.8 7.8 0 0 0 .1-2l2-1.2-2-3.5-2.3.6a7.3 7.3 0 0 0-1.7-1l-.3-2.4h-4l-.3 2.4a7.3 7.3 0 0 0-1.7 1l-2.3-.6-2 3.5 2 1.2a7.8 7.8 0 0 0 .1 2l-2 1.2 2 3.5 2.3-.6a7.3 7.3 0 0 0 1.7 1l.3 2.4h4l.3-2.4a7.3 7.3 0 0 0 1.7-1l2.3.6 2-3.5-2-1.2Z" />
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09A1.65 1.65 0 0 0 11 3.09V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.09a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
           </svg>
         )
 
@@ -125,10 +126,12 @@ export default function Sidebar() {
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
   }, [userName])
 
+  // Troca de logo por CSS classes para modo claro/escuro
   return (
     <aside className={styles.sidebar}>
       <div className={styles.brand}>
-        <img src={logo} alt="DR. NETO ABREU" />
+        <img src={logoBlack} alt="DR. NETO ABREU" className={styles.logoLight} />
+        <img src={logoWhite} alt="DR. NETO ABREU" className={styles.logoDark} />
       </div>
       <div className={styles.brandDivider} aria-hidden="true" />
       <nav className={styles.nav}>

@@ -108,7 +108,7 @@ function AppContent() {
                 </RequireRoles>
               } />
               <Route path="/settings" element={
-                <RequireRoles role={role} roles={['admin']}>
+                <RequireRoles role={role} roles={['admin', 'dentista', 'recepcao']}>
                   <Configuracoes />
                 </RequireRoles>
               } />
