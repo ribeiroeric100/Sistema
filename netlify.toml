@@ -1,0 +1,19 @@
+# Netlify config for the Vite (React) frontend inside the monorepo.
+# This makes the deploy work without manually setting Base/Publish in the UI.
+
+[build]
+  base = "frontend"
+  # Workaround for npm optionalDependencies bug on CI/Linux where Rollup's
+  # platform-specific package (@rollup/rollup-linux-x64-gnu) may be missing.
+  # Reinstall without package-lock so npm resolves the correct optional deps.
+  command = "rm -rf node_modules package-lock.json && npm install --no-audit --no-fund --no-package-lock && npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# SPA fallback for react-router
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

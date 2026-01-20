@@ -40,8 +40,6 @@ Thumbs.db
 .vscode/*
 
 # Arquivos de deploy (ignorar)
-netlify.toml
-render.yaml
 !.vscode/tasks.json
 !.vscode/extensions.json
 
