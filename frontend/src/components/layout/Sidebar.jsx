@@ -1,7 +1,33 @@
 import styles from './Sidebar.module.css'
 import { NavLink } from 'react-router-dom'
 import { useAuth } from '../../context/useAuth'
-import { useMemo } from 'react'
+import { useMemo, useEffect, useState } from 'react'
+import { loadUserThemeUiPreference, normalizeThemeUi } from '../../services/theme'
+// ...existing code...
+
+// Hook para detectar se o tema UI é 'system'
+function useIsSystemTheme(user) {
+  const [isSystem, setIsSystem] = useState(false)
+  useEffect(() => {
+    const userThemeKey = String(user?.email || user?.nome || '').trim().toLowerCase()
+    const stored = loadUserThemeUiPreference(userThemeKey)
+    const themeUi = normalizeThemeUi(stored || 'system')
+    setIsSystem(themeUi === 'system')
+  }, [user])
+  return isSystem
+}
+// Hook para detectar se está em mobile
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= breakpoint)
+  useEffect(() => {
+    function handleResize() {
+      setIsMobile(window.innerWidth <= breakpoint)
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [breakpoint])
+  return isMobile
+}
 import { useNavigate } from 'react-router-dom'
 import logoWhite from '../../assets/dr-neto-logo.png'
 import logoBlack from '../../assets/dr-neto-logo-black.png'
@@ -109,8 +135,11 @@ export default function Sidebar() {
   }
 
 
+
   const role = String(user?.role || '').toLowerCase()
   const itemsVisiveis = menuItems.filter(item => item.roles.includes(role))
+  const isMobile = useIsMobile(768)
+  const isSystemTheme = useIsSystemTheme(user)
 
   const handleLogout = () => {
     logout()
@@ -139,7 +168,11 @@ export default function Sidebar() {
           <NavLink
             key={item.path}
             to={item.path}
-            className={({ isActive }) => isActive ? `${styles.navItem} ${styles.active}` : styles.navItem}
+            className={({ isActive }) =>
+              (isMobile && isSystemTheme)
+                ? `${styles.navItem} ${styles.active}`
+                : (isActive ? `${styles.navItem} ${styles.active}` : styles.navItem)
+            }
           >
             {renderIcon(item.icon)}
             <span className={styles.label}>{item.label}</span>

@@ -218,6 +218,7 @@ export default function Pacientes() {
       carregarPacientes()
     } catch (err) {
       console.error('Erro ao deletar paciente', err)
+      try { alert('Erro ao deletar paciente: ' + (err?.message || JSON.stringify(err))) } catch(e) { console.error(e) }
     }
   }
 
