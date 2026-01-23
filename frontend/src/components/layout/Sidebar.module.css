@@ -269,3 +269,28 @@
     color: #0f172a !important;
   }
 }
+
+/* System theme: make inactive items white with primary (lilac) text, active items lilac with white text */
+:root[data-theme-ui="system"] .navItem {
+  background: transparent;
+  color: #ffffff;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+:root[data-theme-ui="system"] .navItem svg {
+  color: #ffffff;
+}
+
+:root[data-theme-ui="system"] .navItem:hover {
+  background: rgba(255,255,255,0.06);
+}
+
+:root[data-theme-ui="system"] .navItem.active {
+  background: var(--sidebar-start, #7b7ff0);
+  color: #ffffff;
+  box-shadow: none;
+}
+
+:root[data-theme-ui="system"] .navItem.active svg {
+  color: #ffffff;
+}

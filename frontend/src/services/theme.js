@@ -64,7 +64,8 @@ const THEME_VARS = {
     '--sidebar-fg': 'rgba(229, 238, 252, 0.96)',
     '--sidebar-fg-muted': 'rgba(229, 238, 252, 0.88)',
     '--sidebar-item-hover': 'rgba(255, 255, 255, 0.10)',
-    '--sidebar-item-active': 'rgba(255, 255, 255, 0.14)',
+    // Use a purple-tinted active fill so mobile items match the sidebar gradient
+    '--sidebar-item-active': 'rgba(123, 127, 240, 0.16)',
     '--sidebar-card-bg': 'rgba(255, 255, 255, 0.12)',
     '--sidebar-card-border': 'rgba(255, 255, 255, 0.10)',
 

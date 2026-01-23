@@ -4,6 +4,7 @@ const cors = require('cors')
 const helmet = require('helmet')
 const bodyParser = require('body-parser')
 const db = require('./config/database')
+const path = require('path')
 const authRoutes = require('./routes/auth')
 const estoqueRoutes = require('./routes/estoque')
 const pacientesRoutes = require('./routes/pacientes')
@@ -77,6 +78,8 @@ Promise.resolve()
     app.use('/api/configuracoes', configuracoesRoutes)
     app.use('/api/auditoria', auditoriaRoutes)
 
+    // Servir arquivos estáticos de uploads (imagens da galeria)
+    app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
     // Health check
     app.get('/api/health', (req, res) => {
       res.json({ status: 'OK', message: 'Servidor odontológico rodando' })

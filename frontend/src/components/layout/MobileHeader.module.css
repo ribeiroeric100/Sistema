@@ -228,8 +228,8 @@
   border-radius: 10px;
   display: grid;
   place-items: center;
-  background: rgba(37, 99, 235, 0.10);
-  color: var(--sidebar-fg, rgba(37, 99, 235, 0.95));
+  background: var(--primary-a08, rgba(37, 99, 235, 0.10));
+  color: var(--btn-primary-fg, var(--primary));
 }
 
 .drawerLabel {
@@ -271,8 +271,32 @@
 }
 
 .active {
-  background: rgba(37, 99, 235, 0.10);
-  border-color: rgba(37, 99, 235, 0.12);
+  background: var(--sidebar-item-active, var(--primary-a12, rgba(37, 99, 235, 0.10)));
+  border-color: var(--sidebar-item-active, var(--primary-a12, rgba(37, 99, 235, 0.10)));
+  color: var(--sidebar-fg, rgba(15, 23, 42, 0.88));
+}
+
+/* System theme: make drawer items match sidebar behavior */
+:root[data-theme-ui="system"] .drawerItem {
+  background: transparent;
+  color: var(--primary, #7b7ff0);
+  border-color: rgba(255,255,255,0.06);
+}
+
+:root[data-theme-ui="system"] .drawerItem .drawerIcon {
+  background: var(--primary-a08, rgba(123,127,240,0.10));
+  color: var(--primary, #7b7ff0);
+}
+
+:root[data-theme-ui="system"] .drawerItem.active {
+  background: var(--sidebar-start, #7b7ff0);
+  color: #ffffff;
+  border-color: transparent;
+}
+
+:root[data-theme-ui="system"] .drawerItem.active .drawerIcon {
+  background: rgba(255,255,255,0.12);
+  color: #ffffff;
 }
 
 @media (prefers-reduced-motion: reduce) {

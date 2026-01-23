@@ -1,6 +1,9 @@
 const express = require('express')
 const { v4: uuidv4 } = require('uuid')
 const { db } = require('../config/database')
+const upload = require('../middleware/upload')
+const fs = require('fs')
+const path = require('path')
 const { verifyToken, verifyRole } = require('../middleware/auth')
 const { logAudit } = require('../services/audit')
 const PDFDocument = require('pdfkit')
@@ -312,3 +315,69 @@ router.get('/:id/prontuario/pdf', verifyToken, verifyRole(['admin', 'dentista'])
 })
 
 module.exports = router
+
+// --- Galeria de imagens: listar, enviar e deletar ---
+// GET /api/pacientes/:id/galeria
+router.get('/:id/galeria', verifyToken, (req, res) => {
+  const pacienteId = req.params.id
+  db.all(
+    'SELECT id, paciente_id, url, nome_arquivo, data_upload FROM galeria_imagens WHERE paciente_id = ? ORDER BY data_upload DESC',
+    [pacienteId],
+    (err, rows) => {
+      if (err) return res.status(500).json({ error: err.message })
+      res.json(rows || [])
+    }
+  )
+})
+
+// POST /api/pacientes/:id/galeria (multipart/form-data, field name: files)
+router.post('/:id/galeria', verifyToken, verifyRole(['admin', 'dentista', 'recepcao']), upload.array('files', 20), async (req, res) => {
+  const pacienteId = req.params.id
+  const files = req.files || []
+  if (!files.length) return res.status(400).json({ error: 'Nenhum arquivo enviado' })
+
+  try {
+    const created = []
+    for (const f of files) {
+      const id = uuidv4()
+      const url = `/uploads/galeria/${f.filename}`
+      await new Promise((resolve, reject) => {
+        db.run(
+          'INSERT INTO galeria_imagens (id, paciente_id, url, nome_arquivo) VALUES (?, ?, ?, ?)',
+          [id, pacienteId, url, f.originalname],
+          function (err) {
+            if (err) return reject(err)
+            created.push({ id, paciente_id: pacienteId, url, nome_arquivo: f.originalname, data_upload: new Date().toISOString() })
+            resolve()
+          }
+        )
+      })
+    }
+
+    logAudit(req, 'galeria.create', { entityType: 'paciente', entityId: pacienteId, count: created.length })
+    res.json(created)
+  } catch (err) {
+    console.error('Erro ao salvar imagens da galeria:', err)
+    res.status(500).json({ error: 'Erro ao salvar imagens' })
+  }
+})
+
+// DELETE /api/pacientes/galeria/:imageId
+router.delete('/galeria/:imageId', verifyToken, verifyRole(['admin', 'dentista', 'recepcao']), (req, res) => {
+  const imageId = req.params.imageId
+  db.get('SELECT id, url, paciente_id FROM galeria_imagens WHERE id = ?', [imageId], (err, row) => {
+    if (err) return res.status(500).json({ error: err.message })
+    if (!row) return res.status(404).json({ error: 'Imagem não encontrada' })
+
+    const filePath = path.join(__dirname, '..', row.url.replace(/^\//, ''))
+    fs.unlink(filePath, (fsErr) => {
+      // ignore file unlink errors (file may not exist), but proceed to remove DB entry
+      db.run('DELETE FROM galeria_imagens WHERE id = ?', [imageId], function (dbErr) {
+        if (dbErr) return res.status(500).json({ error: dbErr.message })
+        logAudit(req, 'galeria.delete', { entityType: 'paciente', entityId: row.paciente_id, entityId2: imageId })
+        res.json({ success: true })
+      })
+    })
+  })
+})
+
