@@ -3,7 +3,9 @@ import { NavLink } from 'react-router-dom'
 import { useAuth } from '../../context/useAuth'
 import { useMemo, useEffect, useState } from 'react'
 import { loadUserThemeUiPreference, normalizeThemeUi } from '../../services/theme'
-// ...existing code...
+import { useNavigate } from 'react-router-dom'
+import logoWhite from '../../assets/dr-neto-logo-branca.png'
+import logoBlack from '../../assets/dr-neto-abreu-preto.png'
 
 // Hook para detectar se o tema UI é 'system'
 function useIsSystemTheme(user) {
@@ -28,13 +30,24 @@ function useIsMobile(breakpoint = 768) {
   }, [breakpoint])
   return isMobile
 }
-import { useNavigate } from 'react-router-dom'
-import logoWhite from '../../assets/dr-neto-logo.png'
-import logoBlack from '../../assets/dr-neto-logo-black.png'
-
 export default function Sidebar() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+
+  const [themeUi, setThemeUi] = useState(() => {
+    if (typeof document === 'undefined') return 'light'
+    return document.documentElement.dataset.themeUi || 'light'
+  })
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return
+    const root = document.documentElement
+    const obs = new MutationObserver(() => {
+      setThemeUi(root.dataset.themeUi || 'light')
+    })
+    obs.observe(root, { attributes: true, attributeFilter: ['data-theme-ui', 'data-theme'] })
+    return () => obs.disconnect()
+  }, [])
 
   const menuItems = [
     { label: 'Dashboard', path: '/dashboard', icon: 'dashboard', roles: ['admin', 'dentista', 'recepcao'] },
@@ -155,12 +168,13 @@ export default function Sidebar() {
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
   }, [userName])
 
-  // Troca de logo por CSS classes para modo claro/escuro
+  // Escolhe o logo via JS: light -> preto, system/dark -> branco
+  const currentLogo = themeUi === 'light' ? logoBlack : logoWhite
+
   return (
     <aside className={styles.sidebar}>
       <div className={styles.brand}>
-        <img src={logoBlack} alt="DR. NETO ABREU" className={styles.logoLight} />
-        <img src={logoWhite} alt="DR. NETO ABREU" className={styles.logoDark} />
+        <img src={currentLogo} alt="DR. NETO ABREU" className={styles.logo} />
       </div>
       <div className={styles.brandDivider} aria-hidden="true" />
       <nav className={styles.nav}>

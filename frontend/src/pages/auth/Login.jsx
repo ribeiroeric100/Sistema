@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { authService } from '@services/api'
 import { useAuth } from '@context/useAuth'
 import styles from './Login.module.css'
-import logo from '../../assets/dente.png'
+import logo from '../../assets/logo.png'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -33,8 +33,7 @@ export default function Login() {
     <div className={styles.container}>
       <div className={styles.card}>
         <div className={styles.header}>
-          <img src={logo} alt="DR. NETO ABREU" className={styles.logo} />
-          <div className={styles.brandName}>DR. NETO ABREU</div>
+          <img src={logo} alt="Dentaly" className={styles.logo} />
         </div>
 
         <form onSubmit={handleSubmit}>

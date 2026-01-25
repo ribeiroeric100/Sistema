@@ -1,14 +1,15 @@
 .logoLight, .logoDark {
-  width: 150px;
-  max-width: 100%;
-  height: auto;
-  filter: drop-shadow(0 10px 22px rgba(0,0,0,0.22));
   display: none;
 }
-.logoLight { display: block; }
-@media (prefers-color-scheme: dark) {
-  .logoLight { display: none; }
-  .logoDark { display: block; }
+
+/* Generic logo used when switching via JS */
+.logo {
+  width: 180px;
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 10px 22px rgba(0,0,0,0.16));
+  -webkit-filter: drop-shadow(0 10px 22px rgba(0,0,0,0.16));
+  display: block;
 }
 .sidebar {
   background: var(--sidebar-bg, linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%));
@@ -268,6 +269,14 @@
   .brand span {
     color: #0f172a !important;
   }
+}
+
+/* When app-level UI theme is 'system', show the white logo (same as dark) */
+:root[data-theme-ui="system"] .logoLight {
+  display: none;
+}
+:root[data-theme-ui="system"] .logoDark {
+  display: block;
 }
 
 /* System theme: make inactive items white with primary (lilac) text, active items lilac with white text */

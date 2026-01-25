@@ -29,11 +29,14 @@
 }
 
 .logo {
-  width: 108px;
+  width: 300px;
   max-width: 100%;
   height: auto;
   display: block;
   margin: 0 auto 10px auto;
+  border-radius: 12px;
+  -webkit-font-smoothing: antialiased;
+  filter: drop-shadow(0 10px 24px rgba(25, 30, 60, 0.12));
 }
 
 .brandName {
@@ -172,7 +175,7 @@
   }
 
   .logo {
-    width: 96px;
+    width: 120px;
   }
 }
 
