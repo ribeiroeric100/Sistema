@@ -4,6 +4,15 @@ import styles from './Configuracoes.module.css'
 import { configuracoesService } from '../services/api'
 import { useAuth } from '../context/useAuth'
 import { applyClinicTheme, loadUserThemeUiPreference, normalizeHex, normalizeThemeUi, saveUserThemeUiPreference } from '../services/theme'
+// Keys accepted by the backend `/configuracoes` endpoint
+const ALLOWED_KEYS_BACKEND = [
+  'nome_clinica', 'cro_responsavel', 'telefone_clinica', 'email_clinica', 'endereco_clinica', 'rodape_pdf',
+  'logo_claro', 'logo_escuro', 'tema_ui', 'tema_ui_admin', 'tema_ui_dentista', 'tema_ui_recepcao', 'cor_primaria',
+  'lembrete_whatsapp_ativo', 'lembrete_email_ativo', 'mensagem_lembrete',
+  // personalizado keys
+  'logo_personalizado', 'personalizado_sidebar_bg', 'personalizado_sidebar_fg', 'personalizado_table_head_bg',
+  'personalizado_bg', 'personalizado_surface', 'personalizado_text', 'personalizado_sidebar_start', 'personalizado_sidebar_end'
+]
 
 export default function Configuracoes() {
   const { user, logout } = useAuth()
@@ -65,6 +74,16 @@ export default function Configuracoes() {
     tema_ui_admin: 'system',
     tema_ui_dentista: 'system',
     tema_ui_recepcao: 'system',
+    // personalizado fields
+    logo_personalizado: '',
+    personalizado_sidebar_bg: '',
+    personalizado_sidebar_fg: '',
+    personalizado_table_head_bg: '',
+    personalizado_bg: '',
+    personalizado_surface: '',
+    personalizado_text: '',
+    personalizado_sidebar_start: '',
+    personalizado_sidebar_end: '',
     cor_primaria: '#2563eb',
     lembrete_whatsapp_ativo: true,
     lembrete_email_ativo: false,
@@ -91,9 +110,22 @@ export default function Configuracoes() {
 
   // Mantém o tema (claro/escuro/sistema) e a cor primária aplicados globalmente.
   useEffect(() => {
-    const cleanup = applyClinicTheme(form.cor_primaria, appliedThemeUi)
+    const cleanup = applyClinicTheme(form.cor_primaria, appliedThemeUi, form)
     return () => cleanup?.()
-  }, [form.cor_primaria, appliedThemeUi])
+  // Watch primary, applied themeUi and any custom/personalizado fields so live preview updates
+  }, [
+    form.cor_primaria,
+    appliedThemeUi,
+    form.logo_personalizado,
+    form.personalizado_sidebar_bg,
+    form.personalizado_sidebar_fg,
+    form.personalizado_table_head_bg,
+    form.personalizado_bg,
+    form.personalizado_surface,
+    form.personalizado_text,
+    form.personalizado_sidebar_start,
+    form.personalizado_sidebar_end
+  ])
 
   useEffect(() => {
     // Quando troca de usuário, restaura preferências locais
@@ -123,6 +155,16 @@ export default function Configuracoes() {
           tema_ui_dentista: normalizeThemeUi(data?.tema_ui_dentista || ''),
           tema_ui_recepcao: normalizeThemeUi(data?.tema_ui_recepcao || ''),
           cor_primaria: normalizeHex(data?.cor_primaria ?? '#2563eb'),
+          // personalizado fields from backend if present
+          logo_personalizado: data?.logo_personalizado || data?.logo_claro || '',
+          personalizado_sidebar_bg: data?.personalizado_sidebar_bg || '',
+          personalizado_sidebar_fg: data?.personalizado_sidebar_fg || '',
+          personalizado_table_head_bg: data?.personalizado_table_head_bg || '',
+          personalizado_bg: data?.personalizado_bg || '',
+          personalizado_surface: data?.personalizado_surface || '',
+          personalizado_text: data?.personalizado_text || '',
+          personalizado_sidebar_start: data?.personalizado_sidebar_start || '',
+          personalizado_sidebar_end: data?.personalizado_sidebar_end || '',
           lembrete_whatsapp_ativo: String(data?.lembrete_whatsapp_ativo ?? 'true') === 'true',
           lembrete_email_ativo: String(data?.lembrete_email_ativo ?? 'false') === 'true',
           mensagem_lembrete: data?.mensagem_lembrete
@@ -149,6 +191,27 @@ export default function Configuracoes() {
     setForm((prev) => ({ ...prev, [key]: checked }))
   }
 
+  const handleFileChange = (key) => async (e) => {
+    const f = e.target.files && e.target.files[0]
+    if (!f) return
+    try {
+      // show quick preview using object URL
+      const preview = URL.createObjectURL(f)
+      setForm((prev) => ({ ...prev, [key]: preview }))
+      setSuccess('Enviando imagem ao servidor...')
+      // upload to backend to receive a persistent URL
+      const resp = await configuracoesService.uploadLogo(f)
+      if (resp?.url) {
+        setForm((prev) => ({ ...prev, [key]: resp.url }))
+        setSuccess('Imagem enviada. Clique em salvar para persistir as configurações.')
+      } else {
+        setError('Upload concluído sem URL de retorno')
+      }
+    } catch (err) {
+      setError(err.message || 'Erro ao enviar imagem')
+    }
+  }
+
   const handleUserThemeChange = (value) => {
     const v = normalizeThemeUi(value)
     setUserThemeUi(v)
@@ -173,7 +236,13 @@ export default function Configuracoes() {
         lembrete_email_ativo: String(!!form.lembrete_email_ativo)
       }
 
-      const updated = await configuracoesService.atualizar(payload)
+      // Only send keys accepted by the backend to avoid 400 errors
+      const filtered = {}
+      for (const k of ALLOWED_KEYS_BACKEND) {
+        if (Object.prototype.hasOwnProperty.call(payload, k)) filtered[k] = payload[k]
+      }
+
+      const updated = await configuracoesService.atualizar(filtered)
       setForm({
         nome_clinica: updated?.nome_clinica ?? '',
         cro_responsavel: updated?.cro_responsavel ?? '',
@@ -188,6 +257,16 @@ export default function Configuracoes() {
         tema_ui_dentista: normalizeThemeUi(updated?.tema_ui_dentista || ''),
         tema_ui_recepcao: normalizeThemeUi(updated?.tema_ui_recepcao || ''),
         cor_primaria: normalizeHex(updated?.cor_primaria ?? '#2563eb'),
+        // personalizado fields returned
+        logo_personalizado: updated?.logo_personalizado || updated?.logo_claro || '',
+        personalizado_sidebar_bg: updated?.personalizado_sidebar_bg || '',
+        personalizado_sidebar_fg: updated?.personalizado_sidebar_fg || '',
+        personalizado_table_head_bg: updated?.personalizado_table_head_bg || '',
+        personalizado_bg: updated?.personalizado_bg || '',
+        personalizado_surface: updated?.personalizado_surface || '',
+        personalizado_text: updated?.personalizado_text || '',
+        personalizado_sidebar_start: updated?.personalizado_sidebar_start || '',
+        personalizado_sidebar_end: updated?.personalizado_sidebar_end || '',
         lembrete_whatsapp_ativo: String(updated?.lembrete_whatsapp_ativo ?? 'true') === 'true',
         lembrete_email_ativo: String(updated?.lembrete_email_ativo ?? 'false') === 'true',
         mensagem_lembrete: updated?.mensagem_lembrete
@@ -388,10 +467,65 @@ export default function Configuracoes() {
                       <button type="button" className={normalizeThemeUi(userThemeUi) === 'light' ? `${styles.segment} ${styles.segmentActive}` : styles.segment} onClick={() => handleUserThemeChange('light')} disabled={loading}>Claro</button>
                       <button type="button" className={normalizeThemeUi(userThemeUi) === 'system' ? `${styles.segment} ${styles.segmentActive}` : styles.segment} onClick={() => handleUserThemeChange('system')} disabled={loading}>Sistema</button>
                       <button type="button" className={normalizeThemeUi(userThemeUi) === 'dark' ? `${styles.segment} ${styles.segmentActive}` : styles.segment} onClick={() => handleUserThemeChange('dark')} disabled={loading}>Escuro</button>
+                      <button type="button" className={normalizeThemeUi(userThemeUi) === 'personalizado' ? `${styles.segment} ${styles.segmentActive}` : styles.segment} onClick={() => handleUserThemeChange('personalizado')} disabled={loading}>Personalizado</button>
                     </div>
                   </div>
                 </div>
               </div>
+              {normalizeThemeUi(userThemeUi) === 'personalizado' ? (
+                <div className={styles.themePanel} style={{ marginTop: 16 }}>
+                  <div className={styles.themePanelTop}>
+                    <div className={styles.themePanelTitle}>PERSONALIZADO</div>
+                  </div>
+
+                  <div style={{ paddingTop: 4 }}>
+                    <div className={styles.field}>
+                      <label className={styles.label}>Logo da Sidebar</label>
+                      <input type="file" accept="image/*" onChange={handleFileChange('logo_personalizado')} disabled={loading} />
+                      {form.logo_personalizado ? (
+                        <div style={{ marginTop: 8 }}>
+                          <img src={form.logo_personalizado} alt="Preview logo" style={{ height: 48 }} />
+                        </div>
+                      ) : null}
+                      <div className={styles.helper}>Envie um PNG/SVG para substituir o logo da sidebar no tema personalizado.</div>
+                    </div>
+
+                    <div className={styles.formGrid} style={{ marginTop: 12 }}>
+                      <div className={styles.field}>
+                        <label className={styles.label}>Sidebar - Fundo</label>
+                        <input className={styles.colorInput} type="color" value={form.personalizado_sidebar_bg || '#7b7ff0'} onChange={onChange('personalizado_sidebar_bg')} disabled={loading} />
+                      </div>
+
+                      <div className={styles.field}>
+                        <label className={styles.label}>Sidebar - Texto</label>
+                        <input className={styles.colorInput} type="color" value={form.personalizado_sidebar_fg || '#ffffff'} onChange={onChange('personalizado_sidebar_fg')} disabled={loading} />
+                      </div>
+
+                      <div className={styles.field}>
+                        <label className={styles.label}>Tabelas - Cabeçalho</label>
+                        <input className={styles.colorInput} type="color" value={form.personalizado_table_head_bg || '#f3f6fb'} onChange={onChange('personalizado_table_head_bg')} disabled={loading} />
+                      </div>
+
+                      <div className={styles.field}>
+                        <label className={styles.label}>Fundo geral</label>
+                        <input className={styles.colorInput} type="color" value={form.personalizado_bg || '#eef2f7'} onChange={onChange('personalizado_bg')} disabled={loading} />
+                      </div>
+
+                      <div className={styles.field}>
+                        <label className={styles.label}>Superfície (cards)</label>
+                        <input className={styles.colorInput} type="color" value={form.personalizado_surface || '#ffffff'} onChange={onChange('personalizado_surface')} disabled={loading} />
+                      </div>
+
+                      <div className={styles.field}>
+                        <label className={styles.label}>Texto principal</label>
+                        <input className={styles.colorInput} type="color" value={form.personalizado_text || '#0f172a'} onChange={onChange('personalizado_text')} disabled={loading} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+
+              
             </div>
           </div>
           {isAdmin || isRecepcao ? renderSaveBar() : null}

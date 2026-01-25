@@ -169,7 +169,12 @@ export default function Sidebar() {
   }, [userName])
 
   // Escolhe o logo via JS: light -> preto, system/dark -> branco
-  const currentLogo = themeUi === 'light' ? logoBlack : logoWhite
+  let currentLogo = logoWhite
+  if (themeUi === 'light') currentLogo = logoBlack
+  else if (themeUi === 'personalizado') {
+    const custom = (typeof document !== 'undefined' && document.documentElement.dataset && document.documentElement.dataset.sidebarLogo) ? document.documentElement.dataset.sidebarLogo : ''
+    currentLogo = custom || logoWhite
+  }
 
   return (
     <aside className={styles.sidebar}>
@@ -220,7 +225,7 @@ export default function Sidebar() {
           </button>
         </div>
 
-        <p className={styles.footerCopy}>© {new Date().getFullYear()} DR. NETO ABREU</p>
+        <p className={styles.footerCopy}>© {new Date().getFullYear()} DENTALY</p>
       </div>
     </aside>
   )

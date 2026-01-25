@@ -152,7 +152,25 @@ export const relatoriosService = {
 
 export const configuracoesService = {
   buscar: () => api('/configuracoes'),
-  atualizar: (dados) => api('/configuracoes', 'PUT', dados)
+  atualizar: (dados) => api('/configuracoes', 'PUT', dados),
+  uploadLogo: async (file) => {
+    const token = getToken()
+    const form = new FormData()
+    form.append('file', file)
+    const opts = {
+      method: 'POST',
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      },
+      body: form
+    }
+    const response = await fetch(`${API_URL}/configuracoes/logo`, opts)
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({ error: 'Erro no upload' }))
+      throw new Error(err.error || 'Erro no upload')
+    }
+    return response.json()
+  }
 }
 
 export const auditoriaService = {

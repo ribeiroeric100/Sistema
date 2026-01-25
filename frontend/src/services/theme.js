@@ -1,6 +1,6 @@
 export const DEFAULT_PRIMARY = '#2563eb'
 
-export const THEME_UI_VALUES = ['light', 'dark', 'system']
+export const THEME_UI_VALUES = ['light', 'dark', 'system', 'personalizado']
 
 const THEME_UI_STORAGE_PREFIX = 'odonto_theme_ui_v1:'
 
@@ -113,6 +113,40 @@ const THEME_VARS = {
     '--btn-primary-fg': '#0f172a',
     '--btn-primary-border': 'rgba(0, 0, 0, 0.35)'
   }
+  ,
+  personalizado: {
+    // start from the light variant by default; overridden by custom vars
+    '--bg-app': '#eef2f7',
+    '--bg-surface': '#f3f6fb',
+    '--surface': '#ffffff',
+    '--text': '#0f172a',
+    '--muted': '#6b7280',
+    '--border': 'rgba(15, 23, 42, 0.08)',
+
+    '--row-hover': 'rgba(15, 23, 42, 0.04)',
+    '--table-head-bg': 'rgba(243, 246, 251, 0.85)',
+
+    '--sidebar-bg': 'linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%)',
+    '--sidebar-overlay': 'transparent',
+    '--sidebar-overlay-opacity': '0',
+    '--sidebar-blur': '0px',
+    '--sidebar-border': 'rgba(15, 23, 42, 0.08)',
+    '--sidebar-fg': '#0f172a',
+    '--sidebar-fg-muted': 'rgba(51, 65, 85, 0.85)',
+    '--sidebar-item-hover': 'rgba(15, 23, 42, 0.04)',
+    '--sidebar-item-active': 'var(--primary-a12)',
+    '--sidebar-card-bg': 'rgba(255, 255, 255, 0.70)',
+    '--sidebar-card-border': 'rgba(15, 23, 42, 0.08)',
+
+    '--sidebar-active-bar': 'rgba(15, 23, 42, 0.92)',
+
+    '--sidebar-start': '#f8fafc',
+    '--sidebar-end': '#eef2f7',
+
+    '--btn-primary-bg': '#0f172a',
+    '--btn-primary-fg': '#ffffff',
+    '--btn-primary-border': 'rgba(15, 23, 42, 0.14)'
+  }
 }
 
 function getUserThemeStorageKey(userKey) {
@@ -194,13 +228,13 @@ function applyVars(vars) {
   })
 }
 
-export function applyClinicTheme(primaryHex, themeUi) {
+export function applyClinicTheme(primaryHex, themeUi, custom = {}) {
   if (typeof document === 'undefined') return () => {}
 
   const primary = normalizeHex(primaryHex)
   const themeUiNorm = normalizeThemeUi(themeUi)
   const resolved = resolveTheme(themeUiNorm)
-  const variant = themeUiNorm === 'system' ? 'system' : resolved
+  const variant = themeUiNorm === 'system' ? 'system' : (themeUiNorm === 'personalizado' ? 'personalizado' : resolved)
 
   const root = document.documentElement
   root.dataset.theme = resolved
@@ -211,8 +245,41 @@ export function applyClinicTheme(primaryHex, themeUi) {
   root.style.setProperty('--primary-a12', rgbaFromHex(primary, 0.12))
   root.style.setProperty('--primary-a16', rgbaFromHex(primary, 0.16))
 
-  const themeVars = THEME_VARS[variant] || THEME_VARS.light
-  applyVars(themeVars)
+  // Base vars
+  const baseVars = THEME_VARS[variant] || THEME_VARS.light
+  const merged = { ...baseVars }
+
+  // If personalizado, accept a few custom overrides from `custom` object
+  if (themeUiNorm === 'personalizado' && custom) {
+    const map = {
+      personalizado_sidebar_bg: '--sidebar-bg',
+      personalizado_sidebar_fg: '--sidebar-fg',
+      personalizado_table_head_bg: '--table-head-bg',
+      personalizado_bg: '--bg-app',
+      personalizado_surface: '--surface',
+      personalizado_text: '--text',
+      personalizado_sidebar_start: '--sidebar-start',
+      personalizado_sidebar_end: '--sidebar-end'
+    }
+    Object.entries(map).forEach(([k, cssVar]) => {
+      const v = String(custom[k] || '').trim()
+      if (v) merged[cssVar] = v
+    })
+
+    // Custom logo - try several possible keys
+    const logo = String(custom.logo_personalizado || custom.logo_claro || custom.logo_escuro || '').trim()
+    if (logo) {
+      root.dataset.sidebarLogo = logo
+    } else {
+      // clear if none
+      delete root.dataset.sidebarLogo
+    }
+  } else {
+    // Not personalizado: clear any custom logo dataset so defaults apply
+    delete root.dataset.sidebarLogo
+  }
+
+  applyVars(merged)
 
   // Helps native form controls follow the theme.
   root.style.colorScheme = resolved
