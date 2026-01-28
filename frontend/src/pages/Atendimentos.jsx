@@ -3,7 +3,8 @@ import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
 import { useEffect, useRef, useState } from 'react'
 import logoFallback from '../assets/dr-neto-logo.png'
-import denteIcon from '../assets/dente.png'
+import logoPdf from '../assets/logo_pdf.png'
+import BreadcrumbTitle from '@components/common/BreadcrumbTitle'
 import styles from './Relatorios.module.css'
 import {
   ResponsiveContainer,
@@ -389,7 +390,7 @@ export default function Relatorios() {
       }
 
       // Configurações da clínica (nome/rodapé) para personalizar o PDF
-      let clinicName = 'DR. NETO ABREU'
+      let clinicName = ''
       let pdfFooterText = ''
       try {
         const cfg = await configuracoesService.buscar().catch(() => null)
@@ -839,7 +840,7 @@ export default function Relatorios() {
 
       // Build HTML report to render into PDF (layout conforme modelo)
       const emittedAt = formatBRDate(new Date().toISOString())
-      const brandIcon = denteIcon
+      const brandIcon = logoPdf
 
       const currentUserName = (() => {
         try {
@@ -869,8 +870,8 @@ export default function Relatorios() {
 
         .r-top { display:flex; justify-content:space-between; align-items:center; }
         .r-brand { display:flex; align-items:center; gap:12px; }
-        .r-logo { width:48px; height:48px; object-fit:contain; }
-        .r-brandName { font-weight:800; letter-spacing:0.5px; font-size:22px; color:#1f2937; }
+        .r-logo { width:200px; height:auto; object-fit:contain; }
+        .r-brandName { display:none; }
         .r-emitted { font-size:12px; color:#374151; text-align:right; line-height: 1.25; }
         .r-hr { margin:14px 0 18px; border:0; border-top:1px solid #d1d5db; }
         .r-title { text-align:center; margin: 8px 0 18px; font-size:26px; font-weight:800; color:#1f2937; }
@@ -1127,9 +1128,8 @@ export default function Relatorios() {
 
         sections.push(makeSection(`
           <div class="r-top">
-            <div class="r-brand">
+              <div class="r-brand">
               <img class="r-logo" src="${brandIcon}" alt="" onerror="this.onerror=null;this.src='${logoFallback}'" />
-              <div class="r-brandName">${safeText(clinicName || 'DR. NETO ABREU')}</div>
             </div>
             <div class="r-emitted">${periodInfoHtml}<br/>Mês: ${safeText(monthLabel)}</div>
           </div>
@@ -1349,9 +1349,8 @@ export default function Relatorios() {
       } else {
         sections.push(makeSection(`
           <div class="r-top">
-            <div class="r-brand">
+              <div class="r-brand">
               <img class="r-logo" src="${brandIcon}" alt="" onerror="this.onerror=null;this.src='${logoFallback}'" />
-              <div class="r-brandName">${safeText(clinicName || 'DR. NETO ABREU')}</div>
             </div>
             <div class="r-emitted">${periodInfoHtml}</div>
           </div>
@@ -1647,7 +1646,9 @@ export default function Relatorios() {
         </div>
       </div>
 
-      <h1 className={styles.title}>Relatórios</h1>
+      <div className={styles.pageHeading}>
+        <BreadcrumbTitle current="Relatórios" />
+      </div>
 
       <div className={styles.reportFiltersBar}>
         <div className={styles.reportFiltersRow}>

@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { auditoriaService } from '@services/api'
+import BreadcrumbTitle from '@components/common/BreadcrumbTitle'
+import styles from './Auditoria.module.css'
 
 export default function Auditoria() {
   const [items, setItems] = useState([])
@@ -25,15 +27,15 @@ export default function Auditoria() {
     return () => { mounted = false }
   }, [])
 
-  if (loading) return <div style={{ padding: 20, color: 'var(--text)' }}>Carregando auditoria...</div>
-  if (erro) return <div style={{ padding: 20, color: '#b91c1c' }}>{erro}</div>
+  if (loading) return <div className={styles.state}>Carregando auditoria...</div>
+  if (erro) return <div className={styles.error}>{erro}</div>
 
   return (
-    <div style={{ padding: 20, color: 'var(--text)' }}>
-      <h2 style={{ marginBottom: 12, color: 'var(--text)' }}>Auditoria</h2>
-      <div style={{ fontSize: 12, color: 'var(--muted)', marginBottom: 12 }}>
-        Últimos 100 eventos (somente admin)
+    <div className={styles.container}>
+      <div className={styles.pageHeading}>
+        <BreadcrumbTitle current="Auditoria" />
       </div>
+      <div className={styles.subtitle}>Últimos 100 eventos (somente admin)</div>
 
       <div style={{ overflowX: 'auto', background: 'var(--surface)', borderRadius: 12, border: '1px solid var(--border)' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>

@@ -5,6 +5,10 @@
   color: var(--text, #0f172a);
 }
 
+.header {
+  margin-bottom: 1.5rem;
+}
+
 .container h1 {
   font-size: 1.875rem;
   font-weight: 700;

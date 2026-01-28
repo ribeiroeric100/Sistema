@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import styles from './Estoque.module.css'
 import { estoqueService } from '@services/api'
+import BreadcrumbTitle from '@components/common/BreadcrumbTitle'
 
 export default function Estoque() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -72,7 +73,9 @@ export default function Estoque() {
 
   return (
     <div className={styles.container}>
-      <h1>Estoque</h1>
+      <div className={styles.header}>
+        <BreadcrumbTitle current="Estoque" />
+      </div>
 
       <div className={styles.searchSection}>
         <div className={styles.searchBox}>

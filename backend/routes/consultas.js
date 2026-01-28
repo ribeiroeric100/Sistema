@@ -259,6 +259,47 @@ router.post('/', verifyToken, verifyRole(['admin', 'dentista', 'recepcao']), val
       function(err) {
         if (err) return res.status(500).json({ error: err.message })
         logAudit(req, 'consultas.create', { entityType: 'consulta', entityId: id, details: { paciente_id, dentista_id: dentista_id || null, data_hora: dt, tipo_consulta: tipo_consulta || 'geral' } })
+        // After creating, attempt to send confirmation/reminder via WhatsApp if configured
+        (async () => {
+          try {
+            const cfgRows = await new Promise((resolve, reject) => db.all('SELECT chave, valor FROM configuracoes', (e, r) => e ? reject(e) : resolve(r)))
+            const cfg = {}
+            for (const r of cfgRows || []) cfg[r.chave] = r.valor
+
+            const sendConfirmacao = String(cfg.whatsapp_confirmacao_agendamento_ativo || 'false') === 'true'
+            const mensagemTpl = cfg.mensagem_confirmacao_consulta || 'Olá {{paciente}}! Sua consulta com {{dentista}} foi agendada para {{data}} às {{hora}}.'
+
+            if (sendConfirmacao) {
+              // fetch paciente telefone and nome
+              const paciente = await new Promise((resolve, reject) => db.get('SELECT nome, telefone FROM pacientes WHERE id = ?', [paciente_id], (e, r) => e ? reject(e) : resolve(r)))
+              const dentista = dentista_id ? await new Promise((resolve, reject) => db.get('SELECT nome FROM usuarios WHERE id = ?', [dentista_id], (e, r) => e ? reject(e) : resolve(r))) : null
+
+              const pacienteNome = paciente?.nome || ''
+              const dentistaNome = dentista?.nome || ''
+              const hora = (new Date(dt)).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+              const data = (new Date(dt)).toLocaleDateString('pt-BR')
+
+              const message = String(mensagemTpl)
+                .replace(/{{\s*paciente\s*}}/gi, pacienteNome)
+                .replace(/{{\s*dentista\s*}}/gi, dentistaNome)
+                .replace(/{{\s*hora\s*}}/gi, hora)
+                .replace(/{{\s*data\s*}}/gi, data)
+
+              try {
+                const smsSvc = require('../services/sms.example')
+                if (paciente?.telefone) {
+                  await smsSvc.enviarWhatsAppMessage(paciente.telefone, message)
+                  logAudit(req, 'consultas.send_whatsapp', { entityType: 'consulta', entityId: id, details: { paciente_id, telefone: paciente.telefone } })
+                }
+              } catch (e) {
+                console.error('Erro ao enviar WhatsApp na criação da consulta:', e)
+              }
+            }
+          } catch (e) {
+            console.error('Erro ao processar envio após criar consulta:', e)
+          }
+        })()
+
         res.json({ id, paciente_id, data_hora: dt, status: 'agendada' })
       }
     )

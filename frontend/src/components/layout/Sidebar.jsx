@@ -4,8 +4,8 @@ import { useAuth } from '../../context/useAuth'
 import { useMemo, useEffect, useState } from 'react'
 import { loadUserThemeUiPreference, normalizeThemeUi } from '../../services/theme'
 import { useNavigate } from 'react-router-dom'
-import logoWhite from '../../assets/dr-neto-logo-branca.png'
-import logoBlack from '../../assets/dr-neto-abreu-preto.png'
+import logoWhite from '../../assets/logo_branca.png'
+import logoBlack from '../../assets/logo_branca.png'
 
 // Hook para detectar se o tema UI é 'system'
 function useIsSystemTheme(user) {

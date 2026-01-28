@@ -3,17 +3,21 @@
 exports.shorthands = undefined
 
 exports.up = (pgm) => {
-  pgm.createTable('galeria_imagens', {
-    id: { type: 'text', primaryKey: true },
-    paciente_id: { type: 'text', notNull: true, references: 'pacientes(id)', onDelete: 'cascade' },
-    url: { type: 'text', notNull: true },
-    nome_arquivo: { type: 'text' },
-    data_upload: { type: 'timestamp', default: pgm.func('current_timestamp') }
-  })
+  // Idempotente: alguns ambientes podem ter criado essa tabela em migrações antigas.
+  pgm.sql(`
+    CREATE TABLE IF NOT EXISTS galeria_imagens (
+      id TEXT PRIMARY KEY,
+      paciente_id TEXT NOT NULL REFERENCES pacientes(id) ON DELETE CASCADE,
+      url TEXT NOT NULL,
+      nome_arquivo TEXT,
+      data_upload TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `)
 
-  pgm.createIndex('galeria_imagens', 'paciente_id', { name: 'idx_galeria_imagens_paciente_id' })
+  pgm.sql('CREATE INDEX IF NOT EXISTS idx_galeria_imagens_paciente_id ON galeria_imagens (paciente_id);')
 }
 
 exports.down = (pgm) => {
-  pgm.dropTable('galeria_imagens')
+  pgm.sql('DROP INDEX IF EXISTS idx_galeria_imagens_paciente_id;')
+  pgm.sql('DROP TABLE IF EXISTS galeria_imagens;')
 }

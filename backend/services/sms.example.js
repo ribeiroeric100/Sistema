@@ -29,6 +29,28 @@ exports.enviarLembreteSMS = async (telefone, paciente, consulta) => {
   }
 }
 
+// Enviar mensagem via WhatsApp usando Twilio (se configurado)
+exports.enviarWhatsAppMessage = async (telefone, mensagem) => {
+  // Twilio WhatsApp format: 'whatsapp:+15551234567'
+  const fromWhats = process.env.TWILIO_WHATSAPP_NUMBER || twilioPhone
+  if (!fromWhats) {
+    console.log('(sms.example) Twilio não configurado; WhatsApp fallback:')
+    console.log(`To: ${telefone} -- Msg: ${mensagem}`)
+    return
+  }
+
+  try {
+    await client.messages.create({
+      body: mensagem,
+      from: fromWhats.startsWith('whatsapp:') ? fromWhats : `whatsapp:${fromWhats}`,
+      to: telefone.startsWith('whatsapp:') ? telefone : `whatsapp:${telefone}`
+    })
+    console.log(`WhatsApp enviado para ${telefone}`)
+  } catch (err) {
+    console.error('Erro ao enviar WhatsApp via Twilio:', err)
+  }
+}
+
 // Enviar confirmação de pagamento via SMS
 exports.enviarConfirmacaoPagamentoSMS = async (telefone, paciente, valor) => {
   const mensagem = `${paciente.nome}, pagamento de R$ ${valor.toFixed(2)} confirmado! Sua consulta está agendada. Clínica Odontológica.`

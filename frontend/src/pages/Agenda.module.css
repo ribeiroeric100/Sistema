@@ -3,6 +3,13 @@
   background: var(--bg-app, #f6f6f6);
 }
 
+/* Desktop heading (clean breadcrumb). Mobile uses the mobileToolbar title. */
+.pageHeading {
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--border, rgba(15, 23, 42, 0.08));
+}
+
 /* Mobile-first toolbar (screenshot-like) */
 .mobileToolbar { display: none; }
 
@@ -288,6 +295,8 @@ html[data-theme="dark"] .btnNova {
     padding: 14px 12px;
     background: transparent;
   }
+
+  .pageHeading { display: none; }
 
   .toolbarDesktop { display: none; }
   .mobileToolbar { display: block; }

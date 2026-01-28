@@ -4,7 +4,7 @@
 
 /* Generic logo used when switching via JS */
 .logo {
-  width: 180px;
+  width: 80px;
   max-width: 100%;
   height: auto;
   filter: drop-shadow(0 10px 22px rgba(0,0,0,0.16));

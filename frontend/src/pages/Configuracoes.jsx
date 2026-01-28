@@ -4,6 +4,7 @@ import styles from './Configuracoes.module.css'
 import { configuracoesService } from '../services/api'
 import { useAuth } from '../context/useAuth'
 import { applyClinicTheme, loadUserThemeUiPreference, normalizeHex, normalizeThemeUi, saveUserThemeUiPreference } from '../services/theme'
+import BreadcrumbTitle from '../components/common/BreadcrumbTitle'
 // Keys accepted by the backend `/configuracoes` endpoint
 const ALLOWED_KEYS_BACKEND = [
   'nome_clinica', 'cro_responsavel', 'telefone_clinica', 'email_clinica', 'endereco_clinica', 'rodape_pdf',
@@ -307,8 +308,8 @@ export default function Configuracoes() {
     <div className={styles.container}>
       <div className={styles.header}>
         <div>
-          <h1 className={styles.title}>Configurações</h1>
-          <div className={styles.subtitle}>Dr. Neto Abreu – Clínica Odontológica</div>
+          <BreadcrumbTitle current="Configurações" />
+          <div className={styles.subtitle}>Dentaly – Clínica Odontológica</div>
         </div>
       </div>
 
@@ -350,7 +351,7 @@ export default function Configuracoes() {
                 value={form.nome_clinica}
                 disabled={!(isAdmin || isDentista) || loading}
                 onChange={onChange('nome_clinica')}
-                placeholder="Dr. Neto Abreu – Clínica Odontológica"
+                placeholder="Dentaly - Sistema Odontológico"
               />
             </div>
 
@@ -372,7 +373,7 @@ export default function Configuracoes() {
                 value={form.rodape_pdf}
                 disabled={!(isAdmin || isDentista) || loading}
                 onChange={onChange('rodape_pdf')}
-                placeholder="Dr. Neto Abreu – CRO/SP 00000"
+                placeholder="Dentaly – CRO/SP 00000"
                 rows={3}
               />
               <div className={styles.helper}>Assinatura exibida em orçamentos, recibos e PDFs</div>

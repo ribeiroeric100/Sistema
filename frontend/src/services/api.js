@@ -169,7 +169,13 @@ export const configuracoesService = {
       const err = await response.json().catch(() => ({ error: 'Erro no upload' }))
       throw new Error(err.error || 'Erro no upload')
     }
-    return response.json()
+    const json = await response.json()
+    // If backend returns a relative path like `/uploads/xxx`, prefix with API_URL
+    if (json && typeof json.url === 'string' && json.url.startsWith('/')) {
+      // ensure no double slash
+      json.url = `${API_URL.replace(/\/$/, '')}${json.url}`
+    }
+    return json
   }
 }
 

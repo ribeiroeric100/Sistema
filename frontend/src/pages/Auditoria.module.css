@@ -1,0 +1,26 @@
+.container {
+  padding: 20px;
+  color: var(--text);
+}
+
+.pageHeading {
+  padding-bottom: 14px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--border, rgba(15, 23, 42, 0.08));
+}
+
+.subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.state {
+  padding: 20px;
+  color: var(--text);
+}
+
+.error {
+  padding: 20px;
+  color: #b91c1c;
+}

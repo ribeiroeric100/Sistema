@@ -15,6 +15,7 @@ import Atendimentos from '@pages/Atendimentos'
 import Configuracoes from '@pages/Configuracoes'
 import Auditoria from '@pages/Auditoria'
 import Usuarios from '@pages/Usuarios'
+import Landing from '@pages/landing/Landing'
 import './App.css'
 import { configuracoesService } from '@services/api'
 import { applyClinicTheme, loadUserThemeUiPreference, normalizeThemeUi } from '@services/theme'
@@ -66,6 +67,7 @@ function AppContent() {
     return (
       <Router>
         <Routes>
+          <Route path="/landing" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Navigate to="/login" />} />
           <Route path="/forgot-password" element={<Navigate to="/login" />} />
@@ -112,6 +114,7 @@ function AppContent() {
                   <Configuracoes />
                 </RequireRoles>
               } />
+              <Route path="/landing" element={<Landing />} />
               <Route path="*" element={<Navigate to="/dashboard" />} />
               </Routes>
             </main>

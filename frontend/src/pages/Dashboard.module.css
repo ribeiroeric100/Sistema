@@ -71,6 +71,13 @@
 .headerRow { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px }
 .welcome { display:none }
 
+
+/* Make the header content stretch, so the top cards row uses full width */
+.headerRow > div {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 @media (max-width: 900px) {
   .headerRow {
     width: 100%;
@@ -86,13 +93,30 @@
 }
 .topStatsRow {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
   margin-top: 14px;
+  align-items: flex-start;
 }
 
+/* When using the alternate two-column layout, keep same flex behavior */
 .topStatsRowTwo {
+  display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  align-items: flex-start;
+}
+
+/* Keep all top cards the same height */
+.topStatsRow .smallCard,
+.topStatsRowTwo .smallCard {
+  height: 132px;
+}
+
+/* On narrower screens keep left alignment to match layout expectations */
+@media (max-width: 900px) {
+  .topStatsRow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .topStatsRowTwo { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 /* Mobile: evitar scroll horizontal e empilhar cards do topo */
@@ -706,11 +730,37 @@
 }
 
 /* Specific styling for the Consultas Agendadas card to look like the provided table */
-.agendadasCard { display:block; padding: 14px 14px 12px 14px; min-width:0 }
+.agendadasCard {
+  /* keep same layout model as .smallCard so height rules apply consistently */
+  display: flex;
+  flex-direction: column;
+  padding: 14px 14px 12px 14px;
+  min-width: 0;
+  gap: 10px;
+  justify-content: flex-start;
+}
 .agendadasCard .smallTitle { padding: 0; background: transparent; border-bottom: none }
-.agendadasTable { width:100%; border-collapse: collapse; }
-.agendadasTable thead th { text-align:left; padding: 10px 0 8px 0; font-weight: 900; color: var(--muted, rgba(15,23,42,0.55)); border-bottom: 1px solid var(--border, rgba(15,23,42,0.06)) }
-.agendadasTable tbody td { padding: 12px 0; font-weight: 900; font-size: 1.7rem; color: var(--text, #0f172a); }
+.agendadasTable {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  margin-top: -6px;
+}
+.agendadasTable thead th {
+  text-align: left;
+  padding: 8px 0 6px 0;
+  font-weight: 900;
+  color: var(--muted, rgba(15,23,42,0.55));
+  border-bottom: 1px solid var(--border, rgba(15,23,42,0.06));
+}
+.agendadasTable tbody td {
+  padding: 6px 0 4px 0;
+  font-weight: 900;
+  font-size: 1.45rem;
+  line-height: 1;
+  color: var(--text, #0f172a);
+  vertical-align: top;
+}
 .agendadasTable tbody tr + tr td { border-top:1px solid #e6e6e6 }
 
 /* spacer column and larger values */

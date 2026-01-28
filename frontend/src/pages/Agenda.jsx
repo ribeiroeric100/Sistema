@@ -2,6 +2,7 @@ import { consultasService, pacientesService } from '@services/api'
 import { useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import styles from './Agenda.module.css'
+import BreadcrumbTitle from '@components/common/BreadcrumbTitle'
 
 function startOfWeek(date) {
   const d = new Date(date)
@@ -334,6 +335,10 @@ export default function Agenda() {
 
   return (
     <div className={styles.container}>
+
+      <div className={styles.pageHeading}>
+        <BreadcrumbTitle current="Agenda" />
+      </div>
 
       {/* ───── Mobile Header + Filters (match screenshot) ───── */}
       <div className={styles.mobileToolbar}>

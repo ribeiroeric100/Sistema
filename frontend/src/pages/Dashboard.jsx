@@ -13,8 +13,24 @@ import {
   CartesianGrid,
   Tooltip
 } from 'recharts'
+import BreadcrumbTitle from '@components/common/BreadcrumbTitle'
 
 const formatMoneyCompact = (v) => `R$ ${Number(v || 0).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`
+
+const formatMonthLabelPtBr = (ym) => {
+  const [y, m] = String(ym || '').split('-').map(Number)
+  if (!y || !m) return String(ym || '')
+  const dt = new Date(y, m - 1, 1)
+  try {
+    const text = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(dt)
+    // normalize to Title Case-ish for UI ("janeiro de 2026" -> "Janeiro 2026")
+    const cleaned = String(text).replace(/\s+de\s+/i, ' ').trim()
+    return cleaned.charAt(0).toUpperCase() + cleaned.slice(1)
+  } catch {
+    const mm = String(m).padStart(2, '0')
+    return `${y}-${mm}`
+  }
+}
 
 function MoneyLabelContent(props) {
   const { x, y, width, value } = props || {}
@@ -468,19 +484,30 @@ export default function Dashboard() {
     <div className={styles.dashboardWire}>
       <header className={styles.headerRow}>
         <div>
-          <h1>Dashboard</h1>
+          <BreadcrumbTitle current="Dashboard" />
           <p className={styles.welcome}>Bem-vindo de volta, {user?.nome}!</p>
 
           <div className={isRecepcao ? `${styles.topStatsRow} ${styles.topStatsRowTwo}` : styles.topStatsRow}>
             {!isRecepcao && (
-              <div className={styles.smallCard}>
-                <div className={styles.smallTitle}>
-                  <span className={`${styles.smallIcon} ${styles.iconMoney}`}><StatIcon name="money" /></span>
-                  Receita Diária
+              <>
+                <div className={styles.smallCard}>
+                  <div className={styles.smallTitle}>
+                    <span className={`${styles.smallIcon} ${styles.iconMoney}`}><StatIcon name="money" /></span>
+                    Receita Diária
+                  </div>
+                  <div className={styles.smallValue}>R$ {Number(receita).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                  <div className={styles.smallMeta}>R$ {Number(receita).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} hoje</div>
                 </div>
-                <div className={styles.smallValue}>R$ {Number(receita).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
-                <div className={styles.smallMeta}>R$ {Number(receita).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} hoje</div>
-              </div>
+
+                <div className={styles.smallCard}>
+                  <div className={styles.smallTitle}>
+                    <span className={`${styles.smallIcon} ${styles.iconMoney}`}><StatIcon name="money" /></span>
+                    Receita Mensal
+                  </div>
+                  <div className={styles.smallValue}>{formatMoney((monthlyChartWeeks || []).reduce((s, w) => s + Number(w?.total || 0), 0))}</div>
+                  <div className={styles.smallMeta}>{formatMonthLabelPtBr(monthlyChartMonth)}</div>
+                </div>
+              </>
             )}
 
             <div className={`${styles.smallCard} ${styles.agendadasCard}`}>
@@ -720,7 +747,7 @@ export default function Dashboard() {
                     </div>
 
                     <div className={reportStyles.cardControls}>
-                      <div className={reportStyles.metricValueMuted}>{monthlyChartMonth}</div>
+                        <div className={reportStyles.metricValueMuted}>{formatMonthLabelPtBr(monthlyChartMonth)}</div>
                     </div>
                   </div>
 
@@ -733,7 +760,7 @@ export default function Dashboard() {
                     </div>
                     <div className={reportStyles.metricItem}>
                       <div className={reportStyles.metricLabel}>Mês</div>
-                      <div className={reportStyles.metricValueMuted}>{monthlyChartMonth}</div>
+                      <div className={reportStyles.metricValueMuted}>{formatMonthLabelPtBr(monthlyChartMonth)}</div>
                     </div>
                   </div>
 

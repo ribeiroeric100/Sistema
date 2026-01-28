@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import Odontograma from '../components/common/Odontograma'
 import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
-import denteIcon from '../assets/dente.png'
+import logoPdf from '../assets/logo_pdf.png'
 import styles from './PacientePerfil.module.css'
 
 export default function PacientePerfil() {
@@ -180,8 +180,8 @@ export default function PacientePerfil() {
         .p-page { position: relative; font-family: Arial, Helvetica, sans-serif; }
         .p-top { display:flex; justify-content:space-between; align-items:center; }
         .p-brand { display:flex; align-items:center; gap:12px; }
-        .p-logo { width:54px; height:54px; object-fit:contain; }
-        .p-brandName { font-weight:900; letter-spacing:0.3px; font-size:20px; color:#1f2937; text-transform:uppercase; }
+        .p-logo { width:200px; height:auto; object-fit:contain; }
+        .p-brandName { display:none; }
         .p-emitted { font-size:12px; color:#374151; text-align:right; line-height:1.25; }
         .p-title { margin:14px 0 10px; font-size:24px; font-weight:900; color:#111827; text-align:left; text-transform:uppercase; }
         .p-hr { margin:10px 0 14px; border:0; border-top:1px solid #d1d5db; }
@@ -238,9 +238,8 @@ export default function PacientePerfil() {
       const headerHtml = `
         <div class="p-top">
           <div class="p-brand">
-            <img class="p-logo" src="${denteIcon}" alt="Logo" />
-            <div class="p-brandName">${safeText(clinicName)}</div>
-          </div>
+              <img class="p-logo" src="${logoPdf}" alt="Logo" />
+            </div>
           <div class="p-emitted">
             <div><strong>Emitido em:</strong> ${safeText(emittedAt)}</div>
             <div><strong>Profissional responsável:</strong> ${safeText(currentUser.nome)}</div>

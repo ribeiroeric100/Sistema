@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { usuariosService } from '@services/api'
 import styles from './Usuarios.module.css'
+import BreadcrumbTitle from '@components/common/BreadcrumbTitle'
 
 const ROLES = [
   { value: 'admin', label: 'Admin' },
@@ -89,7 +90,7 @@ export default function Usuarios() {
   return (
     <div className={styles.container}>
       <div className={styles.pageHeading}>
-        <h1 className={styles.pageTitle}>Usuários</h1>
+        <BreadcrumbTitle current="Usuários" />
         <div className={styles.subtitle}>Gerencie usuários e permissões do sistema</div>
       </div>
 

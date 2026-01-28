@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { pacientesService, consultasService } from '@services/api'
 import styles from './Pacientes.module.css'
+import BreadcrumbTitle from '@components/common/BreadcrumbTitle'
 
 export default function Pacientes() {
   const navigate = useNavigate()
@@ -289,7 +290,7 @@ export default function Pacientes() {
   return (
     <div className={styles.container}>
       <div className={styles.pageHeader}>
-        <h1>Pacientes</h1>
+        <BreadcrumbTitle current="Pacientes" />
         <div className={styles.topActions}>
           <div className={styles.dropdownWrap} ref={topActionsRef}>
             <button

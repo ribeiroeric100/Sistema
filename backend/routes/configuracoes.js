@@ -24,7 +24,10 @@ const ALLOWED_KEYS = [
   'cor_primaria',
   'lembrete_whatsapp_ativo',
   'lembrete_email_ativo',
-  'mensagem_lembrete'
+  'mensagem_lembrete',
+  'reminder_hours_before',
+  'whatsapp_confirmacao_agendamento_ativo',
+  'mensagem_confirmacao_consulta'
 ]
 
 // Add personalizado keys and logo_personalizado for custom theme persistence
@@ -59,7 +62,13 @@ const DEFAULTS = {
   cor_primaria: '#2563eb',
   lembrete_whatsapp_ativo: 'true',
   lembrete_email_ativo: 'false',
-  mensagem_lembrete: 'Olá {{paciente}}, sua consulta com o Dr. {{dentista}} é amanhã às {{hora}}.'
+  // Lembrete padrão (funciona bem com 2h antes)
+  mensagem_lembrete: 'Olá {{paciente}}! Lembrete: sua consulta com {{dentista}} é em {{data}} às {{hora}}.',
+  // Quantas horas antes do horário da consulta devemos enviar o lembrete
+  reminder_hours_before: '2',
+  // Confirmação imediata ao criar a consulta (opcional; default off para evitar custo/duplicidade)
+  whatsapp_confirmacao_agendamento_ativo: 'false',
+  mensagem_confirmacao_consulta: 'Olá {{paciente}}! Sua consulta com {{dentista}} foi agendada para {{data}} às {{hora}}.'
 }
 
 // Defaults for personalizado keys
