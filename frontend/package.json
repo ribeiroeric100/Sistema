@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "vercel-build": "rm -rf node_modules package-lock.json && npm install --no-audit --no-fund --no-package-lock && vite build",
+    "vercel-build": "node -e \"const fs=require('fs'); for (const p of ['node_modules','package-lock.json']) { try { fs.rmSync(p,{recursive:true,force:true}); } catch (e) { /* ignore */ } }\" && npm install --no-audit --no-fund --no-package-lock && vite build",
     "preview": "vite preview",
     "lint": "eslint src --ext .js,.jsx",
     "export:odontogram": "node scripts/export-odontogram-svg.mjs"
