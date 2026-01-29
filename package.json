@@ -2,6 +2,9 @@
   "name": "odonto-app",
   "version": "1.0.0",
   "description": "Sistema Odontológico",
+  "engines": {
+    "node": "20.x"
+  },
   "workspaces": [
     "backend",
     "frontend",
@@ -13,6 +16,8 @@
   },
   "scripts": {
     "dev": "npm run dev --workspace=frontend",
+    "build": "npm run build --workspace=frontend",
+    "vercel-build": "cd frontend && npm run vercel-build",
     "dev:backend": "npm run dev --workspace=backend",
     "dev:frontend": "npm run dev --workspace=frontend",
     "dev:electron": "npm run start --workspace=electron",

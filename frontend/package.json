@@ -3,9 +3,13 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "vercel-build": "rm -rf node_modules package-lock.json && npm install --no-audit --no-fund --no-package-lock && vite build",
     "preview": "vite preview",
     "lint": "eslint src --ext .js,.jsx",
     "export:odontogram": "node scripts/export-odontogram-svg.mjs"
