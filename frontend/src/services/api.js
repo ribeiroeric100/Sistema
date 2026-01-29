@@ -1,5 +1,14 @@
 const DEFAULT_API_URL = 'http://localhost:3001/api'
-const API_URL = String(import.meta.env?.VITE_API_URL || DEFAULT_API_URL).replace(/\/$/, '')
+
+function normalizeApiUrl(raw) {
+  const base = String(raw || '').trim().replace(/\/+$/, '')
+  if (!base) return DEFAULT_API_URL
+  // allow providing either https://host or https://host/api
+  if (/\/api$/i.test(base)) return base
+  return `${base}/api`
+}
+
+const API_URL = normalizeApiUrl(import.meta.env?.VITE_API_URL || DEFAULT_API_URL)
 
 const getToken = () => localStorage.getItem('token')
 

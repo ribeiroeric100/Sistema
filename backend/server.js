@@ -39,6 +39,36 @@ function parseCorsOrigins(value) {
     .filter(Boolean)
 }
 
+function originMatches(allowed, origin) {
+  if (!allowed || !origin) return false
+  if (allowed === origin) return true
+
+  // Wildcard support: '*.vercel.app' or 'https://*.vercel.app'
+  const a = String(allowed).trim()
+  if (!a.includes('*')) return false
+
+  try {
+    const originUrl = new URL(origin)
+    const allowedHasProtocol = /^https?:\/\//i.test(a)
+    const allowedUrl = allowedHasProtocol ? new URL(a.replace('*.', 'wildcard.')) : null
+
+    const originHost = originUrl.hostname
+    const originProto = originUrl.protocol
+
+    if (allowedHasProtocol) {
+      // If protocol is specified in allowed, require it to match.
+      if (allowedUrl && allowedUrl.protocol !== originProto) return false
+    }
+
+    // Get the wildcard suffix (everything after '*')
+    const suffix = a.split('*').slice(1).join('*').replace(/^\./, '')
+    // Example: '*.vercel.app' => suffix 'vercel.app'
+    return originHost === suffix || originHost.endsWith(`.${suffix}`)
+  } catch {
+    return false
+  }
+}
+
 const corsOrigins = parseCorsOrigins(process.env.CORS_ORIGIN)
 
 if (isProduction && corsOrigins.length === 0) {
@@ -55,6 +85,7 @@ const corsOptions = {
     if (corsOrigins.length === 0) return callback(null, true)
 
     if (corsOrigins.includes(origin)) return callback(null, true)
+    if (corsOrigins.some((a) => originMatches(a, origin))) return callback(null, true)
     return callback(new Error('Not allowed by CORS'))
   }
 }
