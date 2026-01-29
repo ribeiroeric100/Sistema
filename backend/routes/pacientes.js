@@ -127,16 +127,17 @@ router.put('/:id', verifyToken, verifyRole(['admin', 'dentista', 'recepcao']), (
 })
 
 // Deletar paciente
-router.delete('/:id', verifyToken, verifyRole(['admin']), (req, res) => {
-  db.run(
-    'DELETE FROM pacientes WHERE id = ?',
-    [req.params.id],
-    function(err) {
-      if (err) return res.status(500).json({ error: err.message })
-      logAudit(req, 'pacientes.delete', { entityType: 'paciente', entityId: req.params.id })
-      res.json({ success: true })
-    }
-  )
+router.delete('/:id', verifyToken, verifyRole(['admin', 'dentista']), async (req, res) => {
+  try {
+    // Soft delete: mantém histórico (consultas, odontograma, etc.)
+    const meta = await db.run('UPDATE pacientes SET ativo = FALSE WHERE id = ?', [req.params.id])
+    if (!meta.changes) return res.status(404).json({ error: 'Paciente não encontrado' })
+
+    logAudit(req, 'pacientes.delete', { entityType: 'paciente', entityId: req.params.id })
+    res.json({ success: true })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
 })
 
 // Exportar prontuário completo em PDF (backend)

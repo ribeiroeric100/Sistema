@@ -5,25 +5,11 @@
 echo "🦷 Instalando Sistema Odontológico..."
 echo ""
 
-# Backend
-echo "📦 Instalando dependências do Backend..."
-cd backend
+# Instalação via Workspaces (raiz)
+echo "📦 Instalando dependências (workspaces) na raiz..."
+cd "$(dirname "$0")"
 npm install
-echo "✅ Backend instalado!"
-echo ""
-
-# Frontend
-echo "📦 Instalando dependências do Frontend..."
-cd ../frontend
-npm install
-echo "✅ Frontend instalado!"
-echo ""
-
-# Electron
-echo "📦 Instalando dependências do Electron..."
-cd ../electron
-npm install
-echo "✅ Electron instalado!"
+echo "✅ Dependências instaladas!"
 echo ""
 
 echo "🎉 Instalação completa!"
@@ -38,4 +24,8 @@ echo "  cd frontend && npm run dev"
 echo ""
 echo "Terminal 3 (Electron):"
 echo "  cd electron && npm start"
+echo ""
+echo "Alternativa pela raiz:"
+echo "  npm run dev:web"
+echo "  npm run dev:all"
 echo ""

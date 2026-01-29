@@ -260,7 +260,7 @@ router.post('/', verifyToken, verifyRole(['admin', 'dentista', 'recepcao']), val
         if (err) return res.status(500).json({ error: err.message })
         logAudit(req, 'consultas.create', { entityType: 'consulta', entityId: id, details: { paciente_id, dentista_id: dentista_id || null, data_hora: dt, tipo_consulta: tipo_consulta || 'geral' } })
         // After creating, attempt to send confirmation/reminder via WhatsApp if configured
-        (async () => {
+        ;(async () => {
           try {
             const cfgRows = await new Promise((resolve, reject) => db.all('SELECT chave, valor FROM configuracoes', (e, r) => e ? reject(e) : resolve(r)))
             const cfg = {}

@@ -5,25 +5,16 @@ echo.
 echo 🦷 Instalando Sistema Odontologico...
 echo.
 
-REM Backend
-echo 📦 Instalando dependências do Backend...
-cd backend
+REM Instalação via Workspaces (raiz)
+echo 📦 Instalando dependências (workspaces) na raiz...
+cd /d %~dp0
 call npm install
-echo ✅ Backend instalado!
-echo.
-
-REM Frontend
-echo 📦 Instalando dependências do Frontend...
-cd ..\frontend
-call npm install
-echo ✅ Frontend instalado!
-echo.
-
-REM Electron
-echo 📦 Instalando dependências do Electron...
-cd ..\electron
-call npm install
-echo ✅ Electron instalado!
+if errorlevel 1 (
+	echo ❌ Falha ao instalar dependências na raiz.
+	pause
+	exit /b 1
+)
+echo ✅ Dependências instaladas!
 echo.
 
 echo 🎉 Instalação completa!
@@ -38,5 +29,9 @@ echo   cd frontend && npm run dev
 echo.
 echo Terminal 3 (Electron):
 echo   cd electron && npm start
+echo.
+echo Alternativa pela raiz:
+echo   npm run dev:web
+echo   npm run dev:all
 echo.
 pause
