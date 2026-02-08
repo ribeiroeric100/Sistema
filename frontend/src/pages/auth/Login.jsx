@@ -4,7 +4,7 @@ import { authService } from '@services/api'
 import { useAuth } from '@context/useAuth'
 import styles from './Login.module.css'
 import brandLogo from '../../assets/dr-neto-logo-branca.png'
-import loginBg from '../../assets/login-bg.png'
+import loginBg from '../../assets/fundo_login.png'
 
 export default function Login() {
   const [email, setEmail] = useState('')
