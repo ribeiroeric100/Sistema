@@ -23,6 +23,83 @@
   max-width: 420px;
 }
 
+.loginModal {
+  width: min(980px, 92vw);
+  min-height: min(640px, 84vh);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 28px 60px rgba(25, 30, 60, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.loginLeft {
+  position: relative;
+  padding: 28px;
+  color: #fff;
+  background:
+    linear-gradient(180deg, rgba(8, 15, 45, 0.35) 0%, rgba(8, 15, 45, 0.78) 100%),
+    var(--login-bg);
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.leftTop {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brandLogoImg {
+  height: 40px;
+  width: auto;
+  display: block;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
+}
+
+.leftBottom {
+  max-width: 420px;
+}
+
+.leftTitle {
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1.15;
+  margin-bottom: 10px;
+}
+
+.leftSubtitle {
+  font-size: 14px;
+  line-height: 1.45;
+  opacity: 0.92;
+}
+
+.loginRight {
+  padding: 44px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.welcomeTitle {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 900;
+  color: #151733;
+}
+
+.welcomeSubtitle {
+  margin: 8px 0 22px;
+  font-size: 14px;
+  color: rgba(21, 23, 51, 0.62);
+}
+
 .header {
   text-align: center;
   margin-bottom: 22px;
@@ -102,6 +179,32 @@
   box-sizing: border-box;
 }
 
+.loginRight .inputRow input {
+  padding-right: 46px;
+}
+
+.inputEndBtn {
+  width: 40px;
+  height: 40px;
+  margin-right: 6px;
+  border: none;
+  background: transparent;
+  color: rgba(25, 30, 60, 0.55);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+.inputEndBtn:hover:not(:disabled) {
+  background: rgba(127, 137, 255, 0.12);
+}
+
+.inputEndBtn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
 .inputRow input::placeholder {
   color: rgba(21, 23, 51, 0.4);
 }
@@ -153,6 +256,58 @@
   gap: 10px;
 }
 
+.submitArrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 2px 0 10px;
+}
+
+.remember {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: rgba(21, 23, 51, 0.62);
+  user-select: none;
+}
+
+.remember input {
+  width: 16px;
+  height: 16px;
+}
+
+.textLinkBtn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 800;
+  color: #667eea;
+  cursor: pointer;
+}
+
+.textLinkBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.signupRow {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 16px;
+  font-size: 13px;
+  color: rgba(21, 23, 51, 0.62);
+}
+
 .spinner {
   width: 18px;
   height: 18px;
@@ -176,6 +331,19 @@
 
   .logo {
     width: 120px;
+  }
+
+  .loginModal {
+    grid-template-columns: 1fr;
+    min-height: unset;
+  }
+
+  .loginLeft {
+    display: none;
+  }
+
+  .loginRight {
+    padding: 28px 20px;
   }
 }
 

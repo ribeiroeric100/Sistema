@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import Odontograma from '../components/common/Odontograma'
 import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
-import logoPdf from '../assets/logo_pdf.png'
+import logoPdf from '../assets/dr-neto-logo-black.png'
 import styles from './PacientePerfil.module.css'
 
 export default function PacientePerfil() {

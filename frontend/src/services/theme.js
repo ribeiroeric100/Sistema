@@ -239,6 +239,8 @@ export function applyClinicTheme(primaryHex, themeUi, custom = {}) {
   const root = document.documentElement
   root.dataset.theme = resolved
   root.dataset.themeUi = themeUiNorm
+  // Keep Tailwind's dark mode (class-based) in sync with the app theme
+  root.classList.toggle('dark', resolved === 'dark')
   root.style.setProperty('--primary', primary)
   root.style.setProperty('--primary-2', darkenHex(primary))
   root.style.setProperty('--primary-a08', rgbaFromHex(primary, 0.08))

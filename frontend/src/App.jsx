@@ -4,8 +4,6 @@ import { useAuth } from '@context/useAuth'
 import Sidebar from '@components/layout/Sidebar'
 import MobileHeader from '@components/layout/MobileHeader'
 import Login from '@pages/auth/Login'
-import ForgotPassword from '@pages/auth/ForgotPassword'
-import ResetPassword from '@pages/auth/ResetPassword'
 import Dashboard from '@pages/Dashboard'
 import Pacientes from '@pages/Pacientes'
 import PacientePerfil from '@pages/PacientePerfil'
@@ -69,9 +67,9 @@ function AppContent() {
         <Routes>
           <Route path="/landing" element={<Landing />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Navigate to="/login" />} />
-          <Route path="/forgot-password" element={<Navigate to="/login" />} />
-          <Route path="/reset-password" element={<Navigate to="/login" />} />
+          <Route path="/register" element={<Navigate to="/login" replace />} />
+          <Route path="/forgot-password" element={<Navigate to="/login" replace />} />
+          <Route path="/reset-password" element={<Navigate to="/login" replace />} />
           <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
       </Router>
@@ -87,7 +85,7 @@ function AppContent() {
           </div>
           <div className="appContent">
             <MobileHeader />
-            <main className="appMain">
+            <main className="appMain custom-scrollbar">
               <Routes>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/pacientes" element={<Pacientes />} />

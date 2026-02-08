@@ -3,7 +3,7 @@ import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
 import { useEffect, useRef, useState } from 'react'
 import logoFallback from '../assets/dr-neto-logo.png'
-import logoPdf from '../assets/logo_pdf.png'
+import logoPdf from '../assets/dr-neto-logo-black.png'
 import BreadcrumbTitle from '@components/common/BreadcrumbTitle'
 import styles from './Relatorios.module.css'
 import {

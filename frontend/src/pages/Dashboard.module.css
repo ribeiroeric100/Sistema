@@ -71,6 +71,54 @@
 .headerRow { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px }
 .welcome { display:none }
 
+.pageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  width: 100%;
+}
+
+.pageHeaderLeft {
+  min-width: 0;
+}
+
+.pageTitle {
+  margin: 6px 0 0 0;
+  font-size: 1.85rem;
+  font-weight: 900;
+  color: var(--text, #0f172a);
+  letter-spacing: -0.3px;
+}
+
+.pageHeaderRight {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+.datePill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface, rgba(255,255,255,0.85));
+  border: 1px solid var(--border, rgba(15,23,42,0.08));
+  color: var(--text, #0f172a);
+  padding: 10px 14px;
+  border-radius: 12px;
+  box-shadow: 0 8px 18px rgba(15,23,42,0.08);
+  cursor: default;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.datePillIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.9;
+}
 
 /* Make the header content stretch, so the top cards row uses full width */
 .headerRow > div {
@@ -88,6 +136,10 @@
   }
 
   .headerRow h1 {
+    display: none;
+  }
+
+  .pageHeaderRight {
     display: none;
   }
 }
@@ -138,6 +190,18 @@
   min-height: 112px;
 }
 
+/* Dark mode: match the "dark glass" cards style */
+html[data-theme="dark"] .topStatsRow .smallCard,
+html[data-theme="dark"] .topStatsRowTwo .smallCard {
+  background:
+    radial-gradient(220px circle at 12% 18%, rgba(255, 255, 255, 0.10), transparent 58%),
+    radial-gradient(260px circle at 90% 22%, rgba(99, 102, 241, 0.12), transparent 62%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 18px 54px rgba(0, 0, 0, 0.40);
+  backdrop-filter: blur(10px);
+}
+
 .smallTitle {
   display: inline-flex;
   align-items: center;
@@ -145,6 +209,10 @@
   font-size: 0.92rem;
   font-weight: 800;
   color: var(--text, rgba(15, 23, 42, 0.84));
+}
+
+html[data-theme="dark"] .smallTitle {
+  color: rgba(255, 255, 255, 0.72);
 }
 
 .smallIcon {
@@ -170,10 +238,58 @@
   line-height: 1.0;
 }
 
+html[data-theme="dark"] .smallValue {
+  color: #ffffff;
+}
+
 .smallMeta {
   font-size: 0.85rem;
   color: var(--muted, #6b7280);
 }
+
+html[data-theme="dark"] .smallMeta {
+  color: rgba(255, 255, 255, 0.52);
+}
+
+/* Split metrics (Hoje/Mês) used in the Consultas card */
+.splitMetrics {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  flex: 1 1 auto;
+}
+
+.splitMetricCol {
+  min-width: 0;
+  flex: 1 1 0;
+}
+
+.splitMetricValue {
+  font-size: 2rem;
+  font-weight: 900;
+  line-height: 1.05;
+  color: var(--text, #0f172a);
+}
+
+.splitMetricLabel {
+  margin-top: 4px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--muted, #6b7280);
+}
+
+.splitMetricDivider {
+  width: 1px;
+  align-self: stretch;
+  background: var(--border, rgba(15,23,42,0.12));
+  opacity: 0.9;
+}
+
+html[data-theme="dark"] .splitMetricValue { color: #ffffff; }
+html[data-theme="dark"] .splitMetricLabel { color: rgba(255,255,255,0.52); }
+html[data-theme="dark"] .splitMetricDivider { background: rgba(255,255,255,0.12); }
 
 .mainGrid { display:grid; grid-template-columns: 1fr; gap:14px }
 .topPanels { display:grid; grid-template-columns: 1fr 420px; gap:14px; align-items: start }
@@ -273,6 +389,17 @@
   width: 100%;
 }
 
+.panelHeaderText{
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.panelSub{
+  font-size: 12px;
+  color: var(--muted);
+}
+
 :global(html[data-theme="dark"]) .proximasTable th {
   color: #ffffff;
 }
@@ -283,20 +410,36 @@
 
 .proximasTable th,
 .proximasTable td {
-  white-space: normal;
-  overflow-wrap: anywhere;
-  word-break: break-word;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Keep date and action columns stable so the middle columns can wrap */
 .proximasTable th:nth-child(1),
 .proximasTable td:nth-child(1) {
-  width: 120px;
+  width: 320px;
+}
+
+.proximasTable th:nth-child(2),
+.proximasTable td:nth-child(2) {
+  width: 160px;
+}
+
+.proximasTable th:nth-child(3),
+.proximasTable td:nth-child(3) {
+  width: 220px;
 }
 
 .proximasTable th:nth-child(4),
 .proximasTable td:nth-child(4) {
   width: 140px;
+}
+
+.proximasTable thead th{
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-size: 11px;
 }
 
 /* Slightly tighter padding helps on narrower cards */
@@ -324,6 +467,163 @@
 
 .actionTd {
   text-align: center;
+}
+
+.rowDone{
+  opacity: .75;
+}
+
+.patientNameOnly{
+  font-weight: 900;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.patientCell{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.patientAvatar{
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  font-size: 12px;
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.06);
+  flex: 0 0 auto;
+}
+
+html[data-theme-ui='light'] .patientAvatar{
+  border-color: rgba(0,0,0,.10);
+  background: rgba(0,0,0,.04);
+}
+
+.patientMeta{
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.patientName{
+  font-weight: 900;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.patientId{
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.timeCell2{
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.timeRange{
+  font-weight: 900;
+}
+
+.dayHint{
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.procPill{
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 900;
+  font-size: 12px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.06);
+  white-space: nowrap;
+}
+
+html[data-theme-ui='light'] .procPill{
+  border-color: rgba(0,0,0,.10);
+  background: rgba(0,0,0,.04);
+}
+
+.statusWrap{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.06);
+  white-space: nowrap;
+}
+
+html[data-theme-ui='light'] .statusWrap{
+  border-color: rgba(0,0,0,.10);
+  background: rgba(0,0,0,.04);
+}
+
+.statusDot{
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--muted);
+}
+
+.statusText{
+  font-weight: 900;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.statusDot_ok{ opacity: .95; }
+.statusDot_warn{ opacity: .75; }
+.statusDot_done{ opacity: .90; }
+.statusDot_cancel{ opacity: .55; }
+.statusDot_miss{ opacity: 1; }
+.statusDot_muted{ opacity: .65; }
+
+.statusText_ok{ opacity: .95; }
+.statusText_warn{ opacity: .90; }
+.statusText_done{ opacity: .95; }
+.statusText_cancel{ opacity: .75; }
+.statusText_miss{ opacity: 1; }
+.statusText_muted{ opacity: .85; }
+
+.kebabBtn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.06);
+  color: var(--text);
+}
+
+html[data-theme-ui='light'] .kebabBtn{
+  border-color: rgba(0,0,0,.10);
+  background: rgba(0,0,0,.04);
+}
+
+.kebabBtn:hover{
+  filter: brightness(1.05);
+}
+
+.kebabIcon{
+  font-size: 18px;
+  line-height: 1;
 }
 
 /* Ensure estoque headers match Próximas Consultas headers when using tableCardTable + estoqueTable */
@@ -894,14 +1194,26 @@ html[data-theme="dark"] .paidLabel {
     padding: 10px 10px;
   }
 
-  .proximasTable th:nth-child(1),
-  .proximasTable td:nth-child(1) {
-    width: 96px;
+  .proximasTable {
+    table-layout: auto;
   }
 
+  .proximasTable th,
+  .proximasTable td {
+    white-space: normal;
+  }
+
+  .proximasTable th:nth-child(1),
+  .proximasTable td:nth-child(1),
+  .proximasTable th:nth-child(2),
+  .proximasTable td:nth-child(2),
+  .proximasTable th:nth-child(3),
+  .proximasTable td:nth-child(3),
   .proximasTable th:nth-child(4),
-  .proximasTable td:nth-child(4) {
-    width: 110px;
+  .proximasTable td:nth-child(4),
+  .proximasTable th:nth-child(5),
+  .proximasTable td:nth-child(5) {
+    width: auto;
   }
 
   /* Estoque sem scroll horizontal: colunas mais estreitas */

@@ -32,6 +32,18 @@ const formatMonthLabelPtBr = (ym) => {
   }
 }
 
+const formatLongDatePtBr = (ymd) => {
+  try {
+    const raw = String(ymd || '')
+    if (!raw) return ''
+    const dt = new Date(`${raw}T00:00:00`)
+    if (Number.isNaN(dt.getTime())) return raw
+    return new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }).format(dt)
+  } catch {
+    return String(ymd || '')
+  }
+}
+
 function MoneyLabelContent(props) {
   const { x, y, width, value } = props || {}
   const n = Number(value || 0)
@@ -92,6 +104,12 @@ export default function Dashboard() {
   ))
   const [monthlyChartLoading, setMonthlyChartLoading] = useState(false)
   const [monthlyChartError, setMonthlyChartError] = useState('')
+
+  const [keepProximasUntil, setKeepProximasUntil] = useState(() => ({}))
+  const keepProximasUntilRef = useRef({})
+  useEffect(() => {
+    keepProximasUntilRef.current = keepProximasUntil || {}
+  }, [keepProximasUntil])
 
   const carregarDadosRef = useRef(null)
   const carregarReceitaPorHoraRef = useRef(null)
@@ -158,7 +176,140 @@ export default function Dashboard() {
 
   const isReceitaConsulta = (c) => {
     // mesma regra usada em Relatórios para não ficar sempre "sem receita"
-    return Boolean(c?.pago) || String(c?.status || '').toLowerCase() === 'realizada'
+    const st = String(c?.status || '').toLowerCase()
+    return Boolean(c?.pago) || st === 'realizada' || st === 'feita'
+  }
+
+  const normalizeStatus = (s) => String(s || '').trim().toLowerCase()
+
+  const getStatusUi = (consulta) => {
+    const st = normalizeStatus(consulta?.status)
+
+    if (st === 'feita' || st === 'realizada') return { label: 'Feita', tone: 'done' }
+    if (st === 'cancelada') return { label: 'Cancelada', tone: 'cancel' }
+    if (st === 'falta') return { label: 'Falta', tone: 'miss' }
+
+    const conf = normalizeStatus(consulta?.confirmacao_status || consulta?.status_confirmacao || consulta?.confirmacao)
+    const confirmed = conf === 'confirmado' || consulta?.confirmado === true || String(consulta?.confirmado) === '1'
+    if (confirmed) return { label: 'Confirmado', tone: 'ok' }
+    if (conf === 'aguardando' || conf === 'pendente') return { label: 'Aguardando', tone: 'warn' }
+
+    return { label: 'Agendado', tone: 'muted' }
+  }
+
+  const getProcedureLabel = (consulta) => {
+    const pacienteNome = String(consulta?.paciente_nome || '').trim()
+    const pacienteNomeNorm = pacienteNome.toLowerCase()
+
+    const isValidCandidate = (value) => {
+      const v = String(value || '').trim()
+      if (!v) return false
+      if (pacienteNomeNorm && v.toLowerCase() === pacienteNomeNorm) return false
+      return true
+    }
+
+    const procedimentos = consulta?.procedimentos
+    const fromArray = (arr) => {
+      if (!Array.isArray(arr) || !arr.length) return ''
+      const first = arr[0]
+      if (typeof first === 'string') return first
+      if (first && typeof first === 'object') {
+        return String(first.nome || first.titulo || first.descricao || '').trim()
+      }
+      return ''
+    }
+
+    if (Array.isArray(procedimentos)) {
+      const v = fromArray(procedimentos)
+      if (isValidCandidate(v)) return String(v).trim()
+    }
+
+    if (typeof procedimentos === 'string' && procedimentos.trim()) {
+      const raw = procedimentos.trim()
+      if (raw.startsWith('[') || raw.startsWith('{')) {
+        try {
+          const parsed = JSON.parse(raw)
+          const v = fromArray(parsed)
+          if (isValidCandidate(v)) return String(v).trim()
+        } catch {
+          // ignore parse errors
+        }
+      }
+    }
+
+    const tipo = String(consulta?.tipo_consulta || '').trim()
+    if (tipo) {
+      const tipoNorm = tipo.toLowerCase()
+      if (tipoNorm !== 'geral' && isValidCandidate(tipo)) return tipo
+
+      const descricao = String(consulta?.descricao || '').trim()
+      if (isValidCandidate(descricao)) return descricao
+
+      // if tipo is 'geral', keep it; if tipo is invalid (ex: equals paciente), fall back to 'geral'
+      return tipoNorm === 'geral' ? tipo : 'geral'
+    }
+
+    const descricao = String(consulta?.descricao || '').trim()
+    if (isValidCandidate(descricao)) return descricao
+
+    return 'geral'
+  }
+
+  const timeRangeLabel = (consulta) => {
+    try {
+      const dt = new Date(consulta?.data_hora)
+      if (Number.isNaN(dt.getTime())) return '—'
+      const duration = Number(consulta?.duracao_minutos || 60)
+      const start = dt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+      const endDt = new Date(dt.getTime() + (Number.isFinite(duration) ? duration : 60) * 60000)
+      const end = endDt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+      return `${start} - ${end}`
+    } catch {
+      return '—'
+    }
+  }
+
+  const dayHintLabel = (consulta) => {
+    try {
+      const dt = new Date(consulta?.data_hora)
+      if (Number.isNaN(dt.getTime())) return ''
+      const ymd = dt.toISOString().split('T')[0]
+      const today = new Date().toISOString().split('T')[0]
+      if (ymd === today) return 'Hoje'
+      const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+      if (ymd === tomorrow) return 'Amanhã'
+      return dt.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
+    } catch {
+      return ''
+    }
+  }
+
+  const mergePinnedProximas = (incoming, previous) => {
+    const list = Array.isArray(incoming) ? incoming : []
+    const prev = Array.isArray(previous) ? previous : []
+    const keepMap = keepProximasUntilRef.current || {}
+    const now = Date.now()
+
+    const byId = new Map()
+    list.forEach((c) => {
+      if (c?.id == null) return
+      byId.set(String(c.id), c)
+    })
+
+    Object.entries(keepMap).forEach(([id, until]) => {
+      const untilMs = Number(until || 0)
+      if (!Number.isFinite(untilMs) || untilMs <= now) return
+      if (byId.has(String(id))) return
+      const existing = prev.find((c) => String(c?.id) === String(id))
+      if (!existing) return
+      byId.set(String(id), existing)
+    })
+
+    return Array.from(byId.values()).sort((a, b) => {
+      const ta = new Date(a?.data_hora || 0).getTime()
+      const tb = new Date(b?.data_hora || 0).getTime()
+      return ta - tb
+    })
   }
 
   const filterConsultasByRange = (consultas, startYmd, endYmd) => {
@@ -284,6 +435,7 @@ export default function Dashboard() {
         setReceita(0)
         setConsultasAgendadasHoje(0)
         setConsultasAgendadasTotal(0)
+        setKeepProximasUntil({})
         setDailyChartDate(today)
         setMonthlyChartMonth(ymNow)
         // refresh data after reset
@@ -307,7 +459,7 @@ export default function Dashboard() {
       setTotalPacientes(dashboard.total_pacientes || 0)
       // Prefer recently added products when available, otherwise show low-stock products
       setEstoque(dashboard.produtos_recentes && dashboard.produtos_recentes.length ? dashboard.produtos_recentes : (dashboard.produtos_baixo_estoque || []))
-      setProximas(dashboard.next_consultas || [])
+      setProximas((prev) => mergePinnedProximas(dashboard.next_consultas || [], prev))
 
       // prepare local accumulators for daily values so we can persist them reliably
       let newReceita = dashboard.receita_hoje || 0
@@ -329,8 +481,8 @@ export default function Dashboard() {
         if (monthlyChartMonth !== ymNow) setMonthlyChartMonth(ymNow)
 
         // Importante: este card não deve diminuir ao finalizar uma consulta.
-        // Portanto, consideramos tanto 'agendada' quanto 'realizada' nas contagens.
-        const countedStatuses = new Set(['agendada', 'realizada'])
+        // Portanto, consideramos tanto 'agendada' quanto as concluídas ('realizada'/'feita') nas contagens.
+        const countedStatuses = new Set(['agendada', 'realizada', 'feita'])
         newAgendadasHoje = (consultas || []).filter(c => countedStatuses.has(c.status) && (new Date(c.data_hora).toISOString().split('T')[0] === hojeStr)).length
         newAgendadasTotal = (consultas || []).filter(c => countedStatuses.has(c.status)).length
         // respect suppression flag set after a local finalize action so the small card
@@ -386,7 +538,22 @@ export default function Dashboard() {
     setAcaoLoading(true)
     try {
       if (acaoTipo === 'realizada') {
-        await consultasService.atualizar(acaoConsulta.id, { status: 'realizada', pago: acaoPago ? 1 : 0 })
+        // Backend pode passar a usar 'feita'. Mantém compatibilidade com versões antigas.
+        try {
+          await consultasService.atualizar(acaoConsulta.id, { status: 'feita', pago: acaoPago ? 1 : 0 })
+        } catch {
+          await consultasService.atualizar(acaoConsulta.id, { status: 'realizada', pago: acaoPago ? 1 : 0 })
+        }
+
+        // Mantém a consulta na lista de próximas até virar o dia (apenas muda o status no UI)
+        const now = new Date()
+        const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1)
+        const until = nextMidnight.getTime()
+        setKeepProximasUntil((prev) => ({ ...(prev || {}), [String(acaoConsulta.id)]: until }))
+        setProximas((prev) => (prev || []).map((c) => {
+          if (String(c?.id) !== String(acaoConsulta.id)) return c
+          return { ...c, status: 'feita' }
+        }))
       } else if (acaoTipo === 'falta' || acaoTipo === 'cancelada') {
         await consultasService.atualizar(acaoConsulta.id, {
           status: acaoTipo,
@@ -484,7 +651,26 @@ export default function Dashboard() {
     <div className={styles.dashboardWire}>
       <header className={styles.headerRow}>
         <div>
-          <BreadcrumbTitle current="Dashboard" />
+          <div className={styles.pageHeader}>
+            <div className={styles.pageHeaderLeft}>
+              <BreadcrumbTitle current="Dashboard" />
+              <h1 className={styles.pageTitle}>Resumo Geral</h1>
+            </div>
+
+            <div className={styles.pageHeaderRight}>
+              <div className={styles.datePill} aria-label="Data do relatório">
+                <span className={styles.datePillIcon} aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="5" width="18" height="16" rx="2" />
+                    <path d="M16 3v4" />
+                    <path d="M8 3v4" />
+                    <path d="M3 11h18" />
+                  </svg>
+                </span>
+                {formatLongDatePtBr(dailyChartDate)}
+              </div>
+            </div>
+          </div>
           <p className={styles.welcome}>Bem-vindo de volta, {user?.nome}!</p>
 
           <div className={isRecepcao ? `${styles.topStatsRow} ${styles.topStatsRowTwo}` : styles.topStatsRow}>
@@ -513,24 +699,22 @@ export default function Dashboard() {
             <div className={`${styles.smallCard} ${styles.agendadasCard}`}>
               <div className={styles.smallTitle}>
                 <span className={`${styles.smallIcon} ${styles.iconCalendar}`}><StatIcon name="calendar" /></span>
-                Consultas Agendadas
+                Consultas
               </div>
-              <table className={styles.agendadasTable}>
-                <thead>
-                  <tr>
-                    <th>Hoje</th>
-                    <th className={styles.agSpacerHead}></th>
-                    <th>Mensal</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td className={styles.agValue}>{consultasAgendadasHoje}</td>
-                    <td className={styles.agSpacer}></td>
-                    <td className={styles.agValue}>{consultasAgendadasTotal}</td>
-                  </tr>
-                </tbody>
-              </table>
+
+              <div className={styles.splitMetrics}>
+                <div className={styles.splitMetricCol}>
+                  <div className={styles.splitMetricValue}>{consultasAgendadasHoje}</div>
+                  <div className={styles.splitMetricLabel}>Hoje</div>
+                </div>
+
+                <div className={styles.splitMetricDivider} aria-hidden="true" />
+
+                <div className={styles.splitMetricCol}>
+                  <div className={styles.splitMetricValue}>{consultasAgendadasTotal}</div>
+                  <div className={styles.splitMetricLabel}>Mês</div>
+                </div>
+              </div>
             </div>
 
             <div className={styles.smallCard}>
@@ -548,35 +732,66 @@ export default function Dashboard() {
         <div className={styles.topPanels}>
           <div className={`${styles.panel} ${styles.tableCard}`}>
             <div className={styles.panelHeader}>
-              <h3>Próximas Consultas</h3>
+              <div className={styles.panelHeaderText}>
+                <h3>Próximas Consultas</h3>
+                <div className={styles.panelSub}>Agendamentos para os próximos 2 dias</div>
+              </div>
               <a className={styles.panelLink} href="/agenda">Ver todas →</a>
             </div>
             <div className={styles.tableCardInner}>
               <table className={`${styles.tableCardTable} ${styles.proximasTable}`}>
                 <thead>
                   <tr>
-                    <th>Data</th>
-                    <th>Nome do Paciente</th>
+                    <th>Paciente</th>
+                    <th>Horário</th>
                     <th>Procedimento</th>
+                    <th>Status</th>
                     <th className={styles.actionTh}>Ação</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {proximas.filter(c => c.status !== 'realizada').slice(0, PROXIMAS_ROWS).map(c => (
-                    <tr key={c.id} className={c.status === 'agendada' ? styles.scheduledRow : ''}>
-                      <td>
-                        <div className={styles.dateCell}>
-                          <div>{new Date(c.data_hora).toLocaleDateString('pt-BR')}</div>
-                          <div className={styles.timeCell}>{new Date(c.data_hora).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
-                        </div>
-                      </td>
-                      <td>{c.paciente_nome}</td>
-                      <td>{c.tipo_consulta}</td>
-                      <td className={styles.actionTd}>
-                        <button className={styles.markPaidBtn} onClick={() => finalizarConsulta(c)}>Finalizar</button>
-                      </td>
-                    </tr>
-                  ))}
+                  {(proximas || []).slice(0, PROXIMAS_ROWS).map(c => {
+                    const statusUi = getStatusUi(c)
+                    const isDone = statusUi.tone === 'done'
+
+                    return (
+                      <tr key={c.id} className={isDone ? styles.rowDone : ''}>
+                        <td>
+                          <div className={styles.patientNameOnly}>{c?.paciente_nome || '—'}</div>
+                        </td>
+
+                        <td>
+                          <div className={styles.timeCell2}>
+                            <div className={styles.timeRange}>{timeRangeLabel(c)}</div>
+                            <div className={styles.dayHint}>{dayHintLabel(c)}</div>
+                          </div>
+                        </td>
+
+                        <td>
+                          <span className={styles.procPill}>{getProcedureLabel(c)}</span>
+                        </td>
+
+                        <td>
+                          <span className={styles.statusWrap}>
+                            <span className={`${styles.statusDot} ${styles[`statusDot_${statusUi.tone}`]}`} aria-hidden="true" />
+                            <span className={`${styles.statusText} ${styles[`statusText_${statusUi.tone}`]}`}>{statusUi.label}</span>
+                          </span>
+                        </td>
+
+                        <td className={styles.actionTd}>
+                          <button
+                            type="button"
+                            className={styles.kebabBtn}
+                            onClick={() => finalizarConsulta(c)}
+                            aria-label="Ações da consulta"
+                            title="Ações"
+                          >
+                            <span className={styles.kebabIcon} aria-hidden="true">⋮</span>
+                          </button>
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>
@@ -608,7 +823,7 @@ export default function Dashboard() {
                   </div>
 
                   <div className={styles.actionRadios}>
-                    <label><input type="radio" name="acao" checked={acaoTipo === 'realizada'} onChange={() => setAcaoTipo('realizada')} /> Realizada</label>
+                    <label><input type="radio" name="acao" checked={acaoTipo === 'realizada'} onChange={() => setAcaoTipo('realizada')} /> Feita</label>
                     <label><input type="radio" name="acao" checked={acaoTipo === 'falta'} onChange={() => setAcaoTipo('falta')} /> Falta</label>
                     <label><input type="radio" name="acao" checked={acaoTipo === 'cancelada'} onChange={() => setAcaoTipo('cancelada')} /> Cancelada</label>
                     <label><input type="radio" name="acao" checked={acaoTipo === 'reagendar'} onChange={() => setAcaoTipo('reagendar')} /> Reagendar</label>

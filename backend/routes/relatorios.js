@@ -22,7 +22,7 @@ router.get('/dashboard', verifyToken, (req, res) => {
     const produtosBaixos = toPromise(cb => db.all('SELECT id, nome, quantidade, quantidade_minima FROM produtos_estoque WHERE ativo IS TRUE AND quantidade <= quantidade_minima', [], cb))
     const recentPacientes = toPromise(cb => db.all('SELECT id, nome, criado_em FROM pacientes WHERE ativo IS TRUE ORDER BY criado_em DESC LIMIT 5', [], cb))
     const recentProdutos = toPromise(cb => db.all('SELECT id, nome, quantidade, quantidade_minima, criado_em FROM produtos_estoque WHERE ativo IS TRUE ORDER BY criado_em DESC LIMIT 6', [], cb))
-    const nextConsultas = toPromise(cb => db.all(`SELECT c.id, c.data_hora, c.tipo_consulta, c.status, p.nome as paciente_nome, u.nome as dentista_nome 
+    const nextConsultas = toPromise(cb => db.all(`SELECT c.id, c.data_hora, c.tipo_consulta, c.descricao, c.procedimentos, c.status, p.nome as paciente_nome, u.nome as dentista_nome 
       FROM consultas c 
       JOIN pacientes p ON c.paciente_id = p.id 
       LEFT JOIN usuarios u ON c.dentista_id = u.id 

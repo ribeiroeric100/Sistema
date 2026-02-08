@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SaaS Login Page Modern Clean</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3713ec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#131022",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        input:focus {
+            border-color: #3713ec !important;
+            ring-color: #3713ec !important;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="flex h-screen w-full overflow-hidden">
+<!-- Left Side: Visual Hero Section (Architectural Photo) -->
+<div class="hidden lg:flex lg:w-1/2 relative">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Minimalist modern dental clinic interior with soft lighting" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA768liidKq6WlPlGb7JS3KuYkHLl8bpzsrFOTVYyGGYcD5RMSFT0IP4Ycy2ksUsiOp8_WrLeCRGxkcKNCJfgK1PATF2R48pVbk2Y7z0FJM6dpYH512OBq5Z7J63W34oBNyUIQu5eWzvP8uiX6oeSaczIVOaCPRFlTuNC7q5CfVtrw_5kl00cptTot8_a1au8JO5-pM3cJhc8hP7cT6o-XpYSM6ire00tG6EmqcMyFy4R7DwBMHzttGT4vUeFxXGESI-MEapJ6u9Yex');">
+<!-- Subtle Gradient Overlay for Branding -->
+<div class="absolute inset-0 bg-gradient-to-tr from-primary/40 to-transparent"></div>
+</div>
+<!-- Branding/Logo Overlay -->
+<div class="relative z-10 flex flex-col justify-between p-12 w-full h-full">
+<div class="flex items-center gap-3">
+<div class="bg-white/20 backdrop-blur-md p-3 rounded-xl border border-white/30">
+<span class="material-symbols-outlined text-white text-3xl">dentistry</span>
+</div>
+<span class="text-white text-2xl font-extrabold tracking-tight">DentalFlow</span>
+</div>
+<div class="max-w-md">
+<h3 class="text-white text-3xl font-bold leading-tight mb-4">A tecnologia que sua clínica merece.</h3>
+<p class="text-white/80 text-lg">Integre pacientes, agenda e financeiro em uma única plataforma premium e intuitiva.</p>
+</div>
+</div>
+</div>
+<!-- Right Side: Authentication Area -->
+<div class="w-full lg:w-1/2 bg-white dark:bg-background-dark flex flex-col justify-center items-center px-6 sm:px-12 lg:px-24">
+<div class="w-full max-w-[440px]">
+<!-- Welcome Header -->
+<div class="mb-10 text-center lg:text-left">
+<h1 class="text-slate-900 dark:text-white text-4xl font-extrabold tracking-tight mb-3">Bem-vindo de volta!</h1>
+<p class="text-slate-500 dark:text-slate-400 text-base">Gerencie sua clínica com eficiência e segurança.</p>
+</div>
+<!-- Form Section -->
+<form class="space-y-6">
+<!-- Email Field -->
+<div class="flex flex-col gap-2">
+<label class="text-slate-700 dark:text-slate-300 text-sm font-semibold">E-mail</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-400 text-xl">mail</span>
+</div>
+<input class="w-full h-14 pl-12 pr-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all duration-200 placeholder:text-slate-400" placeholder="exemplo@clinica.com" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="flex flex-col gap-2">
+<label class="text-slate-700 dark:text-slate-300 text-sm font-semibold">Senha</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-400 text-xl">lock</span>
+</div>
+<input class="w-full h-14 pl-12 pr-12 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all duration-200 placeholder:text-slate-400" placeholder="••••••••" type="password"/>
+<div class="absolute inset-y-0 right-0 pr-4 flex items-center cursor-pointer">
+<span class="material-symbols-outlined text-slate-400 text-xl hover:text-primary transition-colors">visibility</span>
+</div>
+</div>
+</div>
+<!-- Auxiliary Actions -->
+<div class="flex items-center justify-between py-2">
+<label class="flex items-center gap-2 cursor-pointer group">
+<div class="relative flex items-center">
+<input class="peer h-5 w-5 appearance-none rounded border border-slate-300 dark:border-slate-700 checked:bg-primary checked:border-primary transition-all duration-200 focus:ring-0 focus:ring-offset-0" type="checkbox"/>
+<span class="material-symbols-outlined absolute text-white text-[16px] opacity-0 peer-checked:opacity-100 left-[2px] pointer-events-none">check</span>
+</div>
+<span class="text-sm text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-200 transition-colors">Lembrar de mim</span>
+</label>
+<a class="text-sm font-semibold text-primary hover:underline transition-all" href="#">Esqueceu a senha?</a>
+</div>
+<!-- Submit Button -->
+<button class="w-full h-14 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2" type="submit">
+<span>Entrar no Sistema</span>
+<span class="material-symbols-outlined text-xl">arrow_forward</span>
+</button>
+</form>
+<!-- Footer Sign Up -->
+<div class="mt-12 text-center">
+<p class="text-slate-500 dark:text-slate-400">
+                        Não tem uma conta? 
+                        <a class="text-primary font-bold hover:underline ml-1" href="#">Cadastre-se</a>
+</p>
+</div>
+<!-- Subtle Trust Info (Optional) -->
+<div class="mt-16 flex items-center justify-center gap-4 opacity-50">
+<div class="h-[1px] w-12 bg-slate-300"></div>
+<span class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Acesso Seguro SSL</span>
+<div class="h-[1px] w-12 bg-slate-300"></div>
+</div>
+</div>
+</div>
+</div>
+</body></html>

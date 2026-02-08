@@ -35,7 +35,7 @@ app.use(
 function parseCorsOrigins(value) {
   return String(value || '')
     .split(',')
-    .map((s) => s.trim())
+    .map((s) => s.trim().replace(/\/+$/, ''))
     .filter(Boolean)
 }
 
@@ -84,8 +84,9 @@ const corsOptions = {
     // Se não configurado, libera em dev (comportamento atual)
     if (corsOrigins.length === 0) return callback(null, true)
 
-    if (corsOrigins.includes(origin)) return callback(null, true)
-    if (corsOrigins.some((a) => originMatches(a, origin))) return callback(null, true)
+    const normalizedOrigin = String(origin || '').trim().replace(/\/+$/, '')
+    if (corsOrigins.includes(normalizedOrigin)) return callback(null, true)
+    if (corsOrigins.some((a) => originMatches(a, normalizedOrigin))) return callback(null, true)
     return callback(new Error('Not allowed by CORS'))
   }
 }
