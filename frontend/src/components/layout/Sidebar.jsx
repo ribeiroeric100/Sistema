@@ -227,7 +227,7 @@ export default function Sidebar() {
           </button>
         </div>
 
-        <p className={styles.footerCopy}>© {new Date().getFullYear()} DR. NETO ABREU</p>
+        <p className={styles.footerCopy}>© {new Date().getFullYear()} Dentaly</p>
       </div>
     </aside>
   )

@@ -12,6 +12,7 @@ export default function Login() {
   const [mostrarSenha, setMostrarSenha] = useState(false)
   const [erro, setErro] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showTestLogin, setShowTestLogin] = useState(true)
   const { login } = useAuth()
   const navigate = useNavigate()
 
@@ -34,6 +35,35 @@ export default function Login() {
   return (
     <div className={styles.container}>
       <div className={styles.loginModal}>
+        {!showTestLogin && (
+          <button type="button" className={styles.testLoginReopen} onClick={() => setShowTestLogin(true)}>
+            Login de teste
+          </button>
+        )}
+
+        {showTestLogin && (
+          <aside className={styles.testLoginModal} role="dialog" aria-label="Login de teste">
+            <button
+              type="button"
+              className={styles.testLoginClose}
+              onClick={() => setShowTestLogin(false)}
+              aria-label="Fechar"
+            >
+              ×
+            </button>
+
+            <div className={styles.testLoginTitle}>Login de teste</div>
+            <div className={styles.testLoginRow}>
+              <span className={styles.testLoginLabel}>E-mail</span>
+              <span className={styles.testLoginValue}>teste@local</span>
+            </div>
+            <div className={styles.testLoginRow}>
+              <span className={styles.testLoginLabel}>Senha</span>
+              <span className={styles.testLoginValue}>teste@</span>
+            </div>
+          </aside>
+        )}
+
         <section className={styles.loginLeft} style={{ '--login-bg': `url(${loginBg})` }}>
           <div className={styles.leftTop}>
             <img className={styles.brandLogoImg} src={brandLogo} alt="Dentaly" />

@@ -307,7 +307,7 @@ export default function Configuracoes() {
       <div className={styles.header}>
         <div>
           <BreadcrumbTitle current="Configurações" />
-          <div className={styles.subtitle}>DR. NETO ABREU – Clínica Odontológica</div>
+          <div className={styles.subtitle}>Dentaly – Clínica Odontológica</div>
         </div>
       </div>
 
@@ -349,7 +349,7 @@ export default function Configuracoes() {
                 value={form.nome_clinica}
                 disabled={!(isAdmin || isDentista) || loading}
                 onChange={onChange('nome_clinica')}
-                placeholder="DR. NETO ABREU"
+                placeholder="Dentaly Clínica Odontológica"
               />
             </div>
 

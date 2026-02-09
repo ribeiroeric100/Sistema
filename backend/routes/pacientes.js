@@ -208,7 +208,7 @@ router.get('/:id/prontuario/pdf', verifyToken, verifyRole(['admin', 'dentista'])
         const logoGap = 10
         const textSize = 18
 
-        const imgPath = path.resolve(__dirname, '..', '..', 'frontend', 'src', 'assets', 'logo_preto.png')
+        const imgPath = path.resolve(__dirname, '..', '..', 'frontend', 'src', 'assets', 'dente.png')
         try {
           if (fs.existsSync(imgPath)) {
             // Mantém tamanho consistente no cabeçalho

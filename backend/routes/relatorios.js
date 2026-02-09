@@ -17,7 +17,7 @@ function drawPdfBrandHeader(doc) {
   const logoGap = 10
   const textSize = 18
 
-  const imgPath = path.resolve(__dirname, '..', '..', 'frontend', 'src', 'assets', 'logo_preto.png')
+  const imgPath = path.resolve(__dirname, '..', '..', 'frontend', 'src', 'assets', 'dente.png')
   try {
     if (fs.existsSync(imgPath)) {
       doc.image(imgPath, left, top, { width: logoSize, height: logoSize })

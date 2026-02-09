@@ -2,7 +2,7 @@ import { estoqueService, relatoriosService, configuracoesService } from '@servic
 import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
 import { useEffect, useRef, useState } from 'react'
-import brandIconPng from '../assets/logo_preto.png'
+import brandIconPng from '../assets/dente.png'
 import BreadcrumbTitle from '@components/common/BreadcrumbTitle'
 import styles from './Relatorios.module.css'
 import {
