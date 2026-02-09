@@ -4,7 +4,8 @@ import { useAuth } from '../../context/useAuth'
 import { useMemo, useEffect, useState } from 'react'
 import { loadUserThemeUiPreference, normalizeThemeUi } from '../../services/theme'
 import { useNavigate } from 'react-router-dom'
-import logoWhite from '../../assets/dr-neto-logo.png'
+import logoWhite from '../../assets/logos.png'
+import logoBlack from '../../assets/logo_preto.png'
 
 // Hook para detectar se o tema UI é 'system'
 function useIsSystemTheme(user) {
@@ -167,22 +168,19 @@ export default function Sidebar() {
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
   }, [userName])
 
-  // Escolhe o logo via JS.
-  // Obs: o asset "dr-neto-logo-black.png" estava vazio (0 bytes) e não carregava.
-  // Então, no modo claro, aplicamos um filtro CSS para renderizar o logo escuro.
-  let currentLogo = logoWhite
-  if (themeUi === 'personalizado') {
-    const custom = (typeof document !== 'undefined' && document.documentElement.dataset && document.documentElement.dataset.sidebarLogo) ? document.documentElement.dataset.sidebarLogo : ''
-    currentLogo = custom || logoWhite
-  }
+  // Regra de branding:
+  // - tema UI "light" e "personalizado" -> logo preto
+  // - tema UI "system" e "dark" -> logo branco
+  // (mantemos o dataset.sidebarLogo apenas para não quebrar outras partes, mas aqui não aplicamos no personalizado.)
+  const currentLogo = (themeUi === 'light' || themeUi === 'personalizado') ? logoBlack : logoWhite
 
   return (
     <aside className={styles.sidebar}>
       <div className={styles.brand}>
         <img
           src={currentLogo}
-          alt="DR. NETO ABREU"
-          className={themeUi === 'light' ? `${styles.logo} ${styles.logoOnLight}` : styles.logo}
+          alt="Dentaly"
+          className={styles.logo}
         />
       </div>
       <div className={styles.brandDivider} aria-hidden="true" />

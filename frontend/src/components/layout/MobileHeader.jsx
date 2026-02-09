@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '@context/useAuth'
 import styles from './MobileHeader.module.css'
-import toothLogo from '../../assets/dente.png'
+import logoWhite from '../../assets/logos.png'
+import logoBlack from '../../assets/logo_preto.png'
 
 function MenuIcon(props) {
   return (
@@ -130,6 +131,23 @@ export default function MobileHeader() {
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
 
+  const [themeUi, setThemeUi] = useState(() => {
+    if (typeof document === 'undefined') return 'light'
+    return document.documentElement.dataset.themeUi || 'light'
+  })
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return
+    const root = document.documentElement
+    const obs = new MutationObserver(() => {
+      setThemeUi(root.dataset.themeUi || 'light')
+    })
+    obs.observe(root, { attributes: true, attributeFilter: ['data-theme-ui', 'data-theme'] })
+    return () => obs.disconnect()
+  }, [])
+
+  const currentLogo = (themeUi === 'light' || themeUi === 'personalizado') ? logoBlack : logoWhite
+
   const role = String(user?.role || '').toLowerCase()
   const isAdmin = role === 'admin'
   const canSeeRelatorios = role === 'admin' || role === 'dentista'
@@ -231,8 +249,8 @@ export default function MobileHeader() {
         </div>
 
         <div className={styles.brand}>
-          <img className={styles.brandLogo} src={toothLogo} alt="" aria-hidden="true" />
-          <span className={styles.brandText}>DR. NETO ABREU</span>
+          <img className={styles.brandLogo} src={currentLogo} alt="" aria-hidden="true" />
+          <span className={styles.brandText}>DENTALY</span>
         </div>
 
         <div className={styles.right} aria-hidden="true" />

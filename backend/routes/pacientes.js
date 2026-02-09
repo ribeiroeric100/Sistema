@@ -192,7 +192,7 @@ router.get('/:id/prontuario/pdf', verifyToken, verifyRole(['admin', 'dentista'])
     .then(([cfg, paciente, consultas, od]) => {
       if (!paciente) return res.status(404).json({ error: 'Paciente não encontrado' })
 
-      const brandName = 'DR. NETO ABREU'
+      const brandName = 'DENTALY'
 
       const doc = new PDFDocument({ size: 'A4', margin: 50 })
       res.setHeader('Content-Type', 'application/pdf')
@@ -203,17 +203,23 @@ router.get('/:id/prontuario/pdf', verifyToken, verifyRole(['admin', 'dentista'])
       const drawBrandHeader = () => {
         const left = doc.page.margins.left || 50
         const top = doc.page.margins.top || 50
-        const imgPath = path.resolve(__dirname, '..', '..', 'frontend', 'src', 'assets', 'dente.png')
+
+        const logoSize = 36
+        const logoGap = 10
+        const textSize = 18
+
+        const imgPath = path.resolve(__dirname, '..', '..', 'frontend', 'src', 'assets', 'logo_preto.png')
         try {
           if (fs.existsSync(imgPath)) {
-            doc.image(imgPath, left, top, { width: 26, height: 26 })
+            // Mantém tamanho consistente no cabeçalho
+            doc.image(imgPath, left, top, { width: logoSize, height: logoSize })
           }
         } catch {
           // ignore
         }
 
-        doc.fillColor('#111827')
-        doc.font('Helvetica-Bold').fontSize(18).text(brandName, left + 34, top + 4, { align: 'left' })
+        doc.fillColor('#0f172a')
+        doc.font('Helvetica-Bold').fontSize(textSize).text(brandName, left + logoSize + logoGap, top + Math.round((logoSize - textSize) / 2), { align: 'left' })
         doc.moveDown(1.25)
       }
 

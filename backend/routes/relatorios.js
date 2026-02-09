@@ -12,17 +12,22 @@ const router = express.Router()
 function drawPdfBrandHeader(doc) {
   const left = doc.page.margins.left || 50
   const top = doc.page.margins.top || 50
-  const imgPath = path.resolve(__dirname, '..', '..', 'frontend', 'src', 'assets', 'dente.png')
+
+  const logoSize = 36
+  const logoGap = 10
+  const textSize = 18
+
+  const imgPath = path.resolve(__dirname, '..', '..', 'frontend', 'src', 'assets', 'logo_preto.png')
   try {
     if (fs.existsSync(imgPath)) {
-      doc.image(imgPath, left, top, { width: 26, height: 26 })
+      doc.image(imgPath, left, top, { width: logoSize, height: logoSize })
     }
   } catch {
     // ignore missing image
   }
 
-  doc.fillColor('#111827')
-  doc.font('Helvetica-Bold').fontSize(18).text('DR. NETO ABREU', left + 34, top + 4, { align: 'left' })
+  doc.fillColor('#0f172a')
+  doc.font('Helvetica-Bold').fontSize(textSize).text('DENTALY', left + logoSize + logoGap, top + Math.round((logoSize - textSize) / 2), { align: 'left' })
   doc.moveDown(1.25)
 }
 

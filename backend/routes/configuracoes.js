@@ -47,7 +47,7 @@ const PERSONALIZADO_KEYS = [
 for (const k of PERSONALIZADO_KEYS) ALLOWED_KEYS.push(k)
 
 const DEFAULTS = {
-  nome_clinica: 'DR. NETO ABREU',
+  nome_clinica: 'DENTALY',
   cro_responsavel: '',
   telefone_clinica: '',
   email_clinica: '',

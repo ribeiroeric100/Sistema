@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import Odontograma from '../components/common/Odontograma'
 import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
-import dentePng from '../assets/dente.png'
+import brandIconPng from '../assets/logo_preto.png'
 import styles from './PacientePerfil.module.css'
 
 export default function PacientePerfil() {
@@ -238,8 +238,8 @@ export default function PacientePerfil() {
       const headerHtml = `
         <div class="p-top">
           <div class="p-brand">
-            <img class="p-logo" src="${dentePng}" alt="Dente" />
-            <h1 class="p-h1">DR. NETO ABREU</h1>
+            <img class="p-logo" src="${brandIconPng}" alt="Logo" />
+            <h1 class="p-h1">DENTALY</h1>
           </div>
           <div class="p-emitted">
             <div><strong>Emitido em:</strong> ${safeText(emittedAt)}</div>

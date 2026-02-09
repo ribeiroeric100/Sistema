@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="60" viewBox="0 0 220 60" role="img" aria-label="Dentaly">
+  <title>Dentaly</title>
+  <g transform="translate(2 6)">
+    <rect x="0" y="0" width="48" height="48" rx="12" fill="#2563eb"/>
+    <path d="M24 10C18 10 14 14 14 20C14 25 16 28 16 34C16 38 17 42 20 42C22 42 22 37 24 37C26 37 26 42 28 42C31 42 32 38 32 34C32 28 34 25 34 20C34 14 30 10 24 10Z" fill="#ffffff"/>
+  </g>
+  <text x="64" y="40" font-size="28" font-weight="800" fill="#ffffff" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, 'Noto Sans', 'Liberation Sans', sans-serif">Dentaly</text>
+</svg>

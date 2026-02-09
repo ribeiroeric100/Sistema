@@ -2,7 +2,7 @@ import { estoqueService, relatoriosService, configuracoesService } from '@servic
 import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
 import { useEffect, useRef, useState } from 'react'
-import dentePng from '../assets/dente.png'
+import brandIconPng from '../assets/logo_preto.png'
 import BreadcrumbTitle from '@components/common/BreadcrumbTitle'
 import styles from './Relatorios.module.css'
 import {
@@ -839,7 +839,7 @@ export default function Relatorios() {
 
       // Build HTML report to render into PDF (layout conforme modelo)
       const emittedAt = formatBRDate(new Date().toISOString())
-      const brandIcon = dentePng
+      const brandIcon = brandIconPng
 
       const currentUserName = (() => {
         try {
@@ -1129,7 +1129,7 @@ export default function Relatorios() {
           <div class="r-top">
             <div class="r-brand">
               <img class="r-logo" src="${brandIcon}" alt="Dente" />
-              <h1 class="r-h1">DR. NETO ABREU</h1>
+              <h1 class="r-h1">DENTALY</h1>
             </div>
             <div class="r-emitted">${periodInfoHtml}<br/>Mês: ${safeText(monthLabel)}</div>
           </div>
@@ -1351,7 +1351,7 @@ export default function Relatorios() {
           <div class="r-top">
             <div class="r-brand">
               <img class="r-logo" src="${brandIcon}" alt="Dente" />
-              <h1 class="r-h1">DR. NETO ABREU</h1>
+              <h1 class="r-h1">DENTALY</h1>
             </div>
             <div class="r-emitted">${periodInfoHtml}</div>
           </div>

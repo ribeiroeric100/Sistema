@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { authService } from '@services/api'
 import { useAuth } from '@context/useAuth'
 import styles from './Login.module.css'
-import brandLogo from '../../assets/dr-neto-logo-branca.png'
+import brandLogo from '../../assets/logos.png'
 import loginBg from '../../assets/fundo_login.png'
 
 export default function Login() {
@@ -36,7 +36,7 @@ export default function Login() {
       <div className={styles.loginModal}>
         <section className={styles.loginLeft} style={{ '--login-bg': `url(${loginBg})` }}>
           <div className={styles.leftTop}>
-            <img className={styles.brandLogoImg} src={brandLogo} alt="Logo" />
+            <img className={styles.brandLogoImg} src={brandLogo} alt="Dentaly" />
           </div>
 
           <div className={styles.leftBottom}>
