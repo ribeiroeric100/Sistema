@@ -2,8 +2,7 @@ import { estoqueService, relatoriosService, configuracoesService } from '@servic
 import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
 import { useEffect, useRef, useState } from 'react'
-import logoFallback from '../assets/dr-neto-logo.png'
-import logoPdf from '../assets/dr-neto-logo-black.png'
+import dentePng from '../assets/dente.png'
 import BreadcrumbTitle from '@components/common/BreadcrumbTitle'
 import styles from './Relatorios.module.css'
 import {
@@ -840,7 +839,7 @@ export default function Relatorios() {
 
       // Build HTML report to render into PDF (layout conforme modelo)
       const emittedAt = formatBRDate(new Date().toISOString())
-      const brandIcon = logoPdf
+      const brandIcon = dentePng
 
       const currentUserName = (() => {
         try {
@@ -870,8 +869,8 @@ export default function Relatorios() {
 
         .r-top { display:flex; justify-content:space-between; align-items:center; }
         .r-brand { display:flex; align-items:center; gap:12px; }
-        .r-logo { width:200px; height:auto; object-fit:contain; }
-        .r-brandName { display:none; }
+        .r-logo { width:34px; height:34px; object-fit:contain; }
+        .r-h1 { margin:0; font-size:22px; font-weight:900; color:#111827; letter-spacing:0.3px; }
         .r-emitted { font-size:12px; color:#374151; text-align:right; line-height: 1.25; }
         .r-hr { margin:14px 0 18px; border:0; border-top:1px solid #d1d5db; }
         .r-title { text-align:center; margin: 8px 0 18px; font-size:26px; font-weight:800; color:#1f2937; }
@@ -1128,8 +1127,9 @@ export default function Relatorios() {
 
         sections.push(makeSection(`
           <div class="r-top">
-              <div class="r-brand">
-              <img class="r-logo" src="${brandIcon}" alt="" onerror="this.onerror=null;this.src='${logoFallback}'" />
+            <div class="r-brand">
+              <img class="r-logo" src="${brandIcon}" alt="Dente" />
+              <h1 class="r-h1">DR. NETO ABREU</h1>
             </div>
             <div class="r-emitted">${periodInfoHtml}<br/>Mês: ${safeText(monthLabel)}</div>
           </div>
@@ -1349,8 +1349,9 @@ export default function Relatorios() {
       } else {
         sections.push(makeSection(`
           <div class="r-top">
-              <div class="r-brand">
-              <img class="r-logo" src="${brandIcon}" alt="" onerror="this.onerror=null;this.src='${logoFallback}'" />
+            <div class="r-brand">
+              <img class="r-logo" src="${brandIcon}" alt="Dente" />
+              <h1 class="r-h1">DR. NETO ABREU</h1>
             </div>
             <div class="r-emitted">${periodInfoHtml}</div>
           </div>

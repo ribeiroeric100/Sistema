@@ -38,7 +38,6 @@ export default function Configuracoes() {
         { id: 'identidade', label: 'Identidade da Clínica' },
         { id: 'contato', label: 'Contato & Localização' },
         { id: 'aparencia', label: 'Aparência' },
-        { id: 'comunicacao', label: 'Comunicação' },
         { id: 'conta', label: 'Conta' }
       ]
     }
@@ -47,7 +46,6 @@ export default function Configuracoes() {
       { id: 'identidade', label: 'Identidade da Clínica' },
       { id: 'contato', label: 'Contato & Localização' },
       { id: 'aparencia', label: 'Aparência' },
-      { id: 'comunicacao', label: 'Comunicação' },
       { id: 'conta', label: 'Conta' }
     ]
   }, [isRecepcao, isDentista])
@@ -309,7 +307,7 @@ export default function Configuracoes() {
       <div className={styles.header}>
         <div>
           <BreadcrumbTitle current="Configurações" />
-          <div className={styles.subtitle}>Dentaly – Clínica Odontológica</div>
+          <div className={styles.subtitle}>DR. NETO ABREU – Clínica Odontológica</div>
         </div>
       </div>
 
@@ -351,7 +349,7 @@ export default function Configuracoes() {
                 value={form.nome_clinica}
                 disabled={!(isAdmin || isDentista) || loading}
                 onChange={onChange('nome_clinica')}
-                placeholder="Dentaly - Sistema Odontológico"
+                placeholder="DR. NETO ABREU"
               />
             </div>
 
@@ -373,7 +371,7 @@ export default function Configuracoes() {
                 value={form.rodape_pdf}
                 disabled={!(isAdmin || isDentista) || loading}
                 onChange={onChange('rodape_pdf')}
-                placeholder="Dentaly – CRO/SP 00000"
+                placeholder="DR. NETO ABREU – CRO/SP 00000"
                 rows={3}
               />
               <div className={styles.helper}>Assinatura exibida em orçamentos, recibos e PDFs</div>
@@ -530,63 +528,6 @@ export default function Configuracoes() {
             </div>
           </div>
           {isAdmin || isRecepcao ? renderSaveBar() : null}
-        </div>
-      ) : null}
-
-      {activeTab === 'comunicacao' ? (
-        <div className={styles.card}>
-          <div className={styles.cardTop}>
-            <div>
-              <h2 className={styles.cardTitle}>Comunicação</h2>
-              <div className={styles.cardDesc}>Mensagens automáticas e lembretes</div>
-            </div>
-          </div>
-
-          <div className={styles.formGrid}>
-            <div className={styles.toggleRow}>
-              <div>
-                <div className={styles.toggleTitle}>Enviar lembrete por WhatsApp</div>
-                <div className={styles.helper}>Recomendado para reduzir faltas</div>
-              </div>
-              <label className={styles.switch}>
-                <input type="checkbox" checked={!!form.lembrete_whatsapp_ativo} onChange={onToggle('lembrete_whatsapp_ativo')} disabled={!isAdmin || loading} />
-                <span className={styles.slider} />
-              </label>
-            </div>
-
-            <div className={styles.toggleRow}>
-              <div>
-                <div className={styles.toggleTitle}>Enviar lembrete por e-mail</div>
-                <div className={styles.helper}>Útil como canal alternativo</div>
-              </div>
-              <label className={styles.switch}>
-                <input type="checkbox" checked={!!form.lembrete_email_ativo} onChange={onToggle('lembrete_email_ativo')} disabled={!isAdmin || loading} />
-                <span className={styles.slider} />
-              </label>
-            </div>
-
-            <div className={styles.field} style={{ gridColumn: '1 / -1' }}>
-              <label className={styles.label}>Mensagem padrão</label>
-              <div className={styles.varsRow}>
-                <span className={styles.varChip}>{'{{paciente}}'}</span>
-                <span className={styles.varChip}>{'{{dentista}}'}</span>
-                <span className={styles.varChip}>{'{{data}}'}</span>
-                <span className={styles.varChip}>{'{{hora}}'}</span>
-              </div>
-              <textarea
-                className={styles.textArea}
-                value={form.mensagem_lembrete}
-                disabled={!isAdmin || loading}
-                onChange={onChange('mensagem_lembrete')}
-                rows={4}
-              />
-              <div className={styles.example}>
-                Exemplo: “Olá {'{{paciente}}'}, sua consulta com o Dr. {'{{dentista}}'} é amanhã às {'{{hora}}'}.”
-              </div>
-            </div>
-          </div>
-
-          {isAdmin ? renderSaveBar() : null}
         </div>
       ) : null}
 

@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import Odontograma from '../components/common/Odontograma'
 import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
-import logoPdf from '../assets/dr-neto-logo-black.png'
+import dentePng from '../assets/dente.png'
 import styles from './PacientePerfil.module.css'
 
 export default function PacientePerfil() {
@@ -180,8 +180,8 @@ export default function PacientePerfil() {
         .p-page { position: relative; font-family: Arial, Helvetica, sans-serif; }
         .p-top { display:flex; justify-content:space-between; align-items:center; }
         .p-brand { display:flex; align-items:center; gap:12px; }
-        .p-logo { width:200px; height:auto; object-fit:contain; }
-        .p-brandName { display:none; }
+        .p-logo { width:34px; height:34px; object-fit:contain; }
+        .p-h1 { margin:0; font-size:22px; font-weight:900; color:#111827; letter-spacing:0.3px; }
         .p-emitted { font-size:12px; color:#374151; text-align:right; line-height:1.25; }
         .p-title { margin:14px 0 10px; font-size:24px; font-weight:900; color:#111827; text-align:left; text-transform:uppercase; }
         .p-hr { margin:10px 0 14px; border:0; border-top:1px solid #d1d5db; }
@@ -238,8 +238,9 @@ export default function PacientePerfil() {
       const headerHtml = `
         <div class="p-top">
           <div class="p-brand">
-              <img class="p-logo" src="${logoPdf}" alt="Logo" />
-            </div>
+            <img class="p-logo" src="${dentePng}" alt="Dente" />
+            <h1 class="p-h1">DR. NETO ABREU</h1>
+          </div>
           <div class="p-emitted">
             <div><strong>Emitido em:</strong> ${safeText(emittedAt)}</div>
             <div><strong>Profissional responsável:</strong> ${safeText(currentUser.nome)}</div>

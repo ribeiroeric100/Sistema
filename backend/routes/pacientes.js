@@ -192,7 +192,7 @@ router.get('/:id/prontuario/pdf', verifyToken, verifyRole(['admin', 'dentista'])
     .then(([cfg, paciente, consultas, od]) => {
       if (!paciente) return res.status(404).json({ error: 'Paciente não encontrado' })
 
-      const clinicName = String(cfg.nome_clinica || 'DR. NETO ABREU')
+      const brandName = 'DR. NETO ABREU'
 
       const doc = new PDFDocument({ size: 'A4', margin: 50 })
       res.setHeader('Content-Type', 'application/pdf')
@@ -200,8 +200,27 @@ router.get('/:id/prontuario/pdf', verifyToken, verifyRole(['admin', 'dentista'])
 
       doc.pipe(res)
 
+      const drawBrandHeader = () => {
+        const left = doc.page.margins.left || 50
+        const top = doc.page.margins.top || 50
+        const imgPath = path.resolve(__dirname, '..', '..', 'frontend', 'src', 'assets', 'dente.png')
+        try {
+          if (fs.existsSync(imgPath)) {
+            doc.image(imgPath, left, top, { width: 26, height: 26 })
+          }
+        } catch {
+          // ignore
+        }
+
+        doc.fillColor('#111827')
+        doc.font('Helvetica-Bold').fontSize(18).text(brandName, left + 34, top + 4, { align: 'left' })
+        doc.moveDown(1.25)
+      }
+
+      doc.on('pageAdded', () => drawBrandHeader())
+      drawBrandHeader()
+
       // Cabeçalho
-      doc.fontSize(18).text(clinicName, { align: 'left' })
       doc.fontSize(10).fillColor('#444')
       const contactLine = [cfg.endereco_clinica, cfg.telefone_clinica, cfg.email_clinica].filter(Boolean).join(' • ')
       if (contactLine) doc.text(contactLine)

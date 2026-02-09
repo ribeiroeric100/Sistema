@@ -4,8 +4,27 @@ const { db } = require('../config/database')
 const { verifyToken, verifyRole } = require('../middleware/auth')
 const PDFDocument = require('pdfkit')
 const ExcelJS = require('exceljs')
+const fs = require('fs')
+const path = require('path')
 const { logAudit } = require('../services/audit')
 const router = express.Router()
+
+function drawPdfBrandHeader(doc) {
+  const left = doc.page.margins.left || 50
+  const top = doc.page.margins.top || 50
+  const imgPath = path.resolve(__dirname, '..', '..', 'frontend', 'src', 'assets', 'dente.png')
+  try {
+    if (fs.existsSync(imgPath)) {
+      doc.image(imgPath, left, top, { width: 26, height: 26 })
+    }
+  } catch {
+    // ignore missing image
+  }
+
+  doc.fillColor('#111827')
+  doc.font('Helvetica-Bold').fontSize(18).text('DR. NETO ABREU', left + 34, top + 4, { align: 'left' })
+  doc.moveDown(1.25)
+}
 
 // Dashboard summary (estatísticas rápidas)
 router.get('/dashboard', verifyToken, (req, res) => {
@@ -153,9 +172,13 @@ router.post('/exportar-pdf', verifyToken, verifyRole(['admin', 'dentista']), (re
     res.setHeader('Content-Disposition', `attachment; filename="relatorio-${tipo}-${new Date().getTime()}.pdf"`)
 
     doc.pipe(res)
-    doc.fontSize(20).text(`Relatório de ${tipo}`, 100, 100)
-    doc.fontSize(12).text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`)
-    doc.moveDown()
+
+    doc.on('pageAdded', () => drawPdfBrandHeader(doc))
+    drawPdfBrandHeader(doc)
+
+    doc.font('Helvetica-Bold').fontSize(16).text(`Relatório de ${tipo}`, { align: 'left' })
+    doc.font('Helvetica').fontSize(12).text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`)
+    doc.moveDown(0.75)
 
     if (dados) {
       Object.entries(dados).forEach(([key, value]) => {
