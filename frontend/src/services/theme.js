@@ -18,6 +18,12 @@ const THEME_VARS = {
     '--muted': '#6b7280',
     '--border': 'rgba(15, 23, 42, 0.08)',
 
+    // Status dots (Dashboard: Próximas Consultas)
+    '--status-done': '#10b981',
+    '--status-miss': '#f59e0b',
+    '--status-cancel': '#ef4444',
+    '--status-muted': '#6b7280',
+
     '--row-hover': 'rgba(15, 23, 42, 0.04)',
     '--table-head-bg': 'rgba(243, 246, 251, 0.85)',
 
@@ -51,6 +57,12 @@ const THEME_VARS = {
     '--text': '#0f172a',
     '--muted': '#6b7280',
     '--border': 'rgba(15, 23, 42, 0.08)',
+
+    // Status dots (Dashboard: Próximas Consultas)
+    '--status-done': '#10b981',
+    '--status-miss': '#f59e0b',
+    '--status-cancel': '#ef4444',
+    '--status-muted': '#6b7280',
 
     '--row-hover': 'rgba(15, 23, 42, 0.04)',
     '--table-head-bg': 'rgba(243, 246, 251, 0.85)',
@@ -88,6 +100,12 @@ const THEME_VARS = {
     '--muted': 'rgba(255, 255, 255, 0.70)',
     '--border': 'rgba(255, 255, 255, 0.10)',
 
+    // Status dots (Dashboard: Próximas Consultas)
+    '--status-done': '#10b981',
+    '--status-miss': '#f59e0b',
+    '--status-cancel': '#ef4444',
+    '--status-muted': 'rgba(255, 255, 255, 0.70)',
+
     '--row-hover': '#262a35',
     '--table-head-bg': '#262a35',
 
@@ -122,6 +140,12 @@ const THEME_VARS = {
     '--text': '#0f172a',
     '--muted': '#6b7280',
     '--border': 'rgba(15, 23, 42, 0.08)',
+
+    // Status dots (Dashboard: Próximas Consultas)
+    '--status-done': '#10b981',
+    '--status-miss': '#f59e0b',
+    '--status-cancel': '#ef4444',
+    '--status-muted': '#6b7280',
 
     '--row-hover': 'rgba(15, 23, 42, 0.04)',
     '--table-head-bg': 'rgba(243, 246, 251, 0.85)',

@@ -61,11 +61,89 @@ export default function Dashboard() {
   const { user } = useAuth()
   const role = String(user?.role || '').toLowerCase()
   const isRecepcao = role === 'recepcao'
+
+  const PINNED_PROXIMAS_STORAGE_KEY = 'dashboardPinnedProximas_v1'
+
+  const loadPinnedProximasFromStorage = () => {
+    try {
+      if (typeof window === 'undefined') return { keep: {}, items: [] }
+      const raw = localStorage.getItem(PINNED_PROXIMAS_STORAGE_KEY)
+      if (!raw) return { keep: {}, items: [] }
+      const parsed = JSON.parse(raw)
+      const keep = parsed?.keep && typeof parsed.keep === 'object' ? parsed.keep : {}
+      const items = parsed?.items && typeof parsed.items === 'object' ? parsed.items : {}
+      const now = Date.now()
+
+      const nextKeep = {}
+      const nextItems = {}
+      Object.entries(keep).forEach(([id, until]) => {
+        const untilMs = Number(until || 0)
+        if (!id) return
+        if (!Number.isFinite(untilMs) || untilMs <= now) return
+        const item = items?.[id]
+        if (!item || item?.id == null) return
+        nextKeep[String(id)] = untilMs
+        nextItems[String(id)] = item
+      })
+
+      // prune expired/invalid entries
+      if (Object.keys(nextKeep).length !== Object.keys(keep).length) {
+        localStorage.setItem(PINNED_PROXIMAS_STORAGE_KEY, JSON.stringify({ keep: nextKeep, items: nextItems }))
+      }
+
+      const list = Object.values(nextItems)
+      list.sort((a, b) => {
+        const ta = new Date(a?.data_hora || 0).getTime()
+        const tb = new Date(b?.data_hora || 0).getTime()
+        return ta - tb
+      })
+
+      return { keep: nextKeep, items: list }
+    } catch {
+      return { keep: {}, items: [] }
+    }
+  }
+
+  const savePinnedProximaToStorage = (id, until, consulta) => {
+    try {
+      if (typeof window === 'undefined') return
+      const safeId = String(id || '')
+      const untilMs = Number(until || 0)
+      if (!safeId || !Number.isFinite(untilMs) || !consulta) return
+
+      let current = { keep: {}, items: {} }
+      try {
+        const raw = localStorage.getItem(PINNED_PROXIMAS_STORAGE_KEY)
+        if (raw) current = JSON.parse(raw) || current
+      } catch {
+        // ignore
+      }
+
+      const keep = current?.keep && typeof current.keep === 'object' ? current.keep : {}
+      const items = current?.items && typeof current.items === 'object' ? current.items : {}
+      keep[safeId] = untilMs
+      items[safeId] = consulta
+      localStorage.setItem(PINNED_PROXIMAS_STORAGE_KEY, JSON.stringify({ keep, items }))
+    } catch {
+      // ignore
+    }
+  }
+
+  const clearPinnedProximasStorage = () => {
+    try {
+      if (typeof window === 'undefined') return
+      localStorage.removeItem(PINNED_PROXIMAS_STORAGE_KEY)
+    } catch {
+      // ignore
+    }
+  }
+
+  const initialPinned = loadPinnedProximasFromStorage()
   const [_alertas, setAlertas] = useState([])
   const [receita, setReceita] = useState(0)
   const [totalPacientes, setTotalPacientes] = useState(0)
   const [consultasAll, setConsultasAll] = useState([])
-  const [proximas, setProximas] = useState([])
+  const [proximas, setProximas] = useState(() => initialPinned.items || [])
   const [estoque, setEstoque] = useState([])
   const [consultasAgendadasHoje, setConsultasAgendadasHoje] = useState(0)
   const [consultasAgendadasTotal, setConsultasAgendadasTotal] = useState(0)
@@ -105,8 +183,8 @@ export default function Dashboard() {
   const [monthlyChartLoading, setMonthlyChartLoading] = useState(false)
   const [monthlyChartError, setMonthlyChartError] = useState('')
 
-  const [keepProximasUntil, setKeepProximasUntil] = useState(() => ({}))
-  const keepProximasUntilRef = useRef({})
+  const [keepProximasUntil, setKeepProximasUntil] = useState(() => initialPinned.keep || ({}))
+  const keepProximasUntilRef = useRef(initialPinned.keep || {})
   useEffect(() => {
     keepProximasUntilRef.current = keepProximasUntil || {}
   }, [keepProximasUntil])
@@ -185,7 +263,7 @@ export default function Dashboard() {
   const getStatusUi = (consulta) => {
     const st = normalizeStatus(consulta?.status)
 
-    if (st === 'feita' || st === 'realizada') return { label: 'Feita', tone: 'done' }
+    if (st === 'feita' || st === 'realizada' || st === 'finalizado' || st === 'finalizada') return { label: 'Finalizado', tone: 'done' }
     if (st === 'cancelada') return { label: 'Cancelada', tone: 'cancel' }
     if (st === 'falta') return { label: 'Falta', tone: 'miss' }
 
@@ -436,6 +514,7 @@ export default function Dashboard() {
         setConsultasAgendadasHoje(0)
         setConsultasAgendadasTotal(0)
         setKeepProximasUntil({})
+        clearPinnedProximasStorage()
         setDailyChartDate(today)
         setMonthlyChartMonth(ymNow)
         // refresh data after reset
@@ -482,9 +561,17 @@ export default function Dashboard() {
 
         // Importante: este card não deve diminuir ao finalizar uma consulta.
         // Portanto, consideramos tanto 'agendada' quanto as concluídas ('realizada'/'feita') nas contagens.
+        // O total do card é do mês atual (não histórico inteiro).
         const countedStatuses = new Set(['agendada', 'realizada', 'feita'])
-        newAgendadasHoje = (consultas || []).filter(c => countedStatuses.has(c.status) && (new Date(c.data_hora).toISOString().split('T')[0] === hojeStr)).length
-        newAgendadasTotal = (consultas || []).filter(c => countedStatuses.has(c.status)).length
+        newAgendadasHoje = (consultas || []).filter(c => {
+          const ymd = ymdFromLocalDate(c?.data_hora || c?.data)
+          return countedStatuses.has(c?.status) && ymd === hojeStr
+        }).length
+
+        newAgendadasTotal = (consultas || []).filter(c => {
+          const ymd = ymdFromLocalDate(c?.data_hora || c?.data)
+          return countedStatuses.has(c?.status) && ymd && ymd.startsWith(`${ymNow}-`)
+        }).length
         // respect suppression flag set after a local finalize action so the small card
         // doesn't decrement immediately (user requested it to stay until next full refresh)
         if (Date.now() >= (suppressAgendadasUntil || 0)) {
@@ -533,6 +620,40 @@ export default function Dashboard() {
     }
   }
 
+  const pinProximaUntilNextMidnight = (consultaId, consultaSnapshot) => {
+    const id = String(consultaId || '')
+    if (!id) return
+    const now = new Date()
+    const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1)
+    const until = nextMidnight.getTime()
+
+    setKeepProximasUntil((prev) => {
+      const next = { ...(prev || {}), [id]: until }
+      // importante: atualizar o ref imediatamente para que um refresh logo em seguida
+      // (carregarDados) já consiga manter a consulta pinada na lista.
+      keepProximasUntilRef.current = next
+      return next
+    })
+
+    if (consultaSnapshot) savePinnedProximaToStorage(id, until, consultaSnapshot)
+  }
+
+  const ensureProximaPatched = (prev, consulta, patch) => {
+    const list = Array.isArray(prev) ? prev : []
+    const id = String(consulta?.id || '')
+    if (!id) return list
+
+    let found = false
+    const updated = list.map((c) => {
+      if (String(c?.id) !== id) return c
+      found = true
+      return { ...c, ...(patch || {}) }
+    })
+
+    if (!found && consulta) updated.push({ ...consulta, ...(patch || {}) })
+    return updated
+  }
+
   const executarAcaoConsulta = async () => {
     if (!acaoConsulta?.id) return
     setAcaoLoading(true)
@@ -546,14 +667,8 @@ export default function Dashboard() {
         }
 
         // Mantém a consulta na lista de próximas até virar o dia (apenas muda o status no UI)
-        const now = new Date()
-        const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1)
-        const until = nextMidnight.getTime()
-        setKeepProximasUntil((prev) => ({ ...(prev || {}), [String(acaoConsulta.id)]: until }))
-        setProximas((prev) => (prev || []).map((c) => {
-          if (String(c?.id) !== String(acaoConsulta.id)) return c
-          return { ...c, status: 'feita' }
-        }))
+        pinProximaUntilNextMidnight(acaoConsulta.id, { ...acaoConsulta, status: 'feita' })
+        setProximas((prev) => ensureProximaPatched(prev, acaoConsulta, { status: 'feita' }))
       } else if (acaoTipo === 'falta' || acaoTipo === 'cancelada') {
         await consultasService.atualizar(acaoConsulta.id, {
           status: acaoTipo,
@@ -561,6 +676,10 @@ export default function Dashboard() {
           nao_finalizada_motivo: String(acaoMotivo || '').trim() || null,
           nao_finalizada_observacao: String(acaoObs || '').trim() || null
         })
+
+        // Mantém a consulta na lista de próximas até virar o dia (apenas muda o status no UI)
+        pinProximaUntilNextMidnight(acaoConsulta.id, { ...acaoConsulta, status: acaoTipo })
+        setProximas((prev) => ensureProximaPatched(prev, acaoConsulta, { status: acaoTipo }))
       } else if (acaoTipo === 'reagendar') {
         if (!acaoData || !acaoHora) {
           alert('Selecione data e horário para reagendar.')

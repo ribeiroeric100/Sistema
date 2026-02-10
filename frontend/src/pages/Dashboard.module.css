@@ -436,6 +436,11 @@ html[data-theme="dark"] .splitMetricDivider { background: rgba(255,255,255,0.12)
   width: 140px;
 }
 
+.proximasTable th:nth-child(5),
+.proximasTable td:nth-child(5) {
+  width: 76px;
+}
+
 .proximasTable thead th{
   text-transform: uppercase;
   letter-spacing: .08em;
@@ -577,7 +582,7 @@ html[data-theme-ui='light'] .statusWrap{
   width: 8px;
   height: 8px;
   border-radius: 999px;
-  background: var(--muted);
+  background: var(--status-muted, var(--muted));
 }
 
 .statusText{
@@ -586,20 +591,56 @@ html[data-theme-ui='light'] .statusWrap{
   color: var(--text);
 }
 
-.statusDot_ok{ opacity: .95; }
-.statusDot_warn{ opacity: .75; }
-.statusDot_done{ opacity: .90; }
-.statusDot_cancel{ opacity: .55; }
-.statusDot_miss{ opacity: 1; }
-.statusDot_muted{ opacity: .65; }
+.statusText_ok{ color: var(--status-muted, var(--muted)); opacity: .95; }
+.statusText_warn{ color: var(--status-muted, var(--muted)); opacity: .95; }
+.statusText_done{ color: var(--status-done, var(--text)); opacity: 1; }
+.statusText_cancel{ color: var(--status-cancel, var(--text)); opacity: 1; }
+.statusText_miss{ color: var(--status-miss, var(--text)); opacity: 1; }
+.statusText_muted{ color: var(--status-muted, var(--muted)); opacity: .95; }
 
-.statusText_ok{ opacity: .95; }
-.statusText_warn{ opacity: .90; }
-.statusText_done{ opacity: .95; }
-.statusText_cancel{ opacity: .75; }
-.statusText_miss{ opacity: 1; }
-.statusText_muted{ opacity: .85; }
+.statusDot_ok{ background: var(--status-muted, var(--muted)); opacity: .95; }
+.statusDot_warn{ background: var(--status-muted, var(--muted)); opacity: .75; }
+.statusDot_done{ background: var(--status-done, var(--muted)); opacity: .90; }
+.statusDot_cancel{ background: var(--status-cancel, var(--muted)); opacity: .90; }
+.statusDot_miss{ background: var(--status-miss, var(--muted)); opacity: 1; }
+.statusDot_muted{ background: var(--status-muted, var(--muted)); opacity: .85; }
 
+@media (max-width: 640px) {
+  /* Mobile: keep Ação visible by reducing columns */
+  .tableCardInner { padding: 10px 10px 12px 10px; }
+
+  .proximasTable th:nth-child(3),
+  .proximasTable td:nth-child(3) {
+    display: none;
+  }
+
+  .proximasTable th:nth-child(1),
+  .proximasTable td:nth-child(1) {
+    width: auto;
+  }
+
+  .proximasTable th:nth-child(2),
+  .proximasTable td:nth-child(2) {
+    width: 120px;
+  }
+
+  .proximasTable th:nth-child(4),
+  .proximasTable td:nth-child(4) {
+    width: 120px;
+  }
+
+  .proximasTable th:nth-child(5),
+  .proximasTable td:nth-child(5) {
+    width: 58px;
+  }
+
+  .proximasTable td { padding: 10px 8px; }
+
+  .statusWrap { padding: 6px 8px; gap: 6px; max-width: 100%; overflow: hidden; }
+  .statusText { font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .kebabBtn { width: 36px; height: 32px; }
+}
 .kebabBtn{
   display: inline-flex;
   align-items: center;
